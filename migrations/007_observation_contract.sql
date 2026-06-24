@@ -114,22 +114,37 @@ CREATE TRIGGER observations_no_mutate
   FOR EACH ROW EXECUTE FUNCTION observations_append_only();
 
 -- ----------------------------------------------------------------------------
--- 4. Seed the single axis needed for E-011.
--- NOTE: canonical_unit, method and outcome_spec below are PLACEHOLDERS pending
--- the lab head's pre-registration (Personal Veto). noise_floor = 1.44 (MME).
+-- 4. Seed canonical scalar axes.
+--
+-- IMPORTANT (calibration finding, E-011 option 1 / docs/E-011-calibration-result.md):
+-- "Expansion ratio" is NOT a canonical axis. On real burn-test data it is exactly
+--     expansion_ratio = CHAR_HEIGHT(mm) / FILM_THICKNESS(mm)
+-- i.e. a DERIVED composite of two scalar axes — it fails the is_scalar rule, and a
+-- boundary built on it is a boundary over a non-canonical key. Per LAW-BOUNDARY-001
+-- it must be DERIVED at query time, never stored as an axis.
+--
+-- The calibration also showed the variable that actually governs protection is char
+-- DENSITY / structural integrity, not height or expansion (tallest char failed
+-- fastest). So the response axis worth mapping is CHAR_DENSITY, and performance is
+-- TIME_TO_FAILURE.
+--
+-- canonical_unit / method / noise_floor / outcome_spec are PLACEHOLDERS pending the
+-- lab head's pre-registration (Personal Veto). Nothing empirical is invented here.
 -- ----------------------------------------------------------------------------
-INSERT INTO axes (axis_id, name, dimension, canonical_unit, method, is_scalar, noise_floor, outcome_spec)
-VALUES (
-  'EXPANSION',
-  'Expansion ratio',
-  'expansion_ratio',
-  'x',                       -- TODO(lab): confirm canonical unit (ratio 'x' vs '%')
-  'free_expansion_test',     -- TODO(lab): confirm exact method/instrument
-  TRUE,
-  1.44,                      -- MME for EXPANSION under this method
-  NULL                       -- TODO(lab): pre-register Works/Borderline/Fails thresholds before E-011
-)
+INSERT INTO axes (axis_id, name, dimension, canonical_unit, method, is_scalar, noise_floor, outcome_spec) VALUES
+  -- Inputs / conditions (scanned or controlled)
+  ('APP_LOADING',     'APP loading',          'mass_fraction',      '%w/w',   'gravimetric_formulation', TRUE, NULL, NULL),  -- e.g. EXOLIT AP435; E-011 scan variable
+  ('FILM_THICKNESS',  'Dry film thickness',   'dry_film_thickness', 'micron', 'thickness_gauge_avg',     TRUE, NULL, NULL),
+  -- Responses (measured)
+  ('CHAR_HEIGHT',     'Intumescent char height','char_height',      'mm',     'iso834_furnace_burn',     TRUE, NULL, NULL),
+  ('CHAR_DENSITY',    'Char density',          'char_density',       'kg/m3',  'char_mass_over_volume',   TRUE, NULL, NULL),  -- hypothesized controlling axis
+  -- Performance outcome
+  ('TIME_TO_FAILURE', 'Time to failure',       'time_to_failure',    'min',    'iso834_to_500C',          TRUE, NULL, NULL)   -- outcome_spec (Works/Borderline/Fails) set by lab
 ON CONFLICT (axis_id) DO NOTHING;
+
+-- NOTE: a prior draft seeded a non-scalar 'EXPANSION' axis. If it was already
+-- inserted in a dev DB, remove it (it is derived, not canonical):
+--   DELETE FROM axes WHERE axis_id = 'EXPANSION';
 
 -- ============================================================================
 -- Done. Next (Level-0 items 2 & 3): ingest endpoint that routes EVERY write
