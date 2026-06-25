@@ -30,6 +30,7 @@ import { validateObservation } from './lib/observationContract.js';
 import { deriveBoundary } from './lib/boundaryDerive.js';
 import { findContradictions } from './lib/contradictionDetect.js';
 import { resolveMaterial } from './lib/aliasResolver.js';
+import { checkFormulation } from './lib/formulationRules.js';
 import {
   parseCompositionFromText,
   compareCompositionMaps,
@@ -2146,6 +2147,19 @@ app.get('/api/contradictions', async (req, res) => {
     for (const [k, v] of Object.entries(req.query)) if (k.startsWith('mme_')) axisMme[k.slice(4)] = Number(v);
     const contradictions = findContradictions(data || [], { criticalKeys, axisMme });
     res.json({ count: contradictions.length, contradictions });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Pre-experiment formulation check against domain-pack boundaries (no DB).
+// POST /api/formulation-check  body: { formulation: { "EXOLIT AP435": 0.27, ... } }
+app.post('/api/formulation-check', async (req, res) => {
+  try {
+    const user = await requireAuth(req, res);
+    if (!user) return;
+    const formulation = (req.body && (req.body.formulation || req.body)) || {};
+    res.json(checkFormulation(formulation));
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
