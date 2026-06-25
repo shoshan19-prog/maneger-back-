@@ -7,14 +7,16 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test": "npm run test:unit",
+    "test": "npm run test:unit && npm run test:boundary",
     "test:unit": "node scripts/verify-david-checklist.mjs",
     "verify:david-checklist": "node scripts/verify-david-checklist.mjs",
     "index:vector": "node scripts/index-all-files-to-management-vector.js",
     "index:vector:list": "node scripts/index-all-files-to-management-vector.js --list",
     "register:bucket": "node scripts/register-bucket-files-to-project.js",
     "index:buckets": "node scripts/index-from-buckets-to-management-vector.js",
-    "sync:gpt-rag-all": "node scripts/sync-all-gpt-rag.js"
+    "sync:gpt-rag-all": "node scripts/sync-all-gpt-rag.js",
+    "test:boundary": "node scripts/run-boundary-tests.mjs",
+    "progress": "node scripts/progress_report.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
