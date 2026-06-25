@@ -1,0 +1,50 @@
+{
+  "type": "PROPERTY_REGISTRY_CANONICAL",
+  "version": "v1",
+  "status": ["DRAFT", "HUMAN_REVIEW", "NOT_DEPLOYED"],
+  "reversible": true,
+  "writes_to_db": false,
+  "source": "property_registry_canonical_v1.json (David, Drive, 2026-06-21)",
+  "decisions_locked": {
+    "D1_adhesion_method": "EN 1542 canonical; ASTM D4541 / cross-cut D3359 = method_alias",
+    "D2_fire_split": "time_to_failure (min) and IFR (index) are SEPARATE properties",
+    "D3_water_split": "capillary_absorption (kg/m2.sqrt-h) and water_absorption_pct (%) SEPARATE",
+    "D4_vapor_unit": "water_vapor_resistance_mu (mu) canonical; Sd = mu*thickness derived",
+    "D5_expansion_method": "Furnace ISO 834-1",
+    "D6_id_scheme": "snake_case canonical ids"
+  },
+  "lab_measured_outcomes_proven_here": ["expansion_ratio", "IFR", "char_quality", "pull_off_adhesion", "wet_viscosity"],
+  "properties": [
+    {"property_id":"pull_off_adhesion","name":"Pull-off adhesion","unit":"MPa","method":"EN 1542","method_alias":"ASTM D4541 / D3359","direction_of_good":"higher_is_better","evidence_tier":"PROVEN_HERE_ELIGIBLE","codebook":"ADHES_DRY","aliases":["pull off","pull-off","היצמדות","הידבקות"],"linked_materials":[{"material":"Binder","effect":"up"},{"material":"ENCOR","effect":"up"},{"material":"APP","effect":"down"}]},
+    {"property_id":"expansion_ratio","name":"Expansion ratio","unit":"x","method":"Furnace ISO 834-1 / muffle","direction_of_good":"higher_is_better","evidence_tier":"PROVEN_HERE_ELIGIBLE","codebook":"EXPANSION","aliases":["er","expansion","התפחות"],"linked_materials":[{"material":"APP","effect":"up"},{"material":"PER","effect":"up"},{"material":"MEL","effect":"up"},{"material":"Nanoclay","effect":"up"},{"material":"Binder","effect":"down"}]},
+    {"property_id":"IFR","name":"Intumescence / flame-retardancy index","unit":"index","method":"cone calorimeter / EN 13381-8","direction_of_good":"higher_is_better","evidence_tier":"PROVEN_HERE_ELIGIBLE","codebook":"FIRE_DRY(IFR)","aliases":["ifr","intumescence index"],"linked_materials":[{"material":"APP","effect":"up"},{"material":"MEL","effect":"up"},{"material":"PER","effect":"up"},{"material":"Binder","effect":"down"}]},
+    {"property_id":"time_to_failure","name":"Time to failure (fire)","unit":"min","method":"EN 13381-8","method_alias":"BS 476","direction_of_good":"higher_is_better","evidence_tier":"OBSERVED","codebook":"FIRE_DRY(min)","aliases":["ttf","זמן כשל","זמן עמידות אש"],"linked_materials":[{"material":"APP","effect":"up"},{"material":"MEL","effect":"up"},{"material":"PER","effect":"up"},{"material":"Binder","effect":"down"}]},
+    {"property_id":"char_quality","name":"Char quality","unit":"rating (ordinal)","method":"Char inspection (cohesion/structure)","direction_of_good":"higher_is_better","evidence_tier":"PROVEN_HERE_ELIGIBLE","codebook":"CHAR_QUAL","aliases":["char","איכות פחם"],"linked_materials":[{"material":"PER","effect":"up"},{"material":"Nanoclay","effect":"up"},{"material":"APP","effect":"up"}]},
+    {"property_id":"wet_viscosity","name":"Wet viscosity","unit":"cP / Pa.s","method":"Brookfield / Stormer (KU)","direction_of_good":"context","evidence_tier":"PROVEN_HERE_ELIGIBLE","codebook":"VISC_WET","aliases":["viscosity","צמיגות"],"linked_materials":[{"material":"RM-825","effect":"up"},{"material":"Xanthan","effect":"up"},{"material":"OROTAN","effect":"down"},{"material":"Water","effect":"down"}]},
+    {"property_id":"capillary_absorption","name":"Capillary water absorption","unit":"kg/m2.sqrt-h","method":"EN 1015-18","direction_of_good":"lower_is_better","evidence_tier":"INFERRED","codebook":"CAPILLARY","aliases":["capillary","נימיות","ספיגה קפילרית"]},
+    {"property_id":"water_absorption_pct","name":"Water absorption (mass)","unit":"%","method":"EN 1015-18","direction_of_good":"lower_is_better","evidence_tier":"OBSERVED","codebook":null,"aliases":["absorption","ספיגת מים"]},
+    {"property_id":"water_vapor_resistance_mu","name":"Water-vapor resistance (mu)","unit":"mu","method":"EN 1015-19 (Sd via EN ISO 7783)","direction_of_good":"lower_is_better","evidence_tier":"INFERRED","codebook":"BREATH(Sd)","aliases":["mu","vapor permeability","נשימות"]},
+    {"property_id":"uv_color_change","name":"UV color change (dE)","unit":"dE","method":"QUV ASTM G154","direction_of_good":"lower_is_better","evidence_tier":"INFERRED","codebook":"UV_DRY","aliases":["uv","דהיית צבע"]},
+    {"property_id":"sag_resistance","name":"Sag resistance","unit":"mm (anti-sag index)","method":"Anti-sag bar","direction_of_good":"higher_is_better","evidence_tier":"INFERRED","codebook":"SAG_WET","aliases":["sag","נזילה"]},
+    {"property_id":"suspension_stability","name":"Suspension / shelf stability","unit":"pass/fail, syneresis %","method":"Settling + freeze-thaw","direction_of_good":"higher_is_better","evidence_tier":"INFERRED","codebook":"STAB_WET","aliases":["stability","יציבות"]},
+    {"property_id":"foam","name":"Foam","unit":"density drop %","method":"Density cup / shake test","direction_of_good":"lower_is_better","evidence_tier":"INFERRED","codebook":"FOAM_WET","aliases":["foam","קצף"]},
+    {"property_id":"open_time","name":"Open time / wet edge","unit":"min","method":"Open-time draw-down","direction_of_good":"context","evidence_tier":"INFERRED","codebook":"OPEN_TIME","aliases":["open time","זמן פתוח"]},
+    {"property_id":"workability","name":"Workability","unit":"flow (mm)","method":"Flow table EN 1015-3","direction_of_good":"context","evidence_tier":"INFERRED","codebook":"WORK_WET","aliases":["workability","עבידות"]},
+    {"property_id":"flexibility","name":"Flexibility","unit":"% elong / mandrel mm","method":"Mandrel bend / crack-bridging","direction_of_good":"higher_is_better","evidence_tier":"INFERRED","codebook":"FLEX_DRY","aliases":["flex","גמישות"]},
+    {"property_id":"hardness","name":"Hardness","unit":"pencil / Konig","method":"Pencil hardness / Konig pendulum","direction_of_good":"context","evidence_tier":"INFERRED","codebook":"HARD_DRY","aliases":["hardness","קשיחות"]},
+    {"property_id":"water_resistance","name":"Water resistance","unit":"immersion rating","method":"Immersion / soak","direction_of_good":"higher_is_better","evidence_tier":"INFERRED","codebook":"WATERRES_DRY","aliases":["water resistance","עמידות מים"]},
+    {"property_id":"opacity","name":"Opacity / hiding","unit":"contrast ratio","method":"Hiding power (Leneta)","direction_of_good":"higher_is_better","evidence_tier":"INFERRED","codebook":"OPACITY","aliases":["opacity","hiding","כיסוי"]},
+    {"property_id":"gloss","name":"Gloss","unit":"GU (60deg)","method":"Gloss meter 60deg","direction_of_good":"context","evidence_tier":"INFERRED","codebook":"GLOSS","aliases":["gloss","ברק"]},
+    {"property_id":"scrub_resistance","name":"Scrub resistance","unit":"cycles","method":"ASTM D2486","direction_of_good":"higher_is_better","evidence_tier":"INFERRED","codebook":"SCRUB","aliases":["scrub","שפשוף"]},
+    {"property_id":"set_time","name":"Set time","unit":"hr","method":"Vicat needle","direction_of_good":"context","evidence_tier":"INFERRED","codebook":"SET_TIME","aliases":["set time","זמן התקשות"]},
+    {"property_id":"compressive_strength","name":"Compressive strength","unit":"MPa","method":"EN 1015-11","direction_of_good":"higher_is_better","evidence_tier":"OBSERVED","codebook":null,"aliases":["compression","חוזק לחיצה"]},
+    {"property_id":"flexural_strength","name":"Flexural strength","unit":"MPa","method":"EN 1015-11","direction_of_good":"higher_is_better","evidence_tier":"OBSERVED","codebook":null,"aliases":["flexural","חוזק כפיפה"]},
+    {"property_id":"density","name":"Density","unit":"kg/m3","method":"EN 1015-10","direction_of_good":"context","evidence_tier":"OBSERVED","codebook":null,"aliases":["density","צפיפות"]},
+    {"property_id":"salt_scaling_resistance","name":"Salt / scaling resistance","unit":"cycles","method":"Freeze-thaw salt cycles","direction_of_good":"higher_is_better","evidence_tier":"INFERRED","codebook":null,"aliases":["salt resistance","עמידות למלחים"]}
+  ],
+  "open_todos": [
+    "related_mechanisms empty on every property — wire to mechanism attribution (next step).",
+    "#050-only props (compressive/flexural/density/salt) have no linked_materials yet.",
+    "Verify polarity flips (mu, dE) against a domain expert before DB promotion."
+  ]
+}

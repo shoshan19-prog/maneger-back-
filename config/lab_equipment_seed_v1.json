@@ -1,0 +1,41 @@
+{
+  "registry": "LAB_EQUIPMENT",
+  "version": "v1",
+  "source": "Fresco lab equipment catalog (David, uploaded 2026-06-21)",
+  "note": "Each instrument lists the standards it supports and the property codebook codes it can measure. status: existing = owned & active. Property<->instrument match is by codebook-code / standard overlap. Reversible seed; no DB write.",
+  "equipment": [
+    {"name":"Pushen NDJ-5S","type":"rotational viscometer","measures":["VISC_WET","THIXO_INDEX"],"standards":["ASTM D2196","ISO 2555"],"status":"existing","projects":["all coatings"]},
+    {"name":"SNB-3 Viscometer","type":"rotational viscometer","measures":["VISC_WET","THIXO_INDEX"],"standards":["ASTM D2196","ISO 2555"],"status":"existing"},
+    {"name":"LANGRY LR-P40","type":"pull-off adhesion tester","measures":["ADHES_DRY"],"standards":["ASTM D4541","ASTM D7234","ASTM D7334","EN 1542","ISO 4624","ISO 19403"],"status":"existing","projects":["PR-TFX","ERL-01"]},
+    {"name":"BGD 502/5A","type":"cross-hatch cutter","measures":["ADHES_DRY","FLEX_DRY"],"standards":["ASTM D3359","ISO 2409","EN ISO 2409"],"status":"existing"},
+    {"name":"CM-8826FN (Biuged)","type":"gloss meter 60deg","measures":["GLOSS"],"standards":["ASTM D523","ISO 2813"],"status":"existing"},
+    {"name":"HOBERSAL Muffle Furnace","type":"muffle / calcination furnace 600-1000C","measures":["FIRE_DRY","EXPANSION","CHAR_QUAL"],"standards":["ASTM D2863","ASTM E1354","ASTM E84","ISO 1182","ISO 1716"],"status":"existing","projects":["INT-TFX (critical)"]},
+    {"name":"Building Materials Flammability Furnace","type":"flammability / flame-spread test","measures":["FIRE_DRY"],"standards":["ASTM E84","EN 13501-1","ISO 11925-2"],"status":"existing","projects":["INT-TFX (critical)"]},
+    {"name":"HU04-10 Salt Spray Chamber","type":"salt-spray / corrosion chamber","measures":["WATERRES_DRY"],"standards":["ASTM B117","ISO 9227"],"status":"existing","projects":["PR-TFX (critical)"]},
+    {"name":"SS-301 Sieve Shaker","type":"sieve shaker (particle size)","measures":["PACKING"],"standards":["ASTM C136","ASTM C430","EN 933","ISO 3310"],"status":"existing","projects":["CSC-01 (critical)"]},
+    {"name":"TQC VF2200-666 / VF2201-589","type":"water-vapor permeability cups (Payne/Wet-cup)","measures":["BREATH"],"standards":["EN ISO 7783","ASTM E96"],"status":"existing"},
+    {"name":"BGD wet-film / Taber abrasion (Biuged)","type":"abrasion + wet-film","measures":["SCRUB","SAG_WET","BUILD"],"standards":["ASTM D4060","ASTM D4414"],"status":"existing"},
+    {"name":"BGD 542/S","type":"coating thickness gauge","measures":["BUILD"],"standards":["ASTM D7091","ISO 2178","ISO 2360","ISO 2808"],"status":"existing"},
+    {"name":"Density Cup VF2039-1015 / Pycnometer","type":"density / pycnometer cup","measures":["PVC","COST"],"standards":["ASTM D1475","ISO 2811","EN ISO 2811"],"status":"existing"},
+    {"name":"Color spectro (LR-P40 suite)","type":"colorimeter / spectro","measures":["OPACITY","UV_DRY"],"standards":["ASTM D2244","ASTM E308","ISO 7724","ISO 11664"],"status":"existing"},
+    {"name":"EUTECH pH 700","type":"pH meter","measures":[],"standards":["ASTM C25","ISO 10523"],"status":"existing","projects":["CSC-01 (critical)"]},
+    {"name":"SNOL MSF 11-3/8","type":"drying / heating oven <=300C","measures":["SET_TIME"],"standards":["ASTM C109","ASTM D1640","EN 196","ISO 3270"],"status":"existing"},
+    {"name":"GFL 70","type":"forced-air drying oven","measures":[],"standards":["ASTM C109","ASTM D823","ASTM D1640"],"status":"existing"},
+    {"name":"RADWAG PS 1000.R1","type":"analytical balance","measures":[],"standards":[],"status":"existing"},
+    {"name":"R Technology YP50002","type":"precision balance / penetrometer","measures":[],"standards":["ASTM C305","ASTM D823"],"status":"existing"},
+    {"name":"MRC RC-1000","type":"overhead stirrer","measures":[],"standards":["ASTM C305","ISO 1514"],"status":"existing"},
+    {"name":"High-Shear Disperser / Cowles","type":"high-shear disperser","measures":[],"standards":["ASTM D4761"],"status":"existing","projects":["PR-TFX (critical)"]},
+    {"name":"GOTECH (cement press)","type":"compression / cement strength","measures":["HARD_DRY"],"standards":["ASTM C109","ASTM C39","EN 196-1","ISO 679"],"status":"existing","projects":["CSC-01 (critical)"]},
+    {"name":"Schmidt Rebound Hammer HT225-N / HT75-L","type":"rebound hammer (surface hardness)","measures":["HARD_DRY"],"standards":["ASTM C805","EN 12504-2"],"status":"existing"},
+    {"name":"Tesla Planetary Mixer","type":"planetary mixer","measures":[],"standards":["ASTM D1210","ISO 1524","ISO 2431","ISO 3251"],"status":"existing"},
+    {"name":"TOCSIN-640 (IGD)","type":"fixed gas detector (safety)","measures":[],"standards":["EN 45544","EN 60079"],"status":"existing"}
+  ],
+  "still_missing_or_uncertain": [
+    "CAPILLARY (EN 1015-18 — no dedicated rig; maybe via ISO 19403 contact-angle)",
+    "YIELD_STRESS / RECOVERY (have viscometers, not a full oscillatory rheometer)",
+    "PORE (MIP — none)",
+    "CO2 (LCA/EPD — external)",
+    "WATER_RET / BLEED / SEGREGATION (fresh-mortar rigs — verify)",
+    "WORK_WET (flow table EN 1015-3 — verify)"
+  ]
+}
