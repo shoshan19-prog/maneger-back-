@@ -29,6 +29,7 @@ import { parseExperimentBufferToText } from './lib/labExperimentParse.js';
 import { validateObservation } from './lib/observationContract.js';
 import { deriveBoundary } from './lib/boundaryDerive.js';
 import { findContradictions } from './lib/contradictionDetect.js';
+import { resolveMaterial } from './lib/aliasResolver.js';
 import {
   parseCompositionFromText,
   compareCompositionMaps,
@@ -2066,10 +2067,17 @@ app.post('/api/observations', async (req, res) => {
     }
 
     // All valid — insert (only contract columns; never trust extra keys).
+    // Canonicalize material identity on the way in (Law 2: Identity Before Aggregation):
+    // a recognized alias/trade-name (MELAFINE, EXOLIT AP435, ...) is upgraded to its
+    // canonical material_id so aggregation later is over one identity, not many.
     const rows = list.map(o => {
       const row = {};
       for (const c of OBSERVATION_COLUMNS) if (o[c] !== undefined) row[c] = o[c];
       if (row.conditions == null) row.conditions = {};
+      if (row.material_id) {
+        const hit = resolveMaterial(row.material_id);
+        if (hit && !hit.ambiguous) row.material_id = hit.material_id;
+      }
       return row;
     });
     const { data, error } = await supabase.from('observations').insert(rows).select('id, axis_id, value, unit, outcome_class, created_at');

@@ -1,0 +1,26 @@
+-- ============================================================================
+-- 009 — FK: experiment_materials.material_id -> materials.material_id  (Phase A5)
+-- ============================================================================
+-- GOAL: enforce that every experiment links to a CANONICAL material identity, not a
+-- free-text name. This closes the identity fracture.
+--
+-- ⚠️ DO NOT run this blindly. It will FAIL while any experiment_materials.material_id
+-- value is not present in materials.material_id (i.e. raw names / aliases not yet
+-- canonicalized). Required order:
+--   1. Seed canonical materials:        run migrations/008.
+--   2. Check readiness (find unresolved names):
+--        SELECT DISTINCT em.material_id
+--        FROM experiment_materials em
+--        LEFT JOIN materials m ON m.material_id = em.material_id
+--        WHERE m.material_id IS NULL;
+--      (or run scripts/material_resolve_report.mjs on that list)
+--   3. Normalize existing rows to canonical ids (alias resolver). Ambiguous/unknown
+--      names are a LAB decision (Rachel) — do not guess.
+--   4. Only then apply the FK below.
+-- ============================================================================
+
+-- ALTER TABLE experiment_materials
+--   ADD CONSTRAINT experiment_materials_material_fk
+--   FOREIGN KEY (material_id) REFERENCES materials(material_id) ON UPDATE CASCADE;
+
+-- (Left commented intentionally — uncomment after steps 1–3 above are confirmed.)
