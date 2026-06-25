@@ -2188,6 +2188,23 @@ app.get('/api/next-experiments', async (req, res) => {
   }
 });
 
+// Per-project test registry (Rachel's verified coverage) — drives per-project result screens.
+// GET /api/project-tests           -> all projects
+// GET /api/project-tests/:id       -> one project's done/planned/missing tests
+app.get('/api/project-tests/:id?', async (req, res) => {
+  try {
+    const user = await requireAuth(req, res);
+    if (!user) return;
+    const reg = loadCfg('project_test_registry_v1.json');
+    if (!req.params.id) return res.json({ count: reg.projects.length, projects: reg.projects });
+    const p = reg.projects.find(x => x.id.toLowerCase() === String(req.params.id).toLowerCase());
+    if (!p) return res.status(404).json({ error: 'unknown project: ' + req.params.id, known: reg.projects.map(x => x.id) });
+    res.json(p);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Coverage / navigation skeleton: per axis, is it measurable + how many observations exist.
 app.get('/api/coverage', async (req, res) => {
   try {

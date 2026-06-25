@@ -1,0 +1,70 @@
+{
+  "registry": "PROJECT_TEST_REGISTRY",
+  "version": "v1",
+  "source": "Email RGB-lab (Rachel) -> David, 2026-06-24: verified per-project test coverage",
+  "note": "What each project ACTUALLY measures (done), plans (planned), or is missing (missing). Drives per-project result screens (David's goal) AND the operational coverage layer (which canonical axes are observed per project). axis = canonical property_registry id where mappable; null = no canonical axis yet.",
+  "legend": {"done": "measured today", "planned": "planned/future", "missing": "absent from list (gap)"},
+  "projects": [
+    {"id": "INT-TFX", "domain": "intumescent", "done": [
+      {"test": "pH", "axis": "ph"}, {"test": "specific gravity", "axis": "density"},
+      {"test": "viscosity (CPS+temp+spindle+RPM)", "axis": "wet_viscosity"},
+      {"test": "primer type", "axis": null}, {"test": "primer DFT", "axis": "FILM_THICKNESS"},
+      {"test": "primer curing", "axis": null}, {"test": "paint DFT", "axis": "FILM_THICKNESS"},
+      {"test": "paint curing", "axis": null}, {"test": "substrate", "axis": null},
+      {"test": "burn profile", "axis": null},
+      {"test": "Fire Resistance Time / time to 500C", "axis": "time_to_failure"},
+      {"test": "PASS/FAIL", "axis": null}],
+     "planned": [{"test": "Cross Hatch (before burn)", "axis": "pull_off_adhesion"}, {"test": "Pull Off (before burn)", "axis": "pull_off_adhesion"}, {"test": "Cross Hatch (after burn)", "axis": "pull_off_adhesion"}, {"test": "Pull Off (after burn)", "axis": "pull_off_adhesion"}],
+     "missing": [{"test": "Expansion Ratio", "axis": "expansion_ratio"}, {"test": "Foam Uniformity", "axis": null}, {"test": "Adhesion After Burn", "axis": "pull_off_adhesion"}, {"test": "Visual Change Before/After Burn", "axis": null}]},
+
+    {"id": "PR-TFX", "domain": "corrosion", "done": [
+      {"test": "pH", "axis": "ph"}, {"test": "specific gravity", "axis": "density"},
+      {"test": "viscosity", "axis": "wet_viscosity"},
+      {"test": "corrosion (hours)", "axis": "water_resistance"}, {"test": "corrosion (resistance level)", "axis": "water_resistance"}],
+     "planned": [{"test": "Cross Hatch", "axis": "pull_off_adhesion"}, {"test": "Blistering (ISO 4628-2)", "axis": null}, {"test": "Rust Grade (ISO 4628-3)", "axis": null}, {"test": "Delamination/Flaking", "axis": null}],
+     "missing": []},
+
+    {"id": "SILICATO", "domain": "silicate coating", "done": [
+      {"test": "pH", "axis": "ph"}, {"test": "specific gravity", "axis": "density"},
+      {"test": "viscosity", "axis": "wet_viscosity"}, {"test": "Pigment Opening/Acceptance", "axis": null}],
+     "planned": [{"test": "Gloss", "axis": "gloss"}], "missing": []},
+
+    {"id": "ERL-ONE", "domain": "unspecified", "done": [
+      {"test": "pH", "axis": "ph"}, {"test": "specific gravity", "axis": "density"}, {"test": "viscosity", "axis": "wet_viscosity"}, {"test": "PASS/FAIL", "axis": null}],
+     "planned": [], "missing": []},
+
+    {"id": "CSC-ONE", "domain": "concrete/corrosion sensor", "done": [
+      {"test": "pH", "axis": "ph"}, {"test": "specific gravity", "axis": "density"}, {"test": "viscosity", "axis": "wet_viscosity"}, {"test": "PASS/FAIL", "axis": null}],
+     "planned": [{"test": "PalmSens4 OCP (Open Circuit Potential)", "axis": null}, {"test": "PalmSens4 LPR (Linear Polarization Resistance)", "axis": null}],
+     "missing": []},
+
+    {"id": "TEL_AVIV_PLASTER", "domain": "plaster", "done": [
+      {"test": "sieving (all + total)", "axis": null}, {"test": "compressive strength (MPa)", "axis": "compressive_strength"},
+      {"test": "specific gravity", "axis": "density"}, {"test": "PASS/FAIL", "axis": null}],
+     "planned": [{"test": "Workability", "axis": "workability"}, {"test": "Pull Off", "axis": "pull_off_adhesion"}],
+     "missing": []},
+
+    {"id": "FIRE_RETARDANT_PLASTER", "domain": "intumescent plaster", "done": [
+      {"test": "Expansion Ratio", "axis": "expansion_ratio"}, {"test": "Foam Uniformity", "axis": null},
+      {"test": "Density", "axis": "density"}, {"test": "Fire Resistance Time", "axis": "time_to_failure"},
+      {"test": "Visual Change After Fire", "axis": null}, {"test": "Cracking", "axis": null},
+      {"test": "Char Integrity", "axis": "char_quality"}, {"test": "PASS/FAIL", "axis": null}],
+     "planned": [{"test": "Adhesion to Substrate", "axis": "pull_off_adhesion"}, {"test": "Thermal Conductivity", "axis": null}],
+     "missing": []},
+
+    {"id": "ETL-ONE", "domain": "primer C5", "done": [
+      {"test": "pH", "axis": "ph"}, {"test": "specific gravity", "axis": "density"}, {"test": "viscosity", "axis": "wet_viscosity"},
+      {"test": "DFT", "axis": "FILM_THICKNESS"}, {"test": "Drying Time", "axis": null},
+      {"test": "Salt Spray (hours)", "axis": "water_resistance"}, {"test": "PASS/FAIL", "axis": null}],
+     "planned": [{"test": "Pull Off before/after", "axis": "pull_off_adhesion"}, {"test": "Cross Hatch before/after", "axis": "pull_off_adhesion"}, {"test": "Blistering", "axis": null}, {"test": "Rust Grade", "axis": null}, {"test": "Delamination", "axis": null}],
+     "missing": []},
+
+    {"id": "NST-2026", "domain": "undefined", "done": [], "planned": [], "missing": []}
+  ],
+  "key_finding": "INT-TFX measures time_to_failure but NOT expansion_ratio or char_quality (both MISSING), while FIRE_RETARDANT_PLASTER measures char_quality (Char Integrity) + density + expansion. The controlling axis we identified (char density/integrity) is measured in one fire project and absent in the other — a coverage gap to close for INT-TFX.",
+  "open_todos": [
+    "ph axis not in property registry yet — add or map to outcomes.ph.",
+    "Foam Uniformity / Visual Change / Cracking — ordinal/qualitative axes not yet canonical.",
+    "Thermal Conductivity, corrosion sub-axes (Blistering/Rust Grade/Delamination) — new axes to add."
+  ]
+}
