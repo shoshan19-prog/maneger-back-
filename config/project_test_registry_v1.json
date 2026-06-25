@@ -130,7 +130,8 @@
   ],
   "key_finding": "A universal QC core (ph + specific_gravity + viscosity_profile) underlies almost every project; projects then diverge by domain. The biggest boundary-readiness gaps are quantitative substitutes for visual judgments: char DENSITY (INT-TFX, today visual), instrument pull-off (PR-TFX/ETL-ONE, today future), and the new-axis backlog (ph, whiteness, corrosion sub-grades, corrosion_potential, strip_efficacy).",
   "open_todos": [
-    "Add `ph` to the property registry (Axis Authority) — referenced by every project, still uncanonical.",
+    "DONE 2026-06-25: `ph` added to the Axis Authority (first canonical axis, Fresco GO). specific_gravity=density and viscosity_profile=wet_viscosity already canonical; viscosity now carries the profile RULE (spindle+rpm+temperature required).",
+    "Next per Fresco roadmap: char_density as a quantitative axis (today char_quality is visual) — the real INT-TFX boundary gap.",
     "Canonicalize ordinal/visual axes: foam_uniformity, char_height, blistering, delamination, rust_creep, applicability, pigment_acceptance, strip_efficacy, sieve_residue.",
     "Add `corrosion_potential` (V, PalmSens4) and `penetration_depth` (mm) axes.",
     "Flag fire_resistance_time method split: project '500C minutes' protocol vs EN 13381-8 — keep distinct in commensurability."

@@ -2218,6 +2218,12 @@ app.get('/api/boundaries', async (req, res) => {
     if (!user) return;
     const responseAxis = req.query.response_axis, inputAxis = req.query.input_axis;
     if (!responseAxis || !inputAxis) return res.status(400).json({ error: 'response_axis and input_axis are required' });
+    // STOP (RULE, Fresco 2026-06-25): never derive a boundary from a PROFILE axis as a
+    // single value (e.g. viscosity, which is only meaningful at a fixed spindle/rpm/temp).
+    const profileAxis = [responseAxis, inputAxis].find(a => LOCAL_AXES[a]?.profile);
+    if (profileAxis) {
+      return res.status(400).json({ error: `axis "${profileAxis}" is a profile axis — it cannot be a boundary axis as a scalar. Pin its conditions (${(LOCAL_AXES[profileAxis].required_conditions || []).join(' + ')}) and treat each setting as its own axis instead.` });
+    }
     let q = supabase.from('observations').select('*').eq('axis_id', responseAxis);
     if (req.query.project_id) q = q.eq('project_id', req.query.project_id);
     if (req.query.material_id) q = q.eq('material_id', req.query.material_id);
