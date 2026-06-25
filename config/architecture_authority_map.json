@@ -1,0 +1,24 @@
+{
+  "type": "ARCHITECTURE_AUTHORITY_MAP",
+  "version": "v1",
+  "purpose": "Single source of truth for WHO owns each component, its status, and the decision. Ends duplication/ownership debates (David's request).",
+  "authority_levels": ["Production DB", "Migration (branch)", "Config (branch)", "Lab/Human"],
+  "status_levels": ["VERIFIED", "PARTIAL", "HYPOTHESIS", "MISSING"],
+  "components": [
+    {"component": "measurements", "authority": "Production DB", "status": "VERIFIED", "decision": "Keep — the measurement EVENT (production_run_id, age, temp, spindle, linkage_confidence)"},
+    {"component": "outcomes", "authority": "Production DB", "status": "VERIFIED", "decision": "Normalize — wide named columns (ph, specific_gravity, jsonb) -> canonical axis rows in observations"},
+    {"component": "experiments", "authority": "Production DB", "status": "VERIFIED", "decision": "Keep — already has decision_shift, breakdown_flag, conditions, formulation jsonb"},
+    {"component": "materials", "authority": "Production DB", "status": "PARTIAL", "decision": "Canonicalize — make source of truth; aliasResolver feeds it; deprecate material_library as source"},
+    {"component": "material_library", "authority": "Production DB", "status": "PARTIAL", "decision": "Demote — per-project view only, not a source of identity"},
+    {"component": "formulation_materials", "authority": "Production DB", "status": "PARTIAL", "decision": "Wire resolver into recommended_material"},
+    {"component": "observations", "authority": "Migration 007 (branch)", "status": "PARTIAL", "decision": "LAYER (recommended) — canonical-axis value rows FK->measurements; supersede outcomes' wide columns. DO NOT ship parallel."},
+    {"component": "axes", "authority": "Migration 010 (branch)", "status": "VERIFIED", "decision": "New — canonical Axis Authority (property registry). No live equivalent."},
+    {"component": "equipment", "authority": "Migration 011 (branch)", "status": "VERIFIED", "decision": "New — Equipment Authority. No live equivalent."},
+    {"component": "property_couplings", "authority": "Migration 012 (branch)", "status": "HYPOTHESIS", "decision": "New/Experimental — 0/15 verified (E-010 map)"},
+    {"component": "mechanism_hypotheses", "authority": "Migration 013 (branch)", "status": "HYPOTHESIS", "decision": "New/Experimental — all status=HYPOTHESIS"},
+    {"component": "competitor_benchmarks", "authority": "Config (branch)", "status": "VERIFIED", "decision": "Keep — external boundary evidence from real measurements"},
+    {"component": "T_noise / MME (per axis)", "authority": "Lab/Human", "status": "MISSING", "decision": "Blocked on Rachel — axes.noise_floor"},
+    {"component": "outcome specs (Works/Fails)", "authority": "Lab/Human", "status": "MISSING", "decision": "Blocked on R&D lead — declaration precedes measurement"},
+    {"component": "E-011 / PRR Trial data", "authority": "Lab/Human", "status": "MISSING", "decision": "Blocked on lab run"}
+  ]
+}
