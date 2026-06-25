@@ -2188,9 +2188,13 @@ app.get('/api/next-experiments', async (req, res) => {
   }
 });
 
+// Boundary Dashboard (per-project result screen — David's goal). Self-contained HTML.
+app.get('/boundary-dashboard', (req, res) => {
+  res.sendFile(new URL('./public/boundary-dashboard.html', import.meta.url).pathname);
+});
+
 // Per-project test registry (Rachel's verified coverage) — drives per-project result screens.
-// GET /api/project-tests           -> all projects
-// GET /api/project-tests/:id       -> one project's done/planned/missing tests
+// GET /api/project-tests -> all; GET /api/project-tests/:id -> one project's done/planned/missing.
 app.get('/api/project-tests/:id?', async (req, res) => {
   try {
     const user = await requireAuth(req, res);
