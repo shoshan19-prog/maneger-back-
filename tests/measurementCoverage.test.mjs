@@ -46,12 +46,11 @@ t('INT-TFX: expansion_ratio is now done (Rachel 2026-06-25 — measured as a com
   assert.equal(er.project_status, 'done');
   assert.equal(er.gap, false);
 });
-t('INT-TFX: char_quality (char DENSITY) is the real work gap — measured only visually today', () => {
+t('INT-TFX: char_density is now a planned, defined axis (GO 2026-06-25 closed the visual-only gap)', () => {
   const rows = projectCoverage(prop.properties, equip.equipment, intf);
-  const cq = rows.find(r => r.axis === 'char_quality');
-  assert.ok(cq, 'char_quality present');
-  assert.equal(cq.measurable, true);       // muffle furnace measures CHAR_QUAL
-  assert.equal(cq.gap, true);              // listed in `gap`: quantitative density not done
+  const cd = rows.find(r => r.axis === 'char_density');
+  assert.ok(cd, 'char_density present in project coverage');
+  assert.equal(cd.project_status, 'planned');   // axis defined; ready to measure quantitatively
 });
 t('INT-TFX: time_to_failure is NOT a gap (already done)', () => {
   const rows = projectCoverage(prop.properties, equip.equipment, intf);

@@ -73,4 +73,29 @@ t('viscosity missing only temperature is still rejected', () => {
   assert.ok(errors.some(e => e.includes('temperature')));
 });
 
+// --- char_density: the controlling fire axis (GO 2026-06-25) ---
+const charBase = () => ({ project_id: 'INT-TFX', axis_id: 'char_density', value: 120, unit: 'kg/m3', method: 'char_mass_over_volume', uncertainty: 4, provenance: { ...prov } });
+const charConds = {
+  initial_film_thickness: { value: 800, unit: 'micron' }, exposed_area: { value: 100, unit: 'cm2' },
+  burn_profile: { value: 500, unit: 'C' }, sample_age: { value: 7, unit: 'days' },
+};
+
+t('char_density is canonical, quantitative (kg/m3) and boundary-eligible (NOT a profile axis)', () => {
+  assert.ok(AX.char_density, 'char_density present');
+  assert.equal(AX.char_density.canonical_unit, 'kg/m3');
+  assert.notEqual(AX.char_density.profile, true);   // must remain derivable as a boundary axis
+});
+
+t('char_density WITHOUT its measurement context is rejected', () => {
+  const { valid, errors } = validateObservation(charBase(), AX.char_density);
+  assert.equal(valid, false);
+  assert.ok(errors.some(e => e.includes('initial_film_thickness')));
+});
+
+t('char_density WITH full context (film thickness, area, burn profile, age) passes', () => {
+  const o = charBase(); o.conditions = { ...charConds };
+  const { valid, errors } = validateObservation(o, AX.char_density);
+  assert.equal(valid, true, errors.join('; '));
+});
+
 console.log(`\n${passed} passed`);

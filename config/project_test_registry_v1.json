@@ -27,10 +27,10 @@
       {"test": "adhesion (visual, after burn)", "axis": "pull_off_adhesion", "method_ref": "adhesion_after_burn"},
       {"test": "PASS/FAIL", "axis": null}],
      "planned": [
+      {"test": "char DENSITY (= char mass/volume, kg/m3)", "axis": "char_density", "method_ref": "char_density", "note": "GO 2026-06-25: axis now defined; quantitative replacement for the visual char rating — the controlling fire axis."},
       {"test": "Pull Off before/after burn (instrument)", "axis": "pull_off_adhesion", "method_ref": "pull_off_adhesion"},
       {"test": "Cross Cut before/after burn", "axis": "pull_off_adhesion", "method_ref": "cross_cut_adhesion"}],
-     "gap": [
-      {"test": "char DENSITY (quantitative)", "axis": "char_quality", "note": "measured visually today; the controlling axis wants a quantitative density, not height"}]},
+     "gap": []},
 
     {"id": "PR-TFX", "kind": "rnd", "domain": "anti-corrosive primer for intumescents", "done": [
       {"test": "pH", "axis": "ph", "method_ref": "ph"},
