@@ -59,6 +59,8 @@ const DEMO = {
 };
 const TOKEN = new URLSearchParams(location.search).get("token");
 let DATA = JSON.parse(JSON.stringify(DEMO)), LIVE = false;
+// per-project numeric scan config: which axes form the boundary + spec (T_relevance)
+const CHARTCFG = { FIRE_RETARDANT_PLASTER:{response_axis:"time_to_failure",input_axis:"density",spec:60,mme:1.87} };
 
 async function tryLive(){
   if(!TOKEN) return false;
@@ -70,7 +72,20 @@ async function tryLive(){
     for(const p of projs.projects){
       const cov=await (await fetch("/api/coverage?project="+encodeURIComponent(p.id),{headers:h})).json();
       DATA[p.id]={tests:{done:p.done.map(t=>t.test),planned:p.planned.map(t=>t.test),missing:p.missing.map(t=>t.test)},
-        gap:(cov.work_gap||[]),boundaries:[]};
+        gap:(cov.work_gap||[]),boundaries:[],chart:null};
+      // live boundary from deriveBoundary (only where a scan config exists)
+      const cfg=CHARTCFG[p.id];
+      if(cfg){
+        const qs=`project=${encodeURIComponent(p.id)}&response_axis=${cfg.response_axis}&input_axis=${cfg.input_axis}&spec=${cfg.spec}${cfg.mme?`&mme=${cfg.mme}`:""}`;
+        const b=await (await fetch("/api/boundaries?"+qs,{headers:h})).json();
+        if(b && b.n_points>0){
+          DATA[p.id].chart={xLabel:cfg.input_axis,yLabel:cfg.response_axis,spec:b.spec,
+            boundary:b.boundary?.boundary,ci:b.boundary?.confidence_interval||[b.boundary?.boundary,b.boundary?.boundary],points:b.points};
+          DATA[p.id].boundaries=[{name:`${cfg.input_axis} → ${cfg.response_axis}`,
+            status:b.boundary?.bracketed?(b.boundary?.separable?"partial_verified":"hypothesis"):"hypothesis",
+            note:`live: ${b.n_points} נקודות, גבול ${b.boundary?.boundary??"—"}`}];
+        }
+      }
     }
     return true;
   }catch(e){ return false; }
@@ -92,15 +107,18 @@ function render(){
 function renderChart(c){
   const W=720,H=300,pad=46;
   const xs=c.points.map(p=>p.x), ys=c.points.map(p=>p.y);
-  const xmin=Math.min(...xs,c.boundary)-10, xmax=Math.max(...xs,c.boundary)+10;
+  const hasB=Number.isFinite(c.boundary);
+  const xmin=Math.min(...xs,hasB?c.boundary:xs[0])-10, xmax=Math.max(...xs,hasB?c.boundary:xs[0])+10;
   const ymin=Math.min(...ys,c.spec)-8, ymax=Math.max(...ys,c.spec)+8;
   const X=v=>pad+(v-xmin)/(xmax-xmin)*(W-2*pad);
   const Y=v=>H-pad-(v-ymin)/(ymax-ymin)*(H-2*pad);
   let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:760px">`;
-  // CI band + boundary line (vertical, on density axis)
-  s+=`<rect x="${X(c.ci[0])}" y="${pad}" width="${X(c.ci[1])-X(c.ci[0])}" height="${H-2*pad}" fill="rgba(59,130,246,.15)"/>`;
-  s+=`<line x1="${X(c.boundary)}" y1="${pad}" x2="${X(c.boundary)}" y2="${H-pad}" stroke="#3b82f6" stroke-width="2" stroke-dasharray="5 4"/>`;
-  s+=`<text x="${X(c.boundary)}" y="${pad-6}" fill="#3b82f6" font-size="12" text-anchor="middle">boundary ${c.boundary}</text>`;
+  // CI band + boundary line (vertical, on input axis) — only if a boundary was derived
+  if(hasB){
+    if(c.ci&&Number.isFinite(c.ci[0])&&c.ci[1]>c.ci[0]) s+=`<rect x="${X(c.ci[0])}" y="${pad}" width="${X(c.ci[1])-X(c.ci[0])}" height="${H-2*pad}" fill="rgba(59,130,246,.15)"/>`;
+    s+=`<line x1="${X(c.boundary)}" y1="${pad}" x2="${X(c.boundary)}" y2="${H-pad}" stroke="#3b82f6" stroke-width="2" stroke-dasharray="5 4"/>`;
+    s+=`<text x="${X(c.boundary)}" y="${pad-6}" fill="#3b82f6" font-size="12" text-anchor="middle">boundary ${c.boundary}</text>`;
+  }
   // spec line (horizontal)
   s+=`<line x1="${pad}" y1="${Y(c.spec)}" x2="${W-pad}" y2="${Y(c.spec)}" stroke="#d29922" stroke-width="1.5" stroke-dasharray="4 4"/>`;
   s+=`<text x="${W-pad}" y="${Y(c.spec)-5}" fill="#d29922" font-size="11" text-anchor="end">spec ${c.spec} min</text>`;

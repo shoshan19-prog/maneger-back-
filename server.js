@@ -2130,11 +2130,16 @@ app.get('/api/boundaries', async (req, res) => {
     if (req.query.material_id) q = q.eq('material_id', req.query.material_id);
     const { data, error } = await q.limit(5000);
     if (error) throw error;
-    const points = (data || []).map(o => ({
-      input: Number(o.conditions?.[inputAxis]?.value), response: Number(o.value), outcome: o.outcome_class,
-    })).filter(p => Number.isFinite(p.input) && Number.isFinite(p.response) && p.outcome);
+    const spec = req.query.spec != null ? Number(req.query.spec) : null;
+    const points = (data || []).map(o => {
+      const response = Number(o.value);
+      // outcome from the record, else classify against the spec (T_relevance)
+      const outcome = o.outcome_class || (spec != null && Number.isFinite(response) ? (response >= spec ? 'works' : 'fails') : undefined);
+      return { input: Number(o.conditions?.[inputAxis]?.value), response, outcome };
+    }).filter(p => Number.isFinite(p.input) && Number.isFinite(p.response) && p.outcome);
     const mme = req.query.mme != null ? Number(req.query.mme) : undefined;
-    res.json({ response_axis: responseAxis, input_axis: inputAxis, n_points: points.length,
+    res.json({ response_axis: responseAxis, input_axis: inputAxis, spec, mme, n_points: points.length,
+               points: points.map(p => ({ x: p.input, y: p.response, o: p.outcome === 'works' ? 'work' : 'fail' })),
                boundary: deriveBoundary(points, { mme }) });
   } catch (e) {
     res.status(500).json({ error: e.message });
