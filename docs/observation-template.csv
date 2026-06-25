@@ -1,4 +1,4 @@
 project_id,experiment_id,material_id,axis_id,value,unit,method,uncertainty,replicate_count,replicate_group,outcome_class,outcome_spec_ref,observed_by,observed_at,source_type,source_reference,cond_APP_LOADING_value,cond_APP_LOADING_unit,cond_TEMPERATURE_value,cond_TEMPERATURE_unit,cond_FILM_THICKNESS_value,cond_FILM_THICKNESS_unit
-PROJECT_UUID_HERE,,,CHAR_DENSITY,142,kg/m3,char_mass_over_volume,8,3,CE-003-density-L1,works,TTF-spec-v1,rachel,2026-06-28,lab_run,CE-003/run-1,27.45,%w/w,23,C,970,micron
-PROJECT_UUID_HERE,,,CHAR_DENSITY,118,kg/m3,char_mass_over_volume,7,3,CE-003-density-L2,borderline,TTF-spec-v1,rachel,2026-06-29,lab_run,CE-003/run-2,27.45,%w/w,23,C,930,micron
-PROJECT_UUID_HERE,,,CHAR_DENSITY,95,kg/m3,char_mass_over_volume,9,3,CE-003-density-L3,fails,TTF-spec-v1,rachel,2026-06-30,lab_run,CE-003/run-3,27.45,%w/w,23,C,920,micron
+PROJECT_UUID_HERE,,,density,142,kg/m3,char_mass_over_volume,8,3,CE-003-density-L1,works,TTF-spec-v1,rachel,2026-06-28,lab_run,CE-003/run-1,27.45,%w/w,23,C,970,micron
+PROJECT_UUID_HERE,,,density,118,kg/m3,char_mass_over_volume,7,3,CE-003-density-L2,borderline,TTF-spec-v1,rachel,2026-06-29,lab_run,CE-003/run-2,27.45,%w/w,23,C,930,micron
+PROJECT_UUID_HERE,,,density,95,kg/m3,char_mass_over_volume,9,3,CE-003-density-L3,fails,TTF-spec-v1,rachel,2026-06-30,lab_run,CE-003/run-3,27.45,%w/w,23,C,920,micron
