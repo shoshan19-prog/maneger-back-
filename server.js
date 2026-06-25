@@ -27,6 +27,8 @@ import {
 } from './lib/inboundProjectRouting.js';
 import { parseExperimentBufferToText } from './lib/labExperimentParse.js';
 import { validateObservation } from './lib/observationContract.js';
+import { deriveBoundary } from './lib/boundaryDerive.js';
+import { findContradictions } from './lib/contradictionDetect.js';
 import {
   parseCompositionFromText,
   compareCompositionMaps,
@@ -2092,6 +2094,50 @@ app.get('/api/observations', async (req, res) => {
     const { data, error } = await q;
     if (error) throw error;
     res.json({ observations: data || [] });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Derive a boundary on demand (LAW-BOUNDARY-001: derived, never stored).
+// GET /api/boundaries?project_id=&response_axis=TIME_TO_FAILURE&input_axis=CHAR_DENSITY&mme=1.44
+app.get('/api/boundaries', async (req, res) => {
+  try {
+    const user = await requireAuth(req, res);
+    if (!user) return;
+    const responseAxis = req.query.response_axis, inputAxis = req.query.input_axis;
+    if (!responseAxis || !inputAxis) return res.status(400).json({ error: 'response_axis and input_axis are required' });
+    let q = supabase.from('observations').select('*').eq('axis_id', responseAxis);
+    if (req.query.project_id) q = q.eq('project_id', req.query.project_id);
+    if (req.query.material_id) q = q.eq('material_id', req.query.material_id);
+    const { data, error } = await q.limit(5000);
+    if (error) throw error;
+    const points = (data || []).map(o => ({
+      input: Number(o.conditions?.[inputAxis]?.value), response: Number(o.value), outcome: o.outcome_class,
+    })).filter(p => Number.isFinite(p.input) && Number.isFinite(p.response) && p.outcome);
+    const mme = req.query.mme != null ? Number(req.query.mme) : undefined;
+    res.json({ response_axis: responseAxis, input_axis: inputAxis, n_points: points.length,
+               boundary: deriveBoundary(points, { mme }) });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Surface contradictions among observations (same axis + context, disagreeing).
+// GET /api/contradictions?project_id=&critical=FILM_THICKNESS&mme_TIME_TO_FAILURE=...
+app.get('/api/contradictions', async (req, res) => {
+  try {
+    const user = await requireAuth(req, res);
+    if (!user) return;
+    let q = supabase.from('observations').select('*');
+    if (req.query.project_id) q = q.eq('project_id', req.query.project_id);
+    const { data, error } = await q.limit(5000);
+    if (error) throw error;
+    const criticalKeys = req.query.critical ? String(req.query.critical).split(',') : undefined;
+    const axisMme = {};
+    for (const [k, v] of Object.entries(req.query)) if (k.startsWith('mme_')) axisMme[k.slice(4)] = Number(v);
+    const contradictions = findContradictions(data || [], { criticalKeys, axisMme });
+    res.json({ count: contradictions.length, contradictions });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
