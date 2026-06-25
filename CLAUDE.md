@@ -11,6 +11,21 @@
 3. **End each substantive task with a short "Improvements & threads" note:** (a) one way it
    or the tooling could be sharper next time, (b) how it links to the rest of the system.
 
+## Operating protocol (autonomy — default mode)
+
+When given a task: **start → execute end-to-end → self-review → report.** Do not stop
+to ask approval for each routine step; routine safe actions are pre-approved in
+`.claude/settings.json`. Work the whole task, then deliver a result with a short
+self-review.
+
+Still STOP and ask first for (not auto-approved by design):
+- destructive/irreversible: force-push, `git reset --hard`, rebase, `rm -rf`;
+- production data: writing to / querying the live Supabase (`psql`, `supabase db`);
+- outward-facing: merging to `main`, opening PRs, sending email/Slack/external messages;
+- anything that contradicts a decision already made in the thread.
+
+Always end with the "Improvements & threads" note (below).
+
 ## The north star
 
 MATRIYA is becoming a **Boundary Intelligence Platform**: its asset is an empirical map
