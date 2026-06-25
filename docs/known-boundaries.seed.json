@@ -1,0 +1,58 @@
+{
+  "_comment": "Seed boundaries (priors) extracted from intumescent_domain_pack.yaml (david@frescocolors.com, Drive). These are PRIOR/learned thresholds, not ground truth — use as starting hypotheses for calibration (deriveBoundary refines them against observations). Each carries provenance + confidence.",
+  "source": { "file": "intumescent_domain_pack.yaml", "owner": "david@frescocolors.com", "store": "google_drive", "version": "v0.1" },
+  "boundaries": [
+    {
+      "id": "expansion_adhesion_mismatch",
+      "type": "ratio_threshold",
+      "metric": "expansion_ratio / adhesion_mpa",
+      "threshold": 28.5,
+      "operator": "<",
+      "failure_mode": "delamination",
+      "severity": "critical",
+      "mechanism": "mechanical_stress_exceeds_interfacial_strength",
+      "confidence": 0.8,
+      "note": "MATCHES our empirical calibration: high-expansion/low-density (low adhesion) char detaches. This is the single most important known boundary."
+    },
+    {
+      "id": "minimum_acid_catalysis",
+      "type": "min_threshold",
+      "metric": "sum(APP) wt%",
+      "threshold": 8.0,
+      "operator": ">",
+      "failure_mode": "insufficient_char",
+      "severity": "critical",
+      "mechanism": "inadequate_phosphoric_acid_for_char_network",
+      "note": "Lab data sits at APP ~24-27.5% — far above this floor; consistent with no APP failures observed (comfort zone)."
+    },
+    {
+      "id": "carbon_char_balance",
+      "type": "min_threshold",
+      "metric": "sum(PER, PHENOLIC_RESIN, EXPANDABLE_GRAPHITE, MELAMINE) wt%",
+      "threshold": 5.0, "operator": ">",
+      "failure_mode": "insufficient_carbonaceous_char_network", "severity": "major"
+    },
+    {
+      "id": "binder_matrix_integrity",
+      "type": "min_threshold",
+      "metric": "sum(LATEX, SILICATE, PHENOLIC_RESIN) wt%",
+      "threshold": 10.0, "operator": ">",
+      "failure_mode": "insufficient_matrix_for_cohesion_and_adhesion", "severity": "major"
+    },
+    {
+      "id": "expansion_reinforcement_coupling",
+      "type": "ratio_threshold",
+      "metric": "reinforcement / expansion",
+      "threshold": 0.5, "operator": ">",
+      "failure_mode": "char_collapse", "severity": "warning",
+      "mechanism": "unreinforced_high_expansion_leads_to_char_instability"
+    },
+    {
+      "id": "thermal_activation_window",
+      "type": "range",
+      "metric": "ONSET_TEMPERATURE",
+      "min": 220.0, "max": 360.0, "unit": "C",
+      "failure_mode": "activation_timing_mismatch", "severity": "warning"
+    }
+  ]
+}
