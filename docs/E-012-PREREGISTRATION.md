@@ -91,3 +91,42 @@ Observation  →  Mechanistic Coupling (C16)  →  Boundary (deriveBoundary)  �
 ```
 
 — the move from *recording* observations to *inferring* from them.
+
+---
+
+## 8. The template Rachel fills (and how it reaches Ingest)
+
+Rachel does **not** touch the observation format. She fills one wide, sample-centric sheet:
+
+**`docs/E-012-template.csv`** — columns:
+`sample_id, formulation_id, variable_changed, variable_level, char_height_mm,
+char_density_kg_m3, char_integrity_score, time_to_failure_min, initial_film_thickness,
+exposed_area, burn_profile, sample_age, operator, date, notes`
+
+Units (fixed, so values are commensurable): char_height_mm = mm · char_density_kg_m3 =
+kg/m³ · char_integrity_score = ordinal rating · time_to_failure_min = min ·
+initial_film_thickness = micron · exposed_area = cm² · burn_profile = endpoint °C
+(today 500) · sample_age = days. A filled illustration: **`docs/E-012-template-EXAMPLE.csv`**.
+
+Flow (no change to the tested ingest path):
+
+```
+E-012 sheet (wide)  ──►  npm run e012 <sheet.csv>  ──►  long observation CSV
+                                                          │  (3 obs/sample: char_density,
+                                                          │   char_quality, time_to_failure;
+                                                          │   context carried as conditions)
+                                                          ▼
+                                          Ingest button  ──►  contract gate  ──►  observations
+                                                          ▼
+                                          GET /api/boundaries (char_density → time_to_failure)
+```
+
+`npm run e012 docs/E-012-template-EXAMPLE.csv` validates every row through the same contract
+gate and writes the Ingest-ready CSV. On the example it yields a clean
+char_density→time_to_failure boundary — proof the pipe is whole before any real burn.
+
+### One decision flagged for Fresco
+The canonical `time_to_failure` method was reconciled to the in-house protocol
+`heat_to_500C_count_minutes` (EN 13381-8 / BS 476 demoted to `method_alias`, kept DISTINCT)
+— because the property registry (EN 13381-8) and Rachel's report (500 °C protocol)
+disagreed, and the contract rejects the mismatch. Reversible config. **Confirm or veto.**
