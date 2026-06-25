@@ -31,6 +31,15 @@ import { deriveBoundary } from './lib/boundaryDerive.js';
 import { findContradictions } from './lib/contradictionDetect.js';
 import { resolveMaterial } from './lib/aliasResolver.js';
 import { checkFormulation } from './lib/formulationRules.js';
+import { proposeExperiments } from './lib/nextExperiment.js';
+import { measurementCoverage, coverageSummary } from './lib/measurementCoverage.js';
+import { readFileSync as _readFileSync } from 'fs';
+/** Cached loader for canonical config registries (config/*.json). */
+const _cfgCache = {};
+function loadCfg(name) {
+  if (!_cfgCache[name]) _cfgCache[name] = JSON.parse(_readFileSync(new URL('./config/' + name, import.meta.url), 'utf8'));
+  return _cfgCache[name];
+}
 import {
   parseCompositionFromText,
   compareCompositionMaps,
@@ -2160,6 +2169,41 @@ app.post('/api/formulation-check', async (req, res) => {
     if (!user) return;
     const formulation = (req.body && (req.body.formulation || req.body)) || {};
     res.json(checkFormulation(formulation));
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Next-experiment proposer (closed loop): ranked queue from mechanism to_verify + couplings.
+app.get('/api/next-experiments', async (req, res) => {
+  try {
+    const user = await requireAuth(req, res);
+    if (!user) return;
+    const mechanisms = loadCfg('mechanism_hypothesis_seed_v1.json').rows || [];
+    const couplings = loadCfg('coupling_registry_v1.json').couplings || [];
+    const ranked = proposeExperiments({ mechanisms, couplings });
+    res.json({ count: ranked.length, next: ranked[0] || null, queue: ranked });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Coverage / navigation skeleton: per axis, is it measurable + how many observations exist.
+app.get('/api/coverage', async (req, res) => {
+  try {
+    const user = await requireAuth(req, res);
+    if (!user) return;
+    const properties = loadCfg('property_registry_canonical_v1.json').properties || [];
+    const equipment = loadCfg('lab_equipment_seed_v1.json').equipment || [];
+    const cov = measurementCoverage(properties, equipment);
+    // observation counts per axis (live, if the table exists)
+    let counts = {};
+    try {
+      const { data } = await supabase.from('observations').select('axis_id');
+      for (const o of data || []) counts[o.axis_id] = (counts[o.axis_id] || 0) + 1;
+    } catch (_) { counts = null; } // table not deployed yet
+    const rows = cov.map(c => ({ ...c, observations: counts ? (counts[c.axis] || 0) : null }));
+    res.json({ summary: coverageSummary(properties, equipment), axes: rows });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }

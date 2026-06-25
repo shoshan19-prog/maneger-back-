@@ -1,0 +1,88 @@
+{
+  "registry": "COMPETITOR_BENCHMARKS",
+  "version": "v1",
+  "source": "INTUMESCENT_NEW_FORMULATIONS_20260505.xlsx burn-test sheet (real measurements)",
+  "note": "External boundary evidence: competitor products measured on Fresco rigs (ISO 834). Use to anchor where Fresco must reach. Key signal: competitors achieve high TTF at LOW expansion (dense char) — the density>expansion boundary.",
+  "benchmarks": [
+    {
+      "competitor": "PROMAT",
+      "samples": 4,
+      "expansion_ratio": [
+        12,
+        21
+      ],
+      "char_height_mm": [
+        24,
+        37.9
+      ],
+      "time_to_failure_min": [
+        75,
+        130
+      ],
+      "film_thickness_micron": [
+        1778,
+        3366
+      ]
+    },
+    {
+      "competitor": "FIRETEX 5090",
+      "samples": 2,
+      "expansion_ratio": [
+        10,
+        13.3
+      ],
+      "char_height_mm": [
+        25,
+        40
+      ],
+      "time_to_failure_min": [
+        67,
+        100
+      ],
+      "film_thickness_micron": [
+        2348,
+        3000
+      ]
+    },
+    {
+      "competitor": "INTERCHAR 1090",
+      "samples": 7,
+      "expansion_ratio": [
+        13.1,
+        23
+      ],
+      "char_height_mm": [
+        30,
+        39
+      ],
+      "time_to_failure_min": [
+        42.5,
+        123
+      ],
+      "film_thickness_micron": [
+        1269,
+        2490
+      ]
+    },
+    {
+      "competitor": "CHARCOAT",
+      "samples": 1,
+      "expansion_ratio": [
+        22,
+        22
+      ],
+      "char_height_mm": [
+        45,
+        45
+      ],
+      "time_to_failure_min": [
+        62.5,
+        62.5
+      ],
+      "film_thickness_micron": [
+        2022,
+        2022
+      ]
+    }
+  ]
+}
