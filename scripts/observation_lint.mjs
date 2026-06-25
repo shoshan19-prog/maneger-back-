@@ -21,23 +21,16 @@ const file = args.find(a => !a.startsWith('--'));
 const axesArg = args.includes('--axes') ? args[args.indexOf('--axes') + 1] : null;
 if (!file) { console.error('Usage: node observation_lint.mjs <obs.json|.csv> [--axes axes.json]'); process.exit(2); }
 
-const contractPath = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../lib/observationContract.js');
-const { validateObservation } = await import(pathToFileURL(contractPath).href);
-
-const DEFAULT_AXES = [
-  { axis_id: 'APP_LOADING', canonical_unit: '%w/w', method: 'gravimetric_formulation', is_scalar: true, noise_floor: null },
-  { axis_id: 'FILM_THICKNESS', canonical_unit: 'micron', method: 'thickness_gauge_avg', is_scalar: true, noise_floor: null },
-  { axis_id: 'CHAR_HEIGHT', canonical_unit: 'mm', method: 'iso834_furnace_burn', is_scalar: true, noise_floor: null },
-  { axis_id: 'CHAR_DENSITY', canonical_unit: 'kg/m3', method: 'char_mass_over_volume', is_scalar: true, noise_floor: null },
-  { axis_id: 'TIME_TO_FAILURE', canonical_unit: 'min', method: 'iso834_to_500C', is_scalar: true, noise_floor: null },
-];
+const here = path.dirname(new URL(import.meta.url).pathname);
+const { validateObservation } = await import(pathToFileURL(path.resolve(here, '../lib/observationContract.js')).href);
+const { DEFAULT_AXES, axesById } = await import(pathToFileURL(path.resolve(here, '../lib/boundaryAxes.js')).href);
 const axes = axesArg ? JSON.parse(fs.readFileSync(axesArg, 'utf8')) : DEFAULT_AXES;
-const axById = Object.fromEntries(axes.map(a => [a.axis_id, a]));
+const axById = axesById(axes);
 
 // load observations (json array or simple csv)
 function loadObs(p) {
   const raw = fs.readFileSync(p, 'utf8');
-  if (p.endsWith('.json')) return JSON.parse(raw);
+  if (p.endsWith('.json')) { const j = JSON.parse(raw); return Array.isArray(j) ? j : (j.observations || []); }
   const [head, ...lines] = raw.split(/\r?\n/).filter(Boolean);
   const cols = head.split(',').map(s => s.trim());
   return lines.map(l => {
