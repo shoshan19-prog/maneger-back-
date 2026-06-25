@@ -28,6 +28,7 @@ import {
 import { parseExperimentBufferToText } from './lib/labExperimentParse.js';
 import { validateObservation } from './lib/observationContract.js';
 import { parseObservationsCsv } from './lib/observationCsv.js';
+import { DEFAULT_AXES, axesById } from './lib/boundaryAxes.js';
 import { deriveBoundary } from './lib/boundaryDerive.js';
 import { findContradictions } from './lib/contradictionDetect.js';
 import { resolveMaterial } from './lib/aliasResolver.js';
@@ -2050,31 +2051,85 @@ const OBSERVATION_COLUMNS = [
   'outcome_class', 'outcome_spec_ref'
 ];
 
+// Local canonical Axis Authority (registry-derived) — used to resolve axes when the DB
+// `axes` table is unavailable (e.g. pre-migration-007). The DB stays authoritative where
+// present; the registry is its seed, so this keeps the Raw-Data→Trusted-Evidence gate
+// working even before reconciliation lands.
+const LOCAL_AXES = axesById(DEFAULT_AXES);
+async function resolveAxes(axisIds) {
+  const byId = { ...LOCAL_AXES };
+  try {
+    const { data, error } = await supabase
+      .from('axes').select('*').in('axis_id', axisIds.length ? axisIds : ['__none__']);
+    if (error) throw error;
+    for (const a of (data || [])) byId[a.axis_id] = a; // DB overrides the seed where present
+  } catch { /* no DB / no table yet — fall back to the local registry */ }
+  return byId;
+}
+
+// After a successful insert, return value to the lab (not just "ok"): how many
+// contradictions now exist in the touched projects, and how many response axes are now
+// *bracketed* (have both a Works and a Fails) — i.e. ready for a boundary to be derived.
+// This is the "Raw Data → Trusted Evidence" payoff made visible on every upload.
+async function summarizeProjects(projectIds) {
+  const out = { contradictions_detected: null, boundary_candidates: null };
+  try {
+    const { data, error } = await supabase.from('observations').select('*')
+      .in('project_id', projectIds.length ? projectIds : ['__none__']).limit(5000);
+    if (error) throw error;
+    const obs = data || [];
+    out.contradictions_detected = findContradictions(obs, {}).length;
+    const byAxis = {};
+    for (const o of obs) {
+      const oc = o.outcome_class;
+      if (oc !== 'works' && oc !== 'fails') continue;
+      const k = `${o.project_id}::${o.axis_id}`;
+      (byAxis[k] || (byAxis[k] = { works: 0, fails: 0 }))[oc]++;
+    }
+    out.boundary_candidates = Object.values(byAxis).filter(c => c.works > 0 && c.fails > 0).length;
+  } catch { /* observations table not live yet — leave nulls */ }
+  return out;
+}
+
 // Shared ingest path: resolve axes → validate through the contract gate → (all-or-nothing)
 // insert. Used by BOTH POST /api/observations (JSON) and POST /api/observations/import-csv
-// (lab CSV upload), so the contract is enforced identically no matter how a row arrives.
-// Returns { status, payload } for the caller to send.
-async function ingestObservations(list) {
+// (lab CSV upload, with a dry-run preview), so the contract is enforced identically no
+// matter how a row arrives. Returns { status, payload }.
+//   opts.dryRun → validate only, never insert (powers the dashboard Preview step).
+async function ingestObservations(list, opts = {}) {
   if (!Array.isArray(list) || !list.length) {
     return { status: 400, payload: { error: 'no observations provided' } };
   }
   // Resolve the canonical axes referenced in this batch (Axis Authority).
   const axisIds = [...new Set(list.map(o => o && o.axis_id).filter(Boolean))];
-  const { data: axisRows, error: axisErr } = await supabase
-    .from('axes').select('*').in('axis_id', axisIds.length ? axisIds : ['__none__']);
-  if (axisErr) throw axisErr;
-  const axisById = Object.fromEntries((axisRows || []).map(a => [a.axis_id, a]));
+  const axisById = await resolveAxes(axisIds);
 
-  // Validate every row through the contract gate.
+  // Validate every row through the contract gate; gather the lab-facing preview signals.
   const rejected = [];
   const warnings = [];
+  const newMaterials = new Set();   // material ids with no canonical identity (need registration)
+  const unknownAxes = new Set();    // axis ids not in the Axis Authority (rejection cause)
   list.forEach((o, i) => {
+    if (o && o.axis_id && !axisById[o.axis_id]) unknownAxes.add(o.axis_id);
     const { valid, errors, warnings: w } = validateObservation(o, axisById[o && o.axis_id] || null);
     if (!valid) rejected.push({ index: i, axis_id: o && o.axis_id, errors });
     if (w && w.length) warnings.push({ index: i, warnings: w });
+    if (o && o.material_id && !resolveMaterial(o.material_id)) newMaterials.add(o.material_id);
   });
+  const preview = {
+    detected: list.length,
+    valid: list.length - rejected.length,
+    rejected: rejected.length,
+    new_materials: [...newMaterials],
+    new_axes: [...unknownAxes],
+  };
+
+  // Dry run (Preview): report what WOULD happen, write nothing.
+  if (opts.dryRun) {
+    return { status: 200, payload: { dry_run: true, ...preview, rejected_detail: rejected, warnings } };
+  }
   if (rejected.length) {
-    return { status: 422, payload: { accepted: false, inserted: 0, rejected, warnings } };
+    return { status: 422, payload: { accepted: false, inserted: 0, ...preview, rejected_detail: rejected, warnings } };
   }
 
   // All valid — insert (only contract columns; never trust extra keys).
@@ -2093,7 +2148,9 @@ async function ingestObservations(list) {
   });
   const { data, error } = await supabase.from('observations').insert(rows).select('id, axis_id, value, unit, outcome_class, created_at');
   if (error) throw error;
-  return { status: 201, payload: { accepted: true, inserted: data.length, observations: data, warnings } };
+  const projectIds = [...new Set(list.map(o => o && o.project_id).filter(Boolean))];
+  const summary = await summarizeProjects(projectIds);
+  return { status: 201, payload: { accepted: true, inserted: data.length, ...preview, ...summary, observations: data, warnings } };
 }
 
 app.post('/api/observations', async (req, res) => {
@@ -2102,7 +2159,8 @@ app.post('/api/observations', async (req, res) => {
     if (!user) return;
     const body = req.body || {};
     const list = Array.isArray(body) ? body : (Array.isArray(body.observations) ? body.observations : [body]);
-    const { status, payload } = await ingestObservations(list);
+    const dryRun = req.query.dry_run === '1' || req.query.validate === '1' || body.dry_run === true;
+    const { status, payload } = await ingestObservations(list, { dryRun });
     res.status(status).json(payload);
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -2114,6 +2172,7 @@ app.post('/api/observations', async (req, res) => {
 // (lib/observationCsv.js) and the SAME contract gate (ingestObservations), so the upload
 // button accepts exactly what the CLI and the JSON endpoint accept. Body: raw CSV text
 // (Content-Type text/csv or text/plain), or JSON { csv: "<text>" }.
+//   ?dry_run=1 → Preview: parse + validate, write nothing, return detected/valid/rejected.
 app.post('/api/observations/import-csv', express.text({ type: ['text/csv', 'text/plain'], limit: '5mb' }), async (req, res) => {
   try {
     const user = await requireAuth(req, res);
@@ -2124,7 +2183,8 @@ app.post('/api/observations/import-csv', express.text({ type: ['text/csv', 'text
     try { ({ observations } = parseObservationsCsv(String(csv))); }
     catch (e) { return res.status(400).json({ error: 'CSV parse failed: ' + e.message }); }
     if (!observations.length) return res.status(400).json({ error: 'CSV has no data rows' });
-    const { status, payload } = await ingestObservations(observations);
+    const dryRun = req.query.dry_run === '1' || req.query.validate === '1';
+    const { status, payload } = await ingestObservations(observations, { dryRun });
     res.status(status).json({ ...payload, parsed: observations.length });
   } catch (e) {
     res.status(500).json({ error: e.message });

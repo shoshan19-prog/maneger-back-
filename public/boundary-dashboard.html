@@ -36,6 +36,7 @@
   <span id="ingestMsg" class="mut"></span>
 </header>
 <div id="banner"></div>
+<div id="ingestPanel" style="padding:0 20px"></div>
 <div class="grid">
   <div class="card"><h2>בדיקות הפרויקט</h2><div id="tests"></div></div>
   <div class="card"><h2>פער עבודה — ניתן למדוד, לא נמדד</h2><div id="gap"></div></div>
@@ -139,32 +140,82 @@ function renderChart(c){
   s+=`</svg><div class="mut" style="margin-top:6px">🟢 works · 🔴 fails · — — spec · ▮ boundary ±CI. הגבול נגזר: σ=MME/שיפוע.</div>`;
   return s;
 }
-// CSV ingest — read the lab template file and POST it to /api/observations/import-csv.
-// Same parser + contract gate as the CLI; on success we re-pull live data so the chart
-// reflects the new observations immediately. Requires a token (write needs auth).
-async function ingestCsv(file){
-  const msg=document.getElementById("ingestMsg");
-  if(!TOKEN){ msg.style.color="#f85149"; msg.textContent="נדרש ?token=<JWT> ל-URL כדי להעלות."; return; }
-  msg.style.color="var(--mut)"; msg.textContent="מעלה "+file.name+"…";
-  try{
-    const text=await file.text();
-    const r=await fetch("/api/observations/import-csv",{method:"POST",
-      headers:{Authorization:"Bearer "+TOKEN,"Content-Type":"text/csv"},body:text});
-    const j=await r.json().catch(()=>({}));
-    if(!r.ok){
-      if(j.rejected&&j.rejected.length){
-        const first=j.rejected[0];
-        msg.style.color="#f85149";
-        msg.textContent=`✗ ${j.rejected.length} שורות נדחו ע"י החוזה (למשל שורה ${(first.index??0)+1}: ${(first.errors||[]).join("; ")})`;
-      } else { msg.style.color="#f85149"; msg.textContent="✗ "+(j.error||("שגיאה "+r.status)); }
-      return;
-    }
-    msg.style.color="#2ea043";
-    msg.textContent=`✓ נקלטו ${j.inserted}/${j.parsed} תצפיות`+(j.warnings&&j.warnings.length?` (${j.warnings.length} אזהרות)`:"");
-    LIVE=await tryLive();           // refresh from DB so the chart shows the new points
-    render();
-  }catch(e){ msg.style.color="#f85149"; msg.textContent="✗ "+e.message; }
+// CSV ingest — a two-step gate that turns raw lab data into trusted evidence:
+//   1) Preview (dry-run): parse + validate through the contract, write NOTHING, show
+//      detected/valid/rejected (+reasons) and any new materials/unknown axes → "Proceed?"
+//   2) Import: insert, then show a value-returning summary (contradictions, boundary
+//      candidates) and refresh the chart. Same parser + contract gate as the CLI.
+let pendingCsv=null;
+function setMsg(text,color){const m=document.getElementById("ingestMsg");m.style.color=color||"var(--mut)";m.textContent=text||"";}
+function ingestErr(j,r){
+  if(j&&j.rejected_detail&&j.rejected_detail.length){
+    const f=j.rejected_detail[0];
+    setMsg(`✗ ${j.rejected} שורות נדחו (שורה ${(f.index??0)+1}: ${(f.errors||[]).join("; ")})`,"#f85149");
+  } else setMsg("✗ "+((j&&j.error)||("שגיאה "+(r&&r.status))),"#f85149");
 }
+async function previewCsv(file){
+  if(!TOKEN){ setMsg("נדרש ?token=<JWT> ל-URL כדי להעלות.","#f85149"); return; }
+  setMsg("בודק "+file.name+"…");
+  try{
+    pendingCsv=await file.text();
+    const r=await fetch("/api/observations/import-csv?dry_run=1",{method:"POST",
+      headers:{Authorization:"Bearer "+TOKEN,"Content-Type":"text/csv"},body:pendingCsv});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok && !j.dry_run){ ingestErr(j,r); return; }
+    setMsg("");
+    renderPreview(j,file.name);
+  }catch(e){ setMsg("✗ "+e.message,"#f85149"); }
+}
+function srow(label,val,cls){return `<div class="row"><span>${label}</span><span class="tag ${cls||'ok'}">${val}</span></div>`;}
+function renderPreview(j,name){
+  const rej=(j.rejected_detail||[]).slice(0,6).map(x=>
+    `<div class="row"><span>שורה ${(x.index??0)+1}</span><span class="tag miss">${(x.errors||[]).join("; ")}</span></div>`).join("");
+  document.getElementById("ingestPanel").innerHTML=`<div class="card">
+    <h2>תצוגה מקדימה — ${name}</h2>
+    <div class="row"><span>זוהו תצפיות</span><span class="big">${j.detected}</span></div>
+    ${srow("✓ תקינות (יכנסו)",j.valid,j.valid?"ok":"warn")}
+    ${srow("⚠ נדחו",j.rejected,j.rejected?"miss":"ok")}
+    ${j.new_materials&&j.new_materials.length?srow("חומרים חדשים (אין זהות קנונית)",j.new_materials.join(", "),"warn"):""}
+    ${j.new_axes&&j.new_axes.length?srow("צירים לא מוכרים",j.new_axes.join(", "),"miss"):""}
+    ${rej}
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button class="btn" onclick="confirmImport()" ${j.valid?"":'aria-disabled="true" disabled'}>✓ אישור וייבוא (${j.valid})</button>
+      <button class="btn" style="background:#2a3441" onclick="cancelImport()">ביטול</button>
+    </div>
+    <div class="mut" style="margin-top:8px">שום דבר לא נשמר עד אישור. זהו שער ה-Raw Data → Trusted Evidence.</div></div>`;
+}
+async function confirmImport(){
+  if(!pendingCsv){ cancelImport(); return; }
+  setMsg("מייבא…");
+  try{
+    const r=await fetch("/api/observations/import-csv",{method:"POST",
+      headers:{Authorization:"Bearer "+TOKEN,"Content-Type":"text/csv"},body:pendingCsv});
+    const j=await r.json().catch(()=>({}));
+    pendingCsv=null;
+    if(!r.ok){ ingestErr(j,r); document.getElementById("ingestPanel").innerHTML=""; return; }
+    setMsg("");
+    renderSummary(j);
+    LIVE=await tryLive();      // refresh from DB so the chart reflects the new observations
+    render();
+  }catch(e){ setMsg("✗ "+e.message,"#f85149"); }
+}
+function renderSummary(j){
+  const nm=(j.new_materials||[]).length, na=(j.new_axes||[]).length;
+  const cd=j.contradictions_detected, bc=j.boundary_candidates;
+  document.getElementById("ingestPanel").innerHTML=`<div class="card">
+    <h2>✓ הייבוא הושלם — מה חזר למעבדה</h2>
+    ${srow("נקלטו תצפיות",j.inserted,"ok")}
+    ${srow("נדחו",j.rejected||0,(j.rejected?"miss":"ok"))}
+    ${srow("חומרים חדשים",nm,nm?"warn":"ok")}
+    ${srow("צירים חדשים",na,na?"miss":"ok")}
+    ${srow("סתירות שזוהו",cd==null?"—":cd,cd?"warn":"ok")}
+    ${srow("מועמדים לגבול (Works∧Fails)",bc==null?"—":bc,bc?"gap":"ok")}
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button class="btn" style="background:#2a3441" onclick="cancelImport()">סגור</button>
+    </div>
+    ${(cd==null&&bc==null)?'<div class="mut" style="margin-top:8px">סיכום הגבול/הסתירות יופיע כשטבלת observations תהיה חיה (migration 007).</div>':""}</div>`;
+}
+function cancelImport(){ pendingCsv=null; document.getElementById("ingestPanel").innerHTML=""; setMsg(""); }
 
 (async()=>{
   LIVE=await tryLive();
@@ -177,7 +228,7 @@ async function ingestCsv(file){
   // wire the ingest button (disabled visual hint when no token)
   const btn=document.getElementById("ingestBtn"), inp=document.getElementById("csvFile");
   if(!TOKEN){ btn.setAttribute("aria-disabled","true"); btn.title="נדרש ?token=<JWT> ל-URL כדי להעלות"; }
-  inp.addEventListener("change",e=>{ const f=e.target.files&&e.target.files[0]; if(f) ingestCsv(f); inp.value=""; });
+  inp.addEventListener("change",e=>{ const f=e.target.files&&e.target.files[0]; if(f) previewCsv(f); inp.value=""; });
 })();
 </script>
 </body>
