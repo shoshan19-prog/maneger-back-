@@ -1,0 +1,28 @@
+{
+  "registry": "INCOMPATIBILITY_BOUNDARIES",
+  "version": "v1",
+  "source": "Lab learning story (Rachel), PR-TFX primer iterations 002/003/004 (Feb-Mar 2026)",
+  "note": "Categorical compatibility boundaries (material A + material B -> catastrophic failure), distinct from continuous threshold boundaries (deriveBoundary). Captured as a real learning event: where the system BREAKS.",
+  "boundaries": [
+    {
+      "id": "INCOMP-001",
+      "project": "PR-TFX",
+      "type": "incompatibility",
+      "trigger": {"add": "potassium_silicate", "to": "PR-TFX primer (zinc borate + zinc phosphate + melamine-bearing emulsions 2403/58)"},
+      "failure": "rapid gelation / 'shock' on addition -> cracked, non-uniform film, poor/no cure",
+      "status": "PARTIAL_VERIFIED",
+      "evidence": {
+        "isolation_tests": "K-silicate added to small primer aliquots hardened EVERY time, across TYPES (KSIL34, P35, KASIL 2135, K28) and DILUTIONS (20/35/50% water).",
+        "iterations": [
+          {"formulation": "25.02.2026-002", "k_silicate": "KSIL34 30% (then removed)", "result_24h": "did not cure; many cracks, slight adhesion", "result_8d": "many cracks, stopped"},
+          {"formulation": "26.02.2026-003", "approach": "A11+silicone before K-silicate; reduced K-silicate", "result_10d": "2 coats ~130um, fewer cracks than 002 but non-uniform, cracks", "ph_without_ksilicate": 9.6},
+          {"formulation": "04.03.2026-004", "approach": "replaced K-silicate with extra 2403 emulsion + water; added zinc dust", "result_4d": "2 coats, smooth film with MICRO-cracks, ~55um avg"}
+        ]
+      },
+      "verified_claim": "Adding ANY potassium silicate (type/dilution-independent) to this PR-TFX primer causes shock/gelation -> film failure. Robust across repeated controlled mini-tests.",
+      "open_attribution": "WHICH component reacts with K-silicate is NOT isolated. Candidates: zinc_borate, zinc_phosphate, melamine, emulsion_2403, emulsion_58.",
+      "to_verify": "One-component-at-a-time isolation: K-silicate + ONLY zinc_borate; + ONLY zinc_phosphate; + ONLY melamine; + ONLY each emulsion. The one(s) that gel = the culprit; the rest = the bypass route (R&D payoff).",
+      "trend": "002 (no cure, many cracks) -> 003 (130um, fewer) -> 004 (55um, smooth, micro-cracks). Managing/removing K-silicate improves film; micro-cracks persist."
+    }
+  ]
+}
