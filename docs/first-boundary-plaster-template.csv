@@ -1,0 +1,6 @@
+project_id,axis_id,value,unit,method,uncertainty,replicate_count,replicate_group,outcome_class,outcome_spec_ref,observed_by,observed_at,source_type,source_reference,cond_CHAR_DENSITY_value,cond_CHAR_DENSITY_unit,cond_FILM_THICKNESS_value,cond_FILM_THICKNESS_unit
+FIRE_RETARDANT_PLASTER,time_to_failure,,min,iso834_to_500C,,3,DENS-L1,,fire-rating-vX,rachel,,lab_run,plaster-L1,,kg/m3,,micron
+FIRE_RETARDANT_PLASTER,time_to_failure,,min,iso834_to_500C,,3,DENS-L2,,fire-rating-vX,rachel,,lab_run,plaster-L2,,kg/m3,,micron
+FIRE_RETARDANT_PLASTER,time_to_failure,,min,iso834_to_500C,,3,DENS-L3,,fire-rating-vX,rachel,,lab_run,plaster-L3,,kg/m3,,micron
+FIRE_RETARDANT_PLASTER,time_to_failure,,min,iso834_to_500C,,3,DENS-L4,,fire-rating-vX,rachel,,lab_run,plaster-L4,,kg/m3,,micron
+FIRE_RETARDANT_PLASTER,time_to_failure,,min,iso834_to_500C,,3,DENS-L5,,fire-rating-vX,rachel,,lab_run,plaster-L5,,kg/m3,,micron
