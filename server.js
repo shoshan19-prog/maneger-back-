@@ -26,6 +26,7 @@ import {
   extractProjectIdFromInboundPayload
 } from './lib/inboundProjectRouting.js';
 import { parseExperimentBufferToText } from './lib/labExperimentParse.js';
+import { validateObservation } from './lib/observationContract.js';
 import {
   parseCompositionFromText,
   compareCompositionMaps,
@@ -2019,6 +2020,78 @@ app.post('/api/materials', async (req, res) => {
     const { data, error } = await supabase.from('materials').upsert(row, { onConflict: 'material_id' }).select().single();
     if (error) throw error;
     res.status(201).json(data);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ---------- Observations (Boundary Intelligence — the contract gate) ----------
+// Every observation enters through lib/observationContract.js, the same gate the
+// analyzer/linter use. A batch is all-or-nothing: if any row violates the contract,
+// nothing is inserted and the per-row errors are returned (422), so the caller fixes
+// and resubmits. Append-only by design (DB trigger blocks UPDATE/DELETE).
+const OBSERVATION_COLUMNS = [
+  'project_id', 'experiment_id', 'material_id', 'axis_id', 'value', 'unit', 'method',
+  'uncertainty', 'replicate_count', 'replicate_group', 'conditions', 'provenance',
+  'outcome_class', 'outcome_spec_ref'
+];
+
+app.post('/api/observations', async (req, res) => {
+  try {
+    const user = await requireAuth(req, res);
+    if (!user) return;
+    const body = req.body || {};
+    const list = Array.isArray(body) ? body : (Array.isArray(body.observations) ? body.observations : [body]);
+    if (!list.length) return res.status(400).json({ error: 'no observations provided' });
+
+    // Resolve the canonical axes referenced in this batch (Axis Authority).
+    const axisIds = [...new Set(list.map(o => o && o.axis_id).filter(Boolean))];
+    const { data: axisRows, error: axisErr } = await supabase
+      .from('axes').select('*').in('axis_id', axisIds.length ? axisIds : ['__none__']);
+    if (axisErr) throw axisErr;
+    const axisById = Object.fromEntries((axisRows || []).map(a => [a.axis_id, a]));
+
+    // Validate every row through the contract gate.
+    const rejected = [];
+    const warnings = [];
+    list.forEach((o, i) => {
+      const { valid, errors, warnings: w } = validateObservation(o, axisById[o && o.axis_id] || null);
+      if (!valid) rejected.push({ index: i, axis_id: o && o.axis_id, errors });
+      if (w && w.length) warnings.push({ index: i, warnings: w });
+    });
+    if (rejected.length) {
+      return res.status(422).json({ accepted: false, inserted: 0, rejected, warnings });
+    }
+
+    // All valid — insert (only contract columns; never trust extra keys).
+    const rows = list.map(o => {
+      const row = {};
+      for (const c of OBSERVATION_COLUMNS) if (o[c] !== undefined) row[c] = o[c];
+      if (row.conditions == null) row.conditions = {};
+      return row;
+    });
+    const { data, error } = await supabase.from('observations').insert(rows).select('id, axis_id, value, unit, outcome_class, created_at');
+    if (error) throw error;
+    res.status(201).json({ accepted: true, inserted: data.length, observations: data, warnings });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Retrieve observations (for verification / boundary derivation queries).
+app.get('/api/observations', async (req, res) => {
+  try {
+    const user = await requireAuth(req, res);
+    if (!user) return;
+    let q = supabase.from('observations').select('*').order('created_at', { ascending: false });
+    if (req.query.project_id) q = q.eq('project_id', req.query.project_id);
+    if (req.query.axis_id) q = q.eq('axis_id', req.query.axis_id);
+    if (req.query.material_id) q = q.eq('material_id', req.query.material_id);
+    const limit = Math.min(Number(req.query.limit) || 500, 2000);
+    q = q.limit(limit);
+    const { data, error } = await q;
+    if (error) throw error;
+    res.json({ observations: data || [] });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
