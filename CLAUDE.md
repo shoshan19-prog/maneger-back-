@@ -26,6 +26,12 @@ Still STOP and ask first for (not auto-approved by design):
 
 Always end with the "Improvements & threads" note (below).
 
+## Canonical reference
+
+- **`docs/MASTER-ARCHITECTURE.md` is the stable architecture (v1.0)** — start there. Session/
+  progress notes (`SESSION-SUMMARY`, `STATUS-AND-ROADMAP`) reference it and describe only deltas.
+  Component ownership/status: `config/architecture_authority_map.json`.
+
 ## The north star
 
 MATRIYA is becoming a **Boundary Intelligence Platform**: its asset is an empirical map
