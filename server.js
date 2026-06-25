@@ -27,6 +27,7 @@ import {
 } from './lib/inboundProjectRouting.js';
 import { parseExperimentBufferToText } from './lib/labExperimentParse.js';
 import { validateObservation } from './lib/observationContract.js';
+import { parseObservationsCsv } from './lib/observationCsv.js';
 import { deriveBoundary } from './lib/boundaryDerive.js';
 import { findContradictions } from './lib/contradictionDetect.js';
 import { resolveMaterial } from './lib/aliasResolver.js';
@@ -2049,50 +2050,82 @@ const OBSERVATION_COLUMNS = [
   'outcome_class', 'outcome_spec_ref'
 ];
 
+// Shared ingest path: resolve axes → validate through the contract gate → (all-or-nothing)
+// insert. Used by BOTH POST /api/observations (JSON) and POST /api/observations/import-csv
+// (lab CSV upload), so the contract is enforced identically no matter how a row arrives.
+// Returns { status, payload } for the caller to send.
+async function ingestObservations(list) {
+  if (!Array.isArray(list) || !list.length) {
+    return { status: 400, payload: { error: 'no observations provided' } };
+  }
+  // Resolve the canonical axes referenced in this batch (Axis Authority).
+  const axisIds = [...new Set(list.map(o => o && o.axis_id).filter(Boolean))];
+  const { data: axisRows, error: axisErr } = await supabase
+    .from('axes').select('*').in('axis_id', axisIds.length ? axisIds : ['__none__']);
+  if (axisErr) throw axisErr;
+  const axisById = Object.fromEntries((axisRows || []).map(a => [a.axis_id, a]));
+
+  // Validate every row through the contract gate.
+  const rejected = [];
+  const warnings = [];
+  list.forEach((o, i) => {
+    const { valid, errors, warnings: w } = validateObservation(o, axisById[o && o.axis_id] || null);
+    if (!valid) rejected.push({ index: i, axis_id: o && o.axis_id, errors });
+    if (w && w.length) warnings.push({ index: i, warnings: w });
+  });
+  if (rejected.length) {
+    return { status: 422, payload: { accepted: false, inserted: 0, rejected, warnings } };
+  }
+
+  // All valid — insert (only contract columns; never trust extra keys).
+  // Canonicalize material identity on the way in (Law 2: Identity Before Aggregation):
+  // a recognized alias/trade-name (MELAFINE, EXOLIT AP435, ...) is upgraded to its
+  // canonical material_id so aggregation later is over one identity, not many.
+  const rows = list.map(o => {
+    const row = {};
+    for (const c of OBSERVATION_COLUMNS) if (o[c] !== undefined) row[c] = o[c];
+    if (row.conditions == null) row.conditions = {};
+    if (row.material_id) {
+      const hit = resolveMaterial(row.material_id);
+      if (hit && !hit.ambiguous) row.material_id = hit.material_id;
+    }
+    return row;
+  });
+  const { data, error } = await supabase.from('observations').insert(rows).select('id, axis_id, value, unit, outcome_class, created_at');
+  if (error) throw error;
+  return { status: 201, payload: { accepted: true, inserted: data.length, observations: data, warnings } };
+}
+
 app.post('/api/observations', async (req, res) => {
   try {
     const user = await requireAuth(req, res);
     if (!user) return;
     const body = req.body || {};
     const list = Array.isArray(body) ? body : (Array.isArray(body.observations) ? body.observations : [body]);
-    if (!list.length) return res.status(400).json({ error: 'no observations provided' });
+    const { status, payload } = await ingestObservations(list);
+    res.status(status).json(payload);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
 
-    // Resolve the canonical axes referenced in this batch (Axis Authority).
-    const axisIds = [...new Set(list.map(o => o && o.axis_id).filter(Boolean))];
-    const { data: axisRows, error: axisErr } = await supabase
-      .from('axes').select('*').in('axis_id', axisIds.length ? axisIds : ['__none__']);
-    if (axisErr) throw axisErr;
-    const axisById = Object.fromEntries((axisRows || []).map(a => [a.axis_id, a]));
-
-    // Validate every row through the contract gate.
-    const rejected = [];
-    const warnings = [];
-    list.forEach((o, i) => {
-      const { valid, errors, warnings: w } = validateObservation(o, axisById[o && o.axis_id] || null);
-      if (!valid) rejected.push({ index: i, axis_id: o && o.axis_id, errors });
-      if (w && w.length) warnings.push({ index: i, warnings: w });
-    });
-    if (rejected.length) {
-      return res.status(422).json({ accepted: false, inserted: 0, rejected, warnings });
-    }
-
-    // All valid — insert (only contract columns; never trust extra keys).
-    // Canonicalize material identity on the way in (Law 2: Identity Before Aggregation):
-    // a recognized alias/trade-name (MELAFINE, EXOLIT AP435, ...) is upgraded to its
-    // canonical material_id so aggregation later is over one identity, not many.
-    const rows = list.map(o => {
-      const row = {};
-      for (const c of OBSERVATION_COLUMNS) if (o[c] !== undefined) row[c] = o[c];
-      if (row.conditions == null) row.conditions = {};
-      if (row.material_id) {
-        const hit = resolveMaterial(row.material_id);
-        if (hit && !hit.ambiguous) row.material_id = hit.material_id;
-      }
-      return row;
-    });
-    const { data, error } = await supabase.from('observations').insert(rows).select('id, axis_id, value, unit, outcome_class, created_at');
-    if (error) throw error;
-    res.status(201).json({ accepted: true, inserted: data.length, observations: data, warnings });
+// CSV ingest — the lab's Excel-friendly template uploaded straight from the dashboard
+// (makes Rachel a direct user, no terminal). Same parser as scripts/import_observations.mjs
+// (lib/observationCsv.js) and the SAME contract gate (ingestObservations), so the upload
+// button accepts exactly what the CLI and the JSON endpoint accept. Body: raw CSV text
+// (Content-Type text/csv or text/plain), or JSON { csv: "<text>" }.
+app.post('/api/observations/import-csv', express.text({ type: ['text/csv', 'text/plain'], limit: '5mb' }), async (req, res) => {
+  try {
+    const user = await requireAuth(req, res);
+    if (!user) return;
+    const csv = typeof req.body === 'string' ? req.body : (req.body && req.body.csv);
+    if (!csv || !String(csv).trim()) return res.status(400).json({ error: 'no CSV provided' });
+    let observations;
+    try { ({ observations } = parseObservationsCsv(String(csv))); }
+    catch (e) { return res.status(400).json({ error: 'CSV parse failed: ' + e.message }); }
+    if (!observations.length) return res.status(400).json({ error: 'CSV has no data rows' });
+    const { status, payload } = await ingestObservations(observations);
+    res.status(status).json({ ...payload, parsed: observations.length });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }

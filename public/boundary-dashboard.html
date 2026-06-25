@@ -20,6 +20,8 @@
   .miss{background:rgba(248,81,73,.15);color:var(--miss)} .gap{background:rgba(59,130,246,.15);color:var(--acc)}
   .big{font-size:26px;font-weight:700} .mut{color:var(--mut);font-size:13px}
   .empty{color:var(--mut);font-size:13px;font-style:italic}
+  .btn{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:8px 14px;font-size:14px;cursor:pointer;white-space:nowrap}
+  .btn[aria-disabled="true"]{opacity:.5;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -27,6 +29,11 @@
   <h1>🎯 MATRIYA — Boundary Dashboard</h1>
   <select id="proj" onchange="render()"></select>
   <span id="mode" class="mut"></span>
+  <label class="btn" id="ingestBtn" title="העלאת CSV של תצפיות (תבנית המעבדה) — נכנס דרך אותו שער חוזה">
+    ⬆ העלאת תצפיות (CSV)
+    <input id="csvFile" type="file" accept=".csv,text/csv" style="display:none">
+  </label>
+  <span id="ingestMsg" class="mut"></span>
 </header>
 <div id="banner"></div>
 <div class="grid">
@@ -132,6 +139,33 @@ function renderChart(c){
   s+=`</svg><div class="mut" style="margin-top:6px">🟢 works · 🔴 fails · — — spec · ▮ boundary ±CI. הגבול נגזר: σ=MME/שיפוע.</div>`;
   return s;
 }
+// CSV ingest — read the lab template file and POST it to /api/observations/import-csv.
+// Same parser + contract gate as the CLI; on success we re-pull live data so the chart
+// reflects the new observations immediately. Requires a token (write needs auth).
+async function ingestCsv(file){
+  const msg=document.getElementById("ingestMsg");
+  if(!TOKEN){ msg.style.color="#f85149"; msg.textContent="נדרש ?token=<JWT> ל-URL כדי להעלות."; return; }
+  msg.style.color="var(--mut)"; msg.textContent="מעלה "+file.name+"…";
+  try{
+    const text=await file.text();
+    const r=await fetch("/api/observations/import-csv",{method:"POST",
+      headers:{Authorization:"Bearer "+TOKEN,"Content-Type":"text/csv"},body:text});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){
+      if(j.rejected&&j.rejected.length){
+        const first=j.rejected[0];
+        msg.style.color="#f85149";
+        msg.textContent=`✗ ${j.rejected.length} שורות נדחו ע"י החוזה (למשל שורה ${(first.index??0)+1}: ${(first.errors||[]).join("; ")})`;
+      } else { msg.style.color="#f85149"; msg.textContent="✗ "+(j.error||("שגיאה "+r.status)); }
+      return;
+    }
+    msg.style.color="#2ea043";
+    msg.textContent=`✓ נקלטו ${j.inserted}/${j.parsed} תצפיות`+(j.warnings&&j.warnings.length?` (${j.warnings.length} אזהרות)`:"");
+    LIVE=await tryLive();           // refresh from DB so the chart shows the new points
+    render();
+  }catch(e){ msg.style.color="#f85149"; msg.textContent="✗ "+e.message; }
+}
+
 (async()=>{
   LIVE=await tryLive();
   document.getElementById("mode").textContent = LIVE?"● live":"● demo data";
@@ -140,6 +174,10 @@ function renderChart(c){
   const sel=document.getElementById("proj");
   sel.innerHTML=Object.keys(DATA).map(k=>`<option>${k}</option>`).join("");
   render();
+  // wire the ingest button (disabled visual hint when no token)
+  const btn=document.getElementById("ingestBtn"), inp=document.getElementById("csvFile");
+  if(!TOKEN){ btn.setAttribute("aria-disabled","true"); btn.title="נדרש ?token=<JWT> ל-URL כדי להעלות"; }
+  inp.addEventListener("change",e=>{ const f=e.target.files&&e.target.files[0]; if(f) ingestCsv(f); inp.value=""; });
 })();
 </script>
 </body>
