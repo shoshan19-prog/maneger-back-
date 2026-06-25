@@ -1,0 +1,12 @@
+project_id,axis_id,value,unit,method,uncertainty,replicate_count,replicate_group,outcome_class,outcome_spec_ref,observed_by,observed_at,source_type,source_reference,cond_density_value,cond_density_unit
+FIRE_RETARDANT_PLASTER,time_to_failure,80,min,EN 13381-8,1.9,1,MME-D140,works,fire>=60min,DEMO,2026-06-25,lab_run,demo-mme-1,140,kg/m3
+FIRE_RETARDANT_PLASTER,time_to_failure,82,min,EN 13381-8,1.9,1,MME-D140,works,fire>=60min,DEMO,2026-06-25,lab_run,demo-mme-2,140,kg/m3
+FIRE_RETARDANT_PLASTER,time_to_failure,79,min,EN 13381-8,1.9,1,MME-D140,works,fire>=60min,DEMO,2026-06-25,lab_run,demo-mme-3,140,kg/m3
+FIRE_RETARDANT_PLASTER,time_to_failure,81,min,EN 13381-8,1.9,1,MME-D140,works,fire>=60min,DEMO,2026-06-25,lab_run,demo-mme-4,140,kg/m3
+FIRE_RETARDANT_PLASTER,time_to_failure,83,min,EN 13381-8,1.9,1,MME-D140,works,fire>=60min,DEMO,2026-06-25,lab_run,demo-mme-5,140,kg/m3
+FIRE_RETARDANT_PLASTER,time_to_failure,78,min,EN 13381-8,1.9,1,MME-D140,works,fire>=60min,DEMO,2026-06-25,lab_run,demo-mme-6,140,kg/m3
+FIRE_RETARDANT_PLASTER,time_to_failure,44,min,EN 13381-8,1.9,3,SCAN-D090,fails,fire>=60min,DEMO,2026-06-25,lab_run,demo-scan-90,90,kg/m3
+FIRE_RETARDANT_PLASTER,time_to_failure,54,min,EN 13381-8,1.9,3,SCAN-D110,fails,fire>=60min,DEMO,2026-06-25,lab_run,demo-scan-110,110,kg/m3
+FIRE_RETARDANT_PLASTER,time_to_failure,66,min,EN 13381-8,1.9,3,SCAN-D130,works,fire>=60min,DEMO,2026-06-25,lab_run,demo-scan-130,130,kg/m3
+FIRE_RETARDANT_PLASTER,time_to_failure,80,min,EN 13381-8,1.9,3,SCAN-D150,works,fire>=60min,DEMO,2026-06-25,lab_run,demo-scan-150,150,kg/m3
+FIRE_RETARDANT_PLASTER,time_to_failure,92,min,EN 13381-8,1.9,3,SCAN-D170,works,fire>=60min,DEMO,2026-06-25,lab_run,demo-scan-170,170,kg/m3
