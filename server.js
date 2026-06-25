@@ -32,7 +32,7 @@ import { findContradictions } from './lib/contradictionDetect.js';
 import { resolveMaterial } from './lib/aliasResolver.js';
 import { checkFormulation } from './lib/formulationRules.js';
 import { proposeExperiments } from './lib/nextExperiment.js';
-import { measurementCoverage, coverageSummary } from './lib/measurementCoverage.js';
+import { measurementCoverage, coverageSummary, projectCoverage } from './lib/measurementCoverage.js';
 import { readFileSync as _readFileSync } from 'fs';
 /** Cached loader for canonical config registries (config/*.json). */
 const _cfgCache = {};
@@ -2212,6 +2212,14 @@ app.get('/api/coverage', async (req, res) => {
     if (!user) return;
     const properties = loadCfg('property_registry_canonical_v1.json').properties || [];
     const equipment = loadCfg('lab_equipment_seed_v1.json').equipment || [];
+    // If ?project=ID: merge equipment-coverage × Rachel's actual per-project coverage -> work gap.
+    if (req.query.project) {
+      const reg = loadCfg('project_test_registry_v1.json');
+      const p = reg.projects.find(x => x.id.toLowerCase() === String(req.query.project).toLowerCase());
+      if (!p) return res.status(404).json({ error: 'unknown project', known: reg.projects.map(x => x.id) });
+      const rows = projectCoverage(properties, equipment, p);
+      return res.json({ project: p.id, work_gap: rows.filter(r => r.gap).map(r => r.axis), axes: rows });
+    }
     const cov = measurementCoverage(properties, equipment);
     // observation counts per axis (live, if the table exists)
     let counts = {};

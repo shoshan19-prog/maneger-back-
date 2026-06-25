@@ -35,4 +35,22 @@ t('summary counts measurable vs gaps', () => {
   assert.ok(s.measurable >= 15);
   assert.ok(s.gaps.includes('capillary_absorption'));
 });
+// --- projectCoverage (work gap) ---
+import { projectCoverage } from '../lib/measurementCoverage.js';
+const reg = JSON.parse(fs.readFileSync(path.resolve(here, '../config/project_test_registry_v1.json'), 'utf8'));
+const intf = reg.projects.find(p => p.id === 'INT-TFX');
+t('INT-TFX: expansion_ratio is a work gap (measurable but missing)', () => {
+  const rows = projectCoverage(prop.properties, equip.equipment, intf);
+  const er = rows.find(r => r.axis === 'expansion_ratio');
+  assert.ok(er, 'expansion_ratio present');
+  assert.equal(er.measurable, true);       // muffle furnace measures EXPANSION
+  assert.equal(er.project_status, 'missing');
+  assert.equal(er.gap, true);              // can measure, project does not
+});
+t('INT-TFX: time_to_failure is NOT a gap (already done)', () => {
+  const rows = projectCoverage(prop.properties, equip.equipment, intf);
+  const ttf = rows.find(r => r.axis === 'time_to_failure');
+  assert.equal(ttf.project_status, 'done');
+  assert.equal(ttf.gap, false);
+});
 console.log(`\n${passed} passed`);
