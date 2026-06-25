@@ -16,7 +16,9 @@
     "index:buckets": "node scripts/index-from-buckets-to-management-vector.js",
     "sync:gpt-rag-all": "node scripts/sync-all-gpt-rag.js",
     "test:boundary": "node scripts/run-boundary-tests.mjs",
-    "progress": "node scripts/progress_report.mjs"
+    "progress": "node scripts/progress_report.mjs",
+    "docx": "python3 scripts/md2docx.py",
+    "boundary": "node scripts/boundary_pipeline.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
