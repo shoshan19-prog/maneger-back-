@@ -1,0 +1,24 @@
+{
+  "registry": "COUPLING_EVIDENCE",
+  "version": "0.1",
+  "source": "E-010_1_Coupling_Evidence_Registry (David, Drive)",
+  "note": "Property-vs-property couplings (trade-off/synergy boundaries). 0/15 Verified = the experiment map for E-011. Catalog signal NEVER promotes a level. Each coupling has a Falsifier (Popperian). dir: '-' tradeoff, '+' synergy, '~' neutral/conditional.",
+  "evidence_levels": ["Verified", "Mechanistic", "Catalog-supported", "Hypothesis"],
+  "couplings": [
+    {"id":"C01","a":"Capillary","b":"Adhesion","dir":"-","domain":"Siloxane/Silane","mechanism":"low surface energy -> low wetting and low overcoat adhesion","verify":"pull-off EN ISO 4624 of overcoat on treated vs untreated","level":"Mechanistic","falsifier":"a hydrophobic formulation whose overcoat adheres >= control"},
+    {"id":"C02","a":"Breathability","b":"Flexibility","dir":"-","domain":"Acrylic/PU film","mechanism":"continuous low-Tg film lowers vapor permeability","verify":"binder series: Sd (EN ISO 7783) vs elongation (EN 1062-7) -> Pareto","level":"Mechanistic","falsifier":"flexible film with low Sd like mineral"},
+    {"id":"C03","a":"Breathability","b":"Fire","dir":"-","domain":"Intumescent","mechanism":"thick dense intumescent char raises Sd","verify":"Sd before/after intumescent layer at standard thickness","level":"Mechanistic","falsifier":"intumescent system with low Sd"},
+    {"id":"C04","a":"Flexibility","b":"Fire","dir":"-","domain":"Intumescent","mechanism":"rigid/brittle char structure","verify":"elongation of intumescent vs elastomeric film","level":"Mechanistic","falsifier":"intumescent with crack-bridging"},
+    {"id":"C05","a":"Flexibility","b":"UV","dir":"-","domain":"Organic binders","mechanism":"flexible organic binder oxidizes/embrittles","verify":"QUV EN ISO 16474: elongation change + dE over time","level":"Mechanistic","falsifier":"flexible binder with low UV decay like mineral"},
+    {"id":"C06","a":"Flexibility","b":"Consolidation","dir":"-","domain":"TEOS/Silicate vs Acrylic","mechanism":"high modulus/stiffness contradicts elastomerity","verify":"modulus/drilling-resistance vs elongation","level":"Mechanistic","falsifier":"consolidant that keeps substrate flexibility"},
+    {"id":"C07","a":"Fire","b":"UV/Water","dir":"-","domain":"Intumescent","mechanism":"hydrophilic radiation-sensitive char","verify":"QUV + water absorption with/without topcoat","level":"Mechanistic","falsifier":"water/UV-durable intumescent without topcoat"},
+    {"id":"C08","a":"Capillary","b":"UV","dir":"+","domain":"Hydrophobic systems","mechanism":"less water ingress -> less weathering","verify":"dE/decay (EN ISO 16474) treated vs untreated","level":"Hypothesis","falsifier":"hydrophobic treatment that accelerates weathering"},
+    {"id":"C09","a":"Capillary","b":"Salt","dir":"+","domain":"Siloxane + render","mechanism":"less water transport -> less salt mobilization","verify":"salt crystallization (EN 12370/RILEM) treated vs untreated","level":"Mechanistic","falsifier":"hydrophobe that worsens salt damage"},
+    {"id":"C10","a":"Breathability","b":"Salt","dir":"+","domain":"Porous restoration render","mechanism":"vapor-open -> crystallization in sacrificial render, not at surface","verify":"RILEM MS-A1 + crystallization location (face vs depth)","level":"Mechanistic","falsifier":"sealed system that manages salt better"},
+    {"id":"C11","a":"Adhesion","b":"Consolidation","dir":"+","domain":"Silicate/TEOS, NHL","mechanism":"substrate cohesion strengthening -> better anchoring","verify":"pull-off on consolidated vs not","level":"Mechanistic","falsifier":"consolidation that reduces adhesion"},
+    {"id":"C12","a":"UV","b":"Consolidation","dir":"+","domain":"Inorganic (silicate)","mechanism":"inorganic systems UV-stable and consolidating","verify":"QUV of inorganic consolidating system","level":"Mechanistic","falsifier":"inorganic consolidant that degrades under UV"},
+    {"id":"C13","a":"Capillary","b":"Breathability","dir":"~","domain":"Film vs pore-hydrophobizer","mechanism":"conflict in film-formers; neutral with in-pore hydrophobizer","verify":"Sd (EN ISO 7783) + w-value (EN 1062-3) for both technologies","level":"Mechanistic","falsifier":"water-tight film that keeps low Sd"},
+    {"id":"C14","a":"Flexibility","b":"Adhesion","dir":"~","domain":"Elastomeric on rigid","mechanism":"adhesion needed but high film stress causes debonding","verify":"cross-cut/pull-off after temperature cycles","level":"Hypothesis","falsifier":"very flexible film with stable cyclic adhesion"},
+    {"id":"C15","a":"Consolidation","b":"Salt","dir":"~","domain":"Deep consolidants","mechanism":"over-consolidation traps salt -> internal spalling","verify":"RILEM salt + modulus vs penetration depth","level":"Mechanistic","falsifier":"deep consolidant that improves salt resistance"}
+  ]
+}

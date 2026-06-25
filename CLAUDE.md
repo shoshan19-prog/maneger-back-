@@ -60,6 +60,21 @@ the possibility space has been reliably ruled out.
 - Existing experiment data has **no APP scan** (APP held ~24–27.5%); measurements live as
   free-text `results`. ~0% is boundary-grade until the contract is live.
 
+## Drive seeds + live-schema convergence (read docs/SCHEMA-RECONCILIATION.md)
+
+- David's Drive holds canonical seeds: property registry (= Axis Authority), equipment seed
+  (= Equipment Authority), coupling registry (E-010), mechanism hypotheses, and the
+  **MATRIYA_Workplan** — which formalizes the SAME architecture we built, different names:
+  MME=**T_noise** (PRR L0), pre-registration=**declaration precedes measurement**,
+  outcome_spec=**Decision Boundary=max(T_noise,T_relevance)**, "valid only in context"=**NOT_ISOLATABLE**,
+  E-011=**Phase 0 PRR Trial**. Prefer the workplan's PRR/Claim/Knowledge-State vocabulary.
+- **Duplication caveat (important):** the LIVE DB (64 tables) already has `measurements`,
+  `outcomes`, and `experiments` (with `decision_shift`, `breakdown_flag`, `conditions` jsonb).
+  Our `observations` table OVERLAPS these. Do NOT run migration 007 (observations) before a
+  human decides whether to extend `measurements`/`outcomes` or supersede them — shipping a
+  parallel table re-creates the fracture we're fixing. `axes`/`equipment`/`couplings`/
+  `mechanism_hypotheses` are genuinely new and safe.
+
 ## Conventions
 
 - ESM (`"type":"module"`). `materials.material_id` is TEXT; ids are UUID.
