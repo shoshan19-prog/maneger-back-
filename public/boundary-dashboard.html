@@ -79,7 +79,7 @@ async function tryLive(){
     DATA={};
     for(const p of projs.projects){
       const cov=await (await fetch("/api/coverage?project="+encodeURIComponent(p.id),{headers:h})).json();
-      DATA[p.id]={tests:{done:p.done.map(t=>t.test),planned:p.planned.map(t=>t.test),missing:p.missing.map(t=>t.test)},
+      DATA[p.id]={tests:{done:(p.done||[]).map(t=>t.test),planned:(p.planned||[]).map(t=>t.test),missing:(p.gap||p.missing||[]).map(t=>t.test)},
         gap:(cov.work_gap||[]),boundaries:[],chart:null};
       // live boundary from deriveBoundary (only where a scan config exists)
       const cfg=CHARTCFG[p.id];

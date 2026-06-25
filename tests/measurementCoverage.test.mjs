@@ -39,13 +39,19 @@ t('summary counts measurable vs gaps', () => {
 import { projectCoverage } from '../lib/measurementCoverage.js';
 const reg = JSON.parse(fs.readFileSync(path.resolve(here, '../config/project_test_registry_v1.json'), 'utf8'));
 const intf = reg.projects.find(p => p.id === 'INT-TFX');
-t('INT-TFX: expansion_ratio is a work gap (measurable but missing)', () => {
+t('INT-TFX: expansion_ratio is now done (Rachel 2026-06-25 — measured as a composite)', () => {
   const rows = projectCoverage(prop.properties, equip.equipment, intf);
   const er = rows.find(r => r.axis === 'expansion_ratio');
   assert.ok(er, 'expansion_ratio present');
-  assert.equal(er.measurable, true);       // muffle furnace measures EXPANSION
-  assert.equal(er.project_status, 'missing');
-  assert.equal(er.gap, true);              // can measure, project does not
+  assert.equal(er.project_status, 'done');
+  assert.equal(er.gap, false);
+});
+t('INT-TFX: char_quality (char DENSITY) is the real work gap — measured only visually today', () => {
+  const rows = projectCoverage(prop.properties, equip.equipment, intf);
+  const cq = rows.find(r => r.axis === 'char_quality');
+  assert.ok(cq, 'char_quality present');
+  assert.equal(cq.measurable, true);       // muffle furnace measures CHAR_QUAL
+  assert.equal(cq.gap, true);              // listed in `gap`: quantitative density not done
 });
 t('INT-TFX: time_to_failure is NOT a gap (already done)', () => {
   const rows = projectCoverage(prop.properties, equip.equipment, intf);

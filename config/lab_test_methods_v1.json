@@ -1,0 +1,64 @@
+{
+  "registry": "LAB_TEST_METHODS",
+  "version": "v1",
+  "source": "Rachel (RGB lab) full test-process report, 2026-06-25",
+  "note": "Canonical test->method->unit->equipment->conditions spec, extracted verbatim from Rachel's process description. Feeds the Axis Authority commensurability check (a value is only comparable within {dimension, unit, method}) and the Observation Contract conditions. axis = canonical property_registry id, or null where no canonical axis exists yet (new_axis_candidate flags the backlog). Reversible config; no DB write.",
+  "universal_qc_core": {
+    "note": "Every coating project starts with the SAME three QC measurements before diverging. This is the universal baseline.",
+    "tests": ["ph", "specific_gravity", "viscosity_profile"]
+  },
+  "methods": [
+    {"test": "ph", "axis": "ph", "unit": "pH", "equipment": "pH meter", "method": "pH_meter_direct", "new_axis_candidate": "ph (not yet in property_registry — open todo)"},
+    {"test": "specific_gravity", "axis": "density", "unit": "g/cm3", "equipment": "pycnometer / density cup", "method": "specific_gravity_weight_per_volume"},
+    {"test": "viscosity_profile", "axis": "wet_viscosity", "unit": "cP", "equipment": "Pushen NDJ-5S / SNB-3 rotational viscometer", "method": "rotational_viscosity_profile",
+      "conditions": {"temperature": {"value": 25, "unit": "C"}, "spindle": "selected 1-4 by viscosity range", "rpm_profile": [6, 12, 30, 60]},
+      "notes": "A PROFILE, not a single value: 3-4 RPMs at 25C => a thixotropy curve. Each (spindle,rpm) is its own observation; aggregating across RPM is invalid (different shear)."},
+
+    {"test": "wet_film_thickness", "axis": "FILM_THICKNESS", "unit": "micron", "equipment": "WTD wet-film comb/ruler", "method": "wet_film_gauge"},
+    {"test": "dry_film_thickness", "axis": "FILM_THICKNESS", "unit": "micron|mm", "equipment": "Coating Thickness Gauge", "method": "dry_film_gauge", "notes": "Unit may be micron OR mm — must be carried per observation (commensurability)."},
+    {"test": "panel_prep", "axis": null, "unit": null, "equipment": "sandblast + alcohol clean", "method": "substrate_prep", "notes": "Sand-clean then alcohol-clean before painting; context, not a measured axis."},
+    {"test": "interlayer_dry", "axis": null, "unit": null, "method": "wait_between_coats_until_dry", "notes": "Wait for previous coat to dry before next; reach target thickness across coats."},
+    {"test": "curing", "axis": null, "unit": "days", "method": "cure_wait", "conditions": {"typical": {"value": 7, "unit": "days"}}, "notes": "~1 week or a pre-defined time before testing."},
+
+    {"test": "primer_for_fire_panel", "axis": "FILM_THICKNESS", "unit": "micron", "method": "primer_then_24h_dry", "conditions": {"target_thickness": {"value": 100, "unit": "micron"}, "dry_before_topcoat": {"value": 24, "unit": "h"}}, "notes": "Fire-test panel prep: primer to ~100um avg, 24h dry, THEN paint."},
+    {"test": "fire_resistance_time", "axis": "time_to_failure", "unit": "min", "equipment": "Building Materials Flammability Furnace", "method": "heat_to_500C_count_minutes", "conditions": {"endpoint": {"value": 500, "unit": "C"}}, "notes": "PROJECT PROTOCOL: time in minutes from start until back-face/sample reaches 500C. Distinct from EN 13381-8; method string must say so or values are not commensurable.", "method_alias_warning": "do NOT label this EN 13381-8"},
+    {"test": "foam_uniformity_after_burn", "axis": null, "unit": "rating", "method": "visual_inspection", "new_axis_candidate": "foam_uniformity (ordinal)"},
+    {"test": "foam_density_after_burn", "axis": "char_quality", "unit": "rating|kg/m3", "method": "visual_inspection", "notes": "Visual today; char DENSITY is the controlling axis we want measured, not just height."},
+    {"test": "adhesion_after_burn", "axis": "pull_off_adhesion", "unit": "rating", "method": "visual_inspection", "notes": "Visual today; pull-off instrument would make it boundary-grade."},
+    {"test": "foam_height", "axis": null, "unit": "cm", "equipment": "ruler", "method": "ruler_height", "new_axis_candidate": "char_height (cm)"},
+    {"test": "expansion_factor", "axis": "expansion_ratio", "unit": "x", "method": "foam_height_over_initial_paint_thickness", "is_composite": true, "components": ["foam_height", "wet_film_thickness"], "notes": "CONFIRMS the composite-axis trap: expansion factor = foam_height / initial_thickness. It is DERIVED, not a primary axis. Capture the two components; do not store the ratio as if measured."},
+    {"test": "results_table_and_photo", "axis": null, "unit": null, "method": "record_table_photo", "notes": "Tabulate results + photograph the panel (provenance/source_reference)."},
+
+    {"test": "pull_off_adhesion", "axis": "pull_off_adhesion", "unit": "MPa", "equipment": "LANGRY LR-P40 (PULL OFF)", "method": "EN 1542", "status_in_projects": "future for PR-TFX/ETL-ONE"},
+    {"test": "cross_cut_adhesion", "axis": "pull_off_adhesion", "unit": "rating", "equipment": "BGD 502/5A (CROSS CUT)", "method": "ISO 2409 / ASTM D3359", "status_in_projects": "future for PR-TFX/ETL-ONE"},
+
+    {"test": "salt_spray_corrosion", "axis": "water_resistance", "unit": "h|cycles", "equipment": "Salt Spray chamber", "method": "salt_spray_5pct_scribed", "conditions": {"salinity": {"value": 5, "unit": "%"}, "scribe": true, "cycles": "defined", "duration": "defined"}, "status_in_projects": "future for PR-TFX/ETL-ONE", "notes": "Paint panels, scribe, run defined cycles/time at 5% salinity."},
+    {"test": "corrosion_blistering", "axis": null, "unit": "grade", "method": "ISO 4628-2_blistering", "new_axis_candidate": "blistering"},
+    {"test": "corrosion_peeling", "axis": null, "unit": "grade", "method": "visual_peeling_flaking", "new_axis_candidate": "delamination"},
+    {"test": "corrosion_spread_from_scribe", "axis": null, "unit": "mm", "method": "rust_creep_from_scribe", "new_axis_candidate": "rust_creep (ISO 4628-8)"},
+    {"test": "primer_level_rating", "axis": null, "unit": "level", "method": "derive_primer_grade_from_corrosion", "notes": "From corrosion results, classify which level the primer meets."},
+    {"test": "intumescent_improvement_vs_standard_primer", "axis": "time_to_failure", "unit": "min", "method": "compare_fire_time_vs_standard_primers", "notes": "PR-TFX goal: quantify the fire-resistance contribution of the primer vs standard primers (a coupling/delta question)."},
+
+    {"test": "electrical_potential", "axis": null, "unit": "V", "equipment": "PALMSENSE4", "method": "open_circuit_potential", "new_axis_candidate": "corrosion_potential", "notes": "CSC-ONE: more POSITIVE potential => lower corrosion risk (direction_of_good = higher). Still in learning phase."},
+    {"test": "concrete_penetration", "axis": null, "unit": "mm", "method": "penetration_into_concrete", "new_axis_candidate": "penetration_depth", "status_in_projects": "future for CSC-ONE"},
+
+    {"test": "viscosity_rise_to_stabilization", "axis": "wet_viscosity", "unit": "cP", "method": "track_viscosity_until_stable", "conditions": {"typical_stabilization": {"value": 14, "unit": "days"}}, "notes": "SILICATO: silicate systems rise in viscosity until the system stabilizes (~2 weeks). A time-series, not one reading."},
+    {"test": "whiteness", "axis": null, "unit": "L*|index", "equipment": "spectrophotometer / 200um applicator on hiding charts", "method": "whiteness_on_hiding_chart_200um", "new_axis_candidate": "whiteness (L* / CIELAB)", "conditions": {"film_thickness": {"value": 200, "unit": "micron"}, "substrate": "hiding chart"}},
+    {"test": "application", "axis": null, "unit": "rating", "method": "application_assessment", "new_axis_candidate": "applicability (ordinal)", "notes": "QC-PAINT: assessed by Avraham."},
+    {"test": "pigment_opening_rub_out", "axis": null, "unit": "rating", "method": "rub_out_at_fixed_pct", "new_axis_candidate": "pigment_acceptance / rub_out", "notes": "SILICATO: open pigments at fixed % and check RUB-OUT."},
+
+    {"test": "stripper_efficacy", "axis": null, "unit": "rating", "equipment": "spatula + Garniק scraper", "method": "comparative_strip_difficulty", "new_axis_candidate": "strip_efficacy (ordinal)", "notes": "ERL-ONE: apply remover on our acrylic paint vs competitor, let soak, rate difficulty to remove with spatula; also outdoor painted-wall test. ERL-ONE IS A PAINT REMOVER/STRIPPER project (reclassification)."},
+
+    {"test": "sieving", "axis": null, "unit": "pass/fail|residue", "equipment": "defined-size sieves", "method": "sieve_defined_mesh", "new_axis_candidate": "sieve_residue"},
+    {"test": "wall_adhesion_manual", "axis": "pull_off_adhesion", "unit": "rating", "method": "visual_manual_on_substrate", "notes": "Plaster: adhesion on wall, visual + by hand."},
+    {"test": "compressive_strength", "axis": "compressive_strength", "unit": "MPa", "equipment": "compression press", "method": "compressive_strength_timed", "conditions": {"ages": [{"value": 7, "unit": "days"}, {"value": 14, "unit": "days"}, {"value": 28, "unit": "days"}], "humidity": "defined"}, "notes": "QC-PLASTER: MPa at 7/14/28 days under defined humidity."},
+    {"test": "competitor_match_batch", "axis": null, "unit": null, "method": "produce_matching_batch_compare", "notes": "QC-COMPETITOR: produce a batch with the replacement material and compare the resulting data."}
+  ],
+  "structural_findings": [
+    "Universal QC core: every coating project measures ph + specific_gravity + viscosity_profile first; this is the shared baseline before project-specific axes.",
+    "Viscosity is a PROFILE (spindle 1-4 x RPM 6/12/30/60 @ 25C), not a scalar — each (spindle,rpm) is a distinct observation; never aggregate across shear rates.",
+    "expansion_factor is a COMPOSITE (foam_height / initial_thickness) — confirms the composite-axis trap; capture the two primary components, derive the ratio.",
+    "INT-TFX fire time is a PROJECT protocol (heat to 500C, count minutes), NOT EN 13381-8 — the method string must distinguish them or the values are not commensurable.",
+    "New axis backlog surfaced by Rachel: ph, foam_uniformity, char_height, blistering, delamination, rust_creep, corrosion_potential, penetration_depth, whiteness, applicability, pigment_acceptance/rub_out, strip_efficacy, sieve_residue."
+  ]
+}
