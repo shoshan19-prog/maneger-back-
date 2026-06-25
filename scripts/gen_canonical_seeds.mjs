@@ -8,7 +8,7 @@ const j = o => esc(JSON.stringify(o));
 
 // --- 010: canonical axes from the property registry ---
 const axisRows = prop.properties.map(p =>
-  `  ('${esc(p.property_id)}','${esc(p.name)}','${esc(p.property_id)}','${esc(p.unit)}','${esc(p.method)}',TRUE,'${j(p.aliases||[])}'::jsonb,'${esc(p.direction_of_good)}','${esc(p.evidence_tier)}',${p.method_alias?`'${esc(p.method_alias)}'`:'NULL'},${p.codebook?`'${esc(p.codebook)}'`:'NULL'},${p.profile===true?'TRUE':'FALSE'},${Array.isArray(p.required_conditions)&&p.required_conditions.length?`'${j(p.required_conditions)}'::jsonb`:'NULL'})`
+  `  ('${esc(p.property_id)}','${esc(p.name)}','${esc(p.property_id)}','${esc(p.unit)}','${esc(p.method)}',TRUE,'${j(p.aliases||[])}'::jsonb,'${esc(p.direction_of_good)}','${esc(p.evidence_tier)}',${p.method_alias?`'${esc(p.method_alias)}'`:'NULL'},${p.codebook?`'${esc(p.codebook)}'`:'NULL'},${p.profile===true?'TRUE':'FALSE'},${Array.isArray(p.required_conditions)&&p.required_conditions.length?`'${j(p.required_conditions)}'::jsonb`:'NULL'},${Array.isArray(p.measurement_protocol)&&p.measurement_protocol.length?`'${j(p.measurement_protocol)}'::jsonb`:'NULL'})`
 ).join(',\n');
 const m010 = `-- ============================================================================
 -- 010 — Canonical axes from property_registry_canonical_v1.json (David, Drive)
@@ -26,8 +26,11 @@ ALTER TABLE axes ADD COLUMN IF NOT EXISTS codebook TEXT;
 -- required_conditions (spindle/rpm/temperature) that must be captured per reading.
 ALTER TABLE axes ADD COLUMN IF NOT EXISTS profile BOOLEAN DEFAULT FALSE;
 ALTER TABLE axes ADD COLUMN IF NOT EXISTS required_conditions JSONB;
+-- measurement_protocol: ordered SOP steps. Same unit without the same protocol still
+-- yields lab-to-lab divergence, so the protocol is part of commensurability.
+ALTER TABLE axes ADD COLUMN IF NOT EXISTS measurement_protocol JSONB;
 
-INSERT INTO axes (axis_id,name,dimension,canonical_unit,method,is_scalar,aliases,direction_of_good,evidence_tier,method_alias,codebook,profile,required_conditions) VALUES
+INSERT INTO axes (axis_id,name,dimension,canonical_unit,method,is_scalar,aliases,direction_of_good,evidence_tier,method_alias,codebook,profile,required_conditions,measurement_protocol) VALUES
 ${axisRows}
 ON CONFLICT (axis_id) DO NOTHING;
 `;

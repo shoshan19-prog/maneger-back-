@@ -98,4 +98,10 @@ t('char_density WITH full context (film thickness, area, burn profile, age) pass
   assert.equal(valid, true, errors.join('; '));
 });
 
+t('char_density carries a fixed measurement_protocol (commensurability beyond unit/method)', () => {
+  const proto = AX.char_density.measurement_protocol;
+  assert.ok(Array.isArray(proto) && proto.length >= 5, 'protocol steps present');
+  assert.ok(proto.some(s => /mass\s*\/\s*volume/i.test(s)), 'ends in density = mass/volume');
+});
+
 console.log(`\n${passed} passed`);
