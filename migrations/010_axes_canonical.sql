@@ -17,34 +17,38 @@ ALTER TABLE axes ADD COLUMN IF NOT EXISTS required_conditions JSONB;
 -- measurement_protocol: ordered SOP steps. Same unit without the same protocol still
 -- yields lab-to-lab divergence, so the protocol is part of commensurability.
 ALTER TABLE axes ADD COLUMN IF NOT EXISTS measurement_protocol JSONB;
+-- protocol identity: every observation stores which protocol id+version produced it, so
+-- old and new series stay comparable when the protocol changes (commensurability over time).
+ALTER TABLE axes ADD COLUMN IF NOT EXISTS measurement_protocol_id TEXT;
+ALTER TABLE axes ADD COLUMN IF NOT EXISTS measurement_protocol_version TEXT;
 
-INSERT INTO axes (axis_id,name,dimension,canonical_unit,method,is_scalar,aliases,direction_of_good,evidence_tier,method_alias,codebook,profile,required_conditions,measurement_protocol) VALUES
-  ('pull_off_adhesion','Pull-off adhesion','pull_off_adhesion','MPa','EN 1542',TRUE,'["pull off","pull-off","היצמדות","הידבקות"]'::jsonb,'higher_is_better','PROVEN_HERE_ELIGIBLE','ASTM D4541 / D3359','ADHES_DRY',FALSE,NULL,NULL),
-  ('expansion_ratio','Expansion ratio','expansion_ratio','x','Furnace ISO 834-1 / muffle',TRUE,'["er","expansion","התפחות"]'::jsonb,'higher_is_better','PROVEN_HERE_ELIGIBLE',NULL,'EXPANSION',FALSE,NULL,NULL),
-  ('IFR','Intumescence / flame-retardancy index','IFR','index','cone calorimeter / EN 13381-8',TRUE,'["ifr","intumescence index"]'::jsonb,'higher_is_better','PROVEN_HERE_ELIGIBLE',NULL,'FIRE_DRY(IFR)',FALSE,NULL,NULL),
-  ('time_to_failure','Time to failure (fire)','time_to_failure','min','heat_to_500C_count_minutes',TRUE,'["ttf","זמן כשל","זמן עמידות אש"]'::jsonb,'higher_is_better','OBSERVED','EN 13381-8 / BS 476','FIRE_DRY(min)',FALSE,NULL,NULL),
-  ('char_quality','Char quality','char_quality','rating (ordinal)','Char inspection (cohesion/structure)',TRUE,'["char","איכות פחם"]'::jsonb,'higher_is_better','PROVEN_HERE_ELIGIBLE',NULL,'CHAR_QUAL',FALSE,NULL,NULL),
-  ('char_density','Char density','char_density','kg/m3','char_mass_over_volume',TRUE,'["char density","צפיפות פחם"]'::jsonb,'higher_is_better','PROVEN_HERE_ELIGIBLE',NULL,'CHAR_DENSITY',FALSE,'["initial_film_thickness","exposed_area","burn_profile","sample_age"]'::jsonb,'["Burn complete (per the recorded burn_profile)","Cool to room temperature","Remove loose ash (non-structural)","Weigh remaining char (mass)","Measure char volume (height x exposed_area, or displacement)","Density = mass / volume (kg/m3)"]'::jsonb),
-  ('wet_viscosity','Wet viscosity','wet_viscosity','cP','rotational_viscosity_profile',TRUE,'["viscosity","צמיגות"]'::jsonb,'context','PROVEN_HERE_ELIGIBLE','Brookfield / Stormer (KU)','VISC_WET',TRUE,'["spindle","rpm","temperature"]'::jsonb,NULL),
-  ('capillary_absorption','Capillary water absorption','capillary_absorption','kg/m2.sqrt-h','EN 1015-18',TRUE,'["capillary","נימיות","ספיגה קפילרית"]'::jsonb,'lower_is_better','INFERRED',NULL,'CAPILLARY',FALSE,NULL,NULL),
-  ('water_absorption_pct','Water absorption (mass)','water_absorption_pct','%','EN 1015-18',TRUE,'["absorption","ספיגת מים"]'::jsonb,'lower_is_better','OBSERVED',NULL,NULL,FALSE,NULL,NULL),
-  ('water_vapor_resistance_mu','Water-vapor resistance (mu)','water_vapor_resistance_mu','mu','EN 1015-19 (Sd via EN ISO 7783)',TRUE,'["mu","vapor permeability","נשימות"]'::jsonb,'lower_is_better','INFERRED',NULL,'BREATH(Sd)',FALSE,NULL,NULL),
-  ('uv_color_change','UV color change (dE)','uv_color_change','dE','QUV ASTM G154',TRUE,'["uv","דהיית צבע"]'::jsonb,'lower_is_better','INFERRED',NULL,'UV_DRY',FALSE,NULL,NULL),
-  ('sag_resistance','Sag resistance','sag_resistance','mm (anti-sag index)','Anti-sag bar',TRUE,'["sag","נזילה"]'::jsonb,'higher_is_better','INFERRED',NULL,'SAG_WET',FALSE,NULL,NULL),
-  ('suspension_stability','Suspension / shelf stability','suspension_stability','pass/fail, syneresis %','Settling + freeze-thaw',TRUE,'["stability","יציבות"]'::jsonb,'higher_is_better','INFERRED',NULL,'STAB_WET',FALSE,NULL,NULL),
-  ('foam','Foam','foam','density drop %','Density cup / shake test',TRUE,'["foam","קצף"]'::jsonb,'lower_is_better','INFERRED',NULL,'FOAM_WET',FALSE,NULL,NULL),
-  ('open_time','Open time / wet edge','open_time','min','Open-time draw-down',TRUE,'["open time","זמן פתוח"]'::jsonb,'context','INFERRED',NULL,'OPEN_TIME',FALSE,NULL,NULL),
-  ('workability','Workability','workability','flow (mm)','Flow table EN 1015-3',TRUE,'["workability","עבידות"]'::jsonb,'context','INFERRED',NULL,'WORK_WET',FALSE,NULL,NULL),
-  ('flexibility','Flexibility','flexibility','% elong / mandrel mm','Mandrel bend / crack-bridging',TRUE,'["flex","גמישות"]'::jsonb,'higher_is_better','INFERRED',NULL,'FLEX_DRY',FALSE,NULL,NULL),
-  ('hardness','Hardness','hardness','pencil / Konig','Pencil hardness / Konig pendulum',TRUE,'["hardness","קשיחות"]'::jsonb,'context','INFERRED',NULL,'HARD_DRY',FALSE,NULL,NULL),
-  ('water_resistance','Water resistance','water_resistance','immersion rating','Immersion / soak',TRUE,'["water resistance","עמידות מים"]'::jsonb,'higher_is_better','INFERRED',NULL,'WATERRES_DRY',FALSE,NULL,NULL),
-  ('opacity','Opacity / hiding','opacity','contrast ratio','Hiding power (Leneta)',TRUE,'["opacity","hiding","כיסוי"]'::jsonb,'higher_is_better','INFERRED',NULL,'OPACITY',FALSE,NULL,NULL),
-  ('gloss','Gloss','gloss','GU (60deg)','Gloss meter 60deg',TRUE,'["gloss","ברק"]'::jsonb,'context','INFERRED',NULL,'GLOSS',FALSE,NULL,NULL),
-  ('scrub_resistance','Scrub resistance','scrub_resistance','cycles','ASTM D2486',TRUE,'["scrub","שפשוף"]'::jsonb,'higher_is_better','INFERRED',NULL,'SCRUB',FALSE,NULL,NULL),
-  ('set_time','Set time','set_time','hr','Vicat needle',TRUE,'["set time","זמן התקשות"]'::jsonb,'context','INFERRED',NULL,'SET_TIME',FALSE,NULL,NULL),
-  ('compressive_strength','Compressive strength','compressive_strength','MPa','EN 1015-11',TRUE,'["compression","חוזק לחיצה"]'::jsonb,'higher_is_better','OBSERVED',NULL,NULL,FALSE,NULL,NULL),
-  ('flexural_strength','Flexural strength','flexural_strength','MPa','EN 1015-11',TRUE,'["flexural","חוזק כפיפה"]'::jsonb,'higher_is_better','OBSERVED',NULL,NULL,FALSE,NULL,NULL),
-  ('density','Density','density','kg/m3','EN 1015-10',TRUE,'["density","צפיפות"]'::jsonb,'context','OBSERVED',NULL,NULL,FALSE,NULL,NULL),
-  ('salt_scaling_resistance','Salt / scaling resistance','salt_scaling_resistance','cycles','Freeze-thaw salt cycles',TRUE,'["salt resistance","עמידות למלחים"]'::jsonb,'higher_is_better','INFERRED',NULL,NULL,FALSE,NULL,NULL),
-  ('ph','pH','ph','pH','pH_meter_direct',TRUE,'["ph","pH","חומציות","הגבה"]'::jsonb,'context','OBSERVED',NULL,NULL,FALSE,NULL,NULL)
+INSERT INTO axes (axis_id,name,dimension,canonical_unit,method,is_scalar,aliases,direction_of_good,evidence_tier,method_alias,codebook,profile,required_conditions,measurement_protocol,measurement_protocol_id,measurement_protocol_version) VALUES
+  ('pull_off_adhesion','Pull-off adhesion','pull_off_adhesion','MPa','EN 1542',TRUE,'["pull off","pull-off","היצמדות","הידבקות"]'::jsonb,'higher_is_better','PROVEN_HERE_ELIGIBLE','ASTM D4541 / D3359','ADHES_DRY',FALSE,NULL,NULL,NULL,NULL),
+  ('expansion_ratio','Expansion ratio','expansion_ratio','x','Furnace ISO 834-1 / muffle',TRUE,'["er","expansion","התפחות"]'::jsonb,'higher_is_better','PROVEN_HERE_ELIGIBLE',NULL,'EXPANSION',FALSE,NULL,NULL,NULL,NULL),
+  ('IFR','Intumescence / flame-retardancy index','IFR','index','cone calorimeter / EN 13381-8',TRUE,'["ifr","intumescence index"]'::jsonb,'higher_is_better','PROVEN_HERE_ELIGIBLE',NULL,'FIRE_DRY(IFR)',FALSE,NULL,NULL,NULL,NULL),
+  ('time_to_failure','Time to failure (fire)','time_to_failure','min','heat_to_500C_count_minutes',TRUE,'["ttf","זמן כשל","זמן עמידות אש"]'::jsonb,'higher_is_better','OBSERVED','EN 13381-8 / BS 476','FIRE_DRY(min)',FALSE,NULL,NULL,NULL,NULL),
+  ('char_quality','Char quality','char_quality','rating (ordinal)','Char inspection (cohesion/structure)',TRUE,'["char","איכות פחם"]'::jsonb,'higher_is_better','PROVEN_HERE_ELIGIBLE',NULL,'CHAR_QUAL',FALSE,NULL,NULL,NULL,NULL),
+  ('char_density','Char density','char_density','kg/m3','char_mass_over_volume',TRUE,'["char density","צפיפות פחם"]'::jsonb,'higher_is_better','PROVEN_HERE_ELIGIBLE',NULL,'CHAR_DENSITY',FALSE,'["initial_film_thickness","exposed_area","burn_profile","sample_age"]'::jsonb,'["Burn complete (per the recorded burn_profile)","Cool to room temperature","Remove loose ash (non-structural)","Weigh remaining char (mass)","Measure char volume (height x exposed_area, or displacement)","Density = mass / volume (kg/m3)"]'::jsonb,'CHAR-DENSITY-PROT-001','v1.0'),
+  ('wet_viscosity','Wet viscosity','wet_viscosity','cP','rotational_viscosity_profile',TRUE,'["viscosity","צמיגות"]'::jsonb,'context','PROVEN_HERE_ELIGIBLE','Brookfield / Stormer (KU)','VISC_WET',TRUE,'["spindle","rpm","temperature"]'::jsonb,NULL,NULL,NULL),
+  ('capillary_absorption','Capillary water absorption','capillary_absorption','kg/m2.sqrt-h','EN 1015-18',TRUE,'["capillary","נימיות","ספיגה קפילרית"]'::jsonb,'lower_is_better','INFERRED',NULL,'CAPILLARY',FALSE,NULL,NULL,NULL,NULL),
+  ('water_absorption_pct','Water absorption (mass)','water_absorption_pct','%','EN 1015-18',TRUE,'["absorption","ספיגת מים"]'::jsonb,'lower_is_better','OBSERVED',NULL,NULL,FALSE,NULL,NULL,NULL,NULL),
+  ('water_vapor_resistance_mu','Water-vapor resistance (mu)','water_vapor_resistance_mu','mu','EN 1015-19 (Sd via EN ISO 7783)',TRUE,'["mu","vapor permeability","נשימות"]'::jsonb,'lower_is_better','INFERRED',NULL,'BREATH(Sd)',FALSE,NULL,NULL,NULL,NULL),
+  ('uv_color_change','UV color change (dE)','uv_color_change','dE','QUV ASTM G154',TRUE,'["uv","דהיית צבע"]'::jsonb,'lower_is_better','INFERRED',NULL,'UV_DRY',FALSE,NULL,NULL,NULL,NULL),
+  ('sag_resistance','Sag resistance','sag_resistance','mm (anti-sag index)','Anti-sag bar',TRUE,'["sag","נזילה"]'::jsonb,'higher_is_better','INFERRED',NULL,'SAG_WET',FALSE,NULL,NULL,NULL,NULL),
+  ('suspension_stability','Suspension / shelf stability','suspension_stability','pass/fail, syneresis %','Settling + freeze-thaw',TRUE,'["stability","יציבות"]'::jsonb,'higher_is_better','INFERRED',NULL,'STAB_WET',FALSE,NULL,NULL,NULL,NULL),
+  ('foam','Foam','foam','density drop %','Density cup / shake test',TRUE,'["foam","קצף"]'::jsonb,'lower_is_better','INFERRED',NULL,'FOAM_WET',FALSE,NULL,NULL,NULL,NULL),
+  ('open_time','Open time / wet edge','open_time','min','Open-time draw-down',TRUE,'["open time","זמן פתוח"]'::jsonb,'context','INFERRED',NULL,'OPEN_TIME',FALSE,NULL,NULL,NULL,NULL),
+  ('workability','Workability','workability','flow (mm)','Flow table EN 1015-3',TRUE,'["workability","עבידות"]'::jsonb,'context','INFERRED',NULL,'WORK_WET',FALSE,NULL,NULL,NULL,NULL),
+  ('flexibility','Flexibility','flexibility','% elong / mandrel mm','Mandrel bend / crack-bridging',TRUE,'["flex","גמישות"]'::jsonb,'higher_is_better','INFERRED',NULL,'FLEX_DRY',FALSE,NULL,NULL,NULL,NULL),
+  ('hardness','Hardness','hardness','pencil / Konig','Pencil hardness / Konig pendulum',TRUE,'["hardness","קשיחות"]'::jsonb,'context','INFERRED',NULL,'HARD_DRY',FALSE,NULL,NULL,NULL,NULL),
+  ('water_resistance','Water resistance','water_resistance','immersion rating','Immersion / soak',TRUE,'["water resistance","עמידות מים"]'::jsonb,'higher_is_better','INFERRED',NULL,'WATERRES_DRY',FALSE,NULL,NULL,NULL,NULL),
+  ('opacity','Opacity / hiding','opacity','contrast ratio','Hiding power (Leneta)',TRUE,'["opacity","hiding","כיסוי"]'::jsonb,'higher_is_better','INFERRED',NULL,'OPACITY',FALSE,NULL,NULL,NULL,NULL),
+  ('gloss','Gloss','gloss','GU (60deg)','Gloss meter 60deg',TRUE,'["gloss","ברק"]'::jsonb,'context','INFERRED',NULL,'GLOSS',FALSE,NULL,NULL,NULL,NULL),
+  ('scrub_resistance','Scrub resistance','scrub_resistance','cycles','ASTM D2486',TRUE,'["scrub","שפשוף"]'::jsonb,'higher_is_better','INFERRED',NULL,'SCRUB',FALSE,NULL,NULL,NULL,NULL),
+  ('set_time','Set time','set_time','hr','Vicat needle',TRUE,'["set time","זמן התקשות"]'::jsonb,'context','INFERRED',NULL,'SET_TIME',FALSE,NULL,NULL,NULL,NULL),
+  ('compressive_strength','Compressive strength','compressive_strength','MPa','EN 1015-11',TRUE,'["compression","חוזק לחיצה"]'::jsonb,'higher_is_better','OBSERVED',NULL,NULL,FALSE,NULL,NULL,NULL,NULL),
+  ('flexural_strength','Flexural strength','flexural_strength','MPa','EN 1015-11',TRUE,'["flexural","חוזק כפיפה"]'::jsonb,'higher_is_better','OBSERVED',NULL,NULL,FALSE,NULL,NULL,NULL,NULL),
+  ('density','Density','density','kg/m3','EN 1015-10',TRUE,'["density","צפיפות"]'::jsonb,'context','OBSERVED',NULL,NULL,FALSE,NULL,NULL,NULL,NULL),
+  ('salt_scaling_resistance','Salt / scaling resistance','salt_scaling_resistance','cycles','Freeze-thaw salt cycles',TRUE,'["salt resistance","עמידות למלחים"]'::jsonb,'higher_is_better','INFERRED',NULL,NULL,FALSE,NULL,NULL,NULL,NULL),
+  ('ph','pH','ph','pH','pH_meter_direct',TRUE,'["ph","pH","חומציות","הגבה"]'::jsonb,'context','OBSERVED',NULL,NULL,FALSE,NULL,NULL,NULL,NULL)
 ON CONFLICT (axis_id) DO NOTHING;

@@ -11,7 +11,7 @@ const j = o => esc(JSON.stringify(o));
 // the structured list + non-equivalence warning live in the JSON registry (the authority).
 const axisRows = prop.properties.map(p => {
   const ma = Array.isArray(p.method_alias) ? p.method_alias.join(' / ') : p.method_alias;
-  return `  ('${esc(p.property_id)}','${esc(p.name)}','${esc(p.property_id)}','${esc(p.unit)}','${esc(p.method)}',TRUE,'${j(p.aliases||[])}'::jsonb,'${esc(p.direction_of_good)}','${esc(p.evidence_tier)}',${ma?`'${esc(ma)}'`:'NULL'},${p.codebook?`'${esc(p.codebook)}'`:'NULL'},${p.profile===true?'TRUE':'FALSE'},${Array.isArray(p.required_conditions)&&p.required_conditions.length?`'${j(p.required_conditions)}'::jsonb`:'NULL'},${Array.isArray(p.measurement_protocol)&&p.measurement_protocol.length?`'${j(p.measurement_protocol)}'::jsonb`:'NULL'})`;
+  return `  ('${esc(p.property_id)}','${esc(p.name)}','${esc(p.property_id)}','${esc(p.unit)}','${esc(p.method)}',TRUE,'${j(p.aliases||[])}'::jsonb,'${esc(p.direction_of_good)}','${esc(p.evidence_tier)}',${ma?`'${esc(ma)}'`:'NULL'},${p.codebook?`'${esc(p.codebook)}'`:'NULL'},${p.profile===true?'TRUE':'FALSE'},${Array.isArray(p.required_conditions)&&p.required_conditions.length?`'${j(p.required_conditions)}'::jsonb`:'NULL'},${Array.isArray(p.measurement_protocol)&&p.measurement_protocol.length?`'${j(p.measurement_protocol)}'::jsonb`:'NULL'},${p.measurement_protocol_id?`'${esc(p.measurement_protocol_id)}'`:'NULL'},${p.measurement_protocol_version?`'${esc(p.measurement_protocol_version)}'`:'NULL'})`;
 }).join(',\n');
 const m010 = `-- ============================================================================
 -- 010 — Canonical axes from property_registry_canonical_v1.json (David, Drive)
@@ -32,8 +32,12 @@ ALTER TABLE axes ADD COLUMN IF NOT EXISTS required_conditions JSONB;
 -- measurement_protocol: ordered SOP steps. Same unit without the same protocol still
 -- yields lab-to-lab divergence, so the protocol is part of commensurability.
 ALTER TABLE axes ADD COLUMN IF NOT EXISTS measurement_protocol JSONB;
+-- protocol identity: every observation stores which protocol id+version produced it, so
+-- old and new series stay comparable when the protocol changes (commensurability over time).
+ALTER TABLE axes ADD COLUMN IF NOT EXISTS measurement_protocol_id TEXT;
+ALTER TABLE axes ADD COLUMN IF NOT EXISTS measurement_protocol_version TEXT;
 
-INSERT INTO axes (axis_id,name,dimension,canonical_unit,method,is_scalar,aliases,direction_of_good,evidence_tier,method_alias,codebook,profile,required_conditions,measurement_protocol) VALUES
+INSERT INTO axes (axis_id,name,dimension,canonical_unit,method,is_scalar,aliases,direction_of_good,evidence_tier,method_alias,codebook,profile,required_conditions,measurement_protocol,measurement_protocol_id,measurement_protocol_version) VALUES
 ${axisRows}
 ON CONFLICT (axis_id) DO NOTHING;
 `;

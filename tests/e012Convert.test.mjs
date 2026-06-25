@@ -17,9 +17,9 @@ let passed = 0;
 const t = (name, fn) => { try { fn(); passed++; console.log('✓', name); } catch (e) { console.error('✗', name, '\n  ', e.message); process.exitCode = 1; } };
 
 const CSV = [
-  'sample_id,formulation_id,variable_changed,variable_level,char_height_mm,char_density_kg_m3,char_integrity_score,time_to_failure_min,initial_film_thickness,exposed_area,burn_profile,sample_age,operator,date,notes',
-  'E012-001,INT-TFX-BASE,PER,8,32,78,2,42,800,100,500,7,Rachel,2026-06-26,low PER',
-  'E012-002,INT-TFX-BASE,PER,14,28,118,4,63,800,100,500,7,Rachel,2026-06-26,',
+  'sample_id,formulation_id,variable_changed,variable_level,char_height_mm,char_density_kg_m3,char_integrity_score,time_to_failure_min,initial_film_thickness,exposed_area,burn_profile,sample_age,protocol_version,operator,date,notes',
+  'E012-001,INT-TFX-BASE,PER,8,32,78,2,42,800,100,500,7,v1.0,Rachel,2026-06-26,low PER',
+  'E012-002,INT-TFX-BASE,PER,14,28,118,4,63,800,100,500,7,v1.0,Rachel,2026-06-26,',
 ].join('\n');
 
 const { observations, samples } = e012ToObservations(CSV);
@@ -51,6 +51,14 @@ t('every converted observation passes the contract gate (Ingest-ready)', () => {
     const { valid, errors } = validateObservation(o, AX[o.axis_id] || null);
     assert.equal(valid, true, `${o.axis_id}: ${errors.join('; ')}`);
   }
+});
+
+t('char_density observation is stamped with protocol id + version (commensurability over time)', () => {
+  const cd = observations.find(o => o.axis_id === 'char_density');
+  assert.equal(cd.provenance.measurement_protocol_id, 'CHAR-DENSITY-PROT-001');
+  assert.equal(cd.provenance.measurement_protocol_version, 'v1.0');
+  // axis declares the same current protocol identity
+  assert.equal(AX.char_density.measurement_protocol_id, 'CHAR-DENSITY-PROT-001');
 });
 
 t('time_to_failure uses the reconciled in-house method (not EN 13381-8)', () => {

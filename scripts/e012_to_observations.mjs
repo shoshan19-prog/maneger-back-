@@ -45,6 +45,7 @@ if (pass < observations.length) {
 const condKeys = [...new Set(observations.flatMap(o => Object.keys(o.conditions)))];
 const cols = ['project_id', 'experiment_id', 'replicate_group', 'axis_id', 'value', 'unit', 'method',
   'observed_by', 'observed_at', 'source_type', 'source_reference',
+  'measurement_protocol_id', 'measurement_protocol_version',
   ...condKeys.flatMap(k => [`cond_${k}_value`, `cond_${k}_unit`])];
 const esc = (v) => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
 const lines = [cols.join(',')];

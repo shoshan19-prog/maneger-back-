@@ -101,7 +101,14 @@ Rachel does **not** touch the observation format. She fills one wide, sample-cen
 **`docs/E-012-template.csv`** — columns:
 `sample_id, formulation_id, variable_changed, variable_level, char_height_mm,
 char_density_kg_m3, char_integrity_score, time_to_failure_min, initial_film_thickness,
-exposed_area, burn_profile, sample_age, operator, date, notes`
+exposed_area, burn_profile, sample_age, protocol_version, operator, date, notes`
+
+`protocol_version` (e.g. `v1.0`) records which version of the char-density measurement
+protocol the series used. The converter stamps every char_density observation with
+`measurement_protocol_id` (CHAR-DENSITY-PROT-001) + `measurement_protocol_version` in its
+provenance. **Why:** if the char-volume method changes next year, old and new series stay
+comparable only because each records the protocol it used — protocol identity is part of
+commensurability, not a footnote.
 
 Units (fixed, so values are commensurable): char_height_mm = mm · char_density_kg_m3 =
 kg/m³ · char_integrity_score = ordinal rating · time_to_failure_min = min ·
