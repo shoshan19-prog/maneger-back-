@@ -33,6 +33,7 @@
   <div class="card"><h2>בדיקות הפרויקט</h2><div id="tests"></div></div>
   <div class="card"><h2>פער עבודה — ניתן למדוד, לא נמדד</h2><div id="gap"></div></div>
   <div class="card"><h2>גבולות שנגזרו</h2><div id="bnd"></div></div>
+  <div class="card" style="grid-column:1/-1"><h2>מפת הגבול</h2><div id="chart"></div></div>
 </div>
 
 <script>
@@ -47,7 +48,9 @@ const DEMO = {
     tests:{done:["Expansion Ratio","Foam Uniformity","Density","Fire Resistance Time","Char Integrity","Cracking","PASS/FAIL"],
       planned:["Adhesion to Substrate","Thermal Conductivity"], missing:[]},
     gap:[],
-    boundaries:[{name:"density → fire-time",status:"ready",note:"מחכה לסריקת צפיפות (template מוכן)"}]},
+    boundaries:[{name:"density → fire-time",status:"ready",note:"דמו: גבול ב-120 kg/m³ (CI ±6)"}],
+    chart:{xLabel:"char density (kg/m³)",yLabel:"time to failure (min)",spec:60,boundary:120,ci:[113.8,126.2],
+      points:[{x:90,y:44,o:"fail"},{x:110,y:54,o:"fail"},{x:130,y:66,o:"work"},{x:150,y:80,o:"work"},{x:170,y:92,o:"work"}]}},
   "PR-TFX": {
     tests:{done:["pH","specific gravity","viscosity","corrosion (hours)","corrosion (level)"],
       planned:["Cross Hatch","Blistering","Rust Grade","Delamination"], missing:[]},
@@ -84,6 +87,32 @@ function render(){
   document.getElementById("bnd").innerHTML = (d.boundaries&&d.boundaries.length)
     ? d.boundaries.map(b=>`<div class="row"><span>${b.name}<div class="mut">${b.note}</div></span><span class="tag ${statusTag(b.status)}">${b.status}</span></div>`).join("")
     : '<div class="empty">טרם נגזר גבול</div>';
+  document.getElementById("chart").innerHTML = d.chart ? renderChart(d.chart) : '<div class="empty">אין סריקה מספרית עדיין — יתמלא כשתגיע סריקת צפיפות/קלט מספרי.</div>';
+}
+function renderChart(c){
+  const W=720,H=300,pad=46;
+  const xs=c.points.map(p=>p.x), ys=c.points.map(p=>p.y);
+  const xmin=Math.min(...xs,c.boundary)-10, xmax=Math.max(...xs,c.boundary)+10;
+  const ymin=Math.min(...ys,c.spec)-8, ymax=Math.max(...ys,c.spec)+8;
+  const X=v=>pad+(v-xmin)/(xmax-xmin)*(W-2*pad);
+  const Y=v=>H-pad-(v-ymin)/(ymax-ymin)*(H-2*pad);
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:760px">`;
+  // CI band + boundary line (vertical, on density axis)
+  s+=`<rect x="${X(c.ci[0])}" y="${pad}" width="${X(c.ci[1])-X(c.ci[0])}" height="${H-2*pad}" fill="rgba(59,130,246,.15)"/>`;
+  s+=`<line x1="${X(c.boundary)}" y1="${pad}" x2="${X(c.boundary)}" y2="${H-pad}" stroke="#3b82f6" stroke-width="2" stroke-dasharray="5 4"/>`;
+  s+=`<text x="${X(c.boundary)}" y="${pad-6}" fill="#3b82f6" font-size="12" text-anchor="middle">boundary ${c.boundary}</text>`;
+  // spec line (horizontal)
+  s+=`<line x1="${pad}" y1="${Y(c.spec)}" x2="${W-pad}" y2="${Y(c.spec)}" stroke="#d29922" stroke-width="1.5" stroke-dasharray="4 4"/>`;
+  s+=`<text x="${W-pad}" y="${Y(c.spec)-5}" fill="#d29922" font-size="11" text-anchor="end">spec ${c.spec} min</text>`;
+  // axes
+  s+=`<line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="#2a3441"/><line x1="${pad}" y1="${pad}" x2="${pad}" y2="${H-pad}" stroke="#2a3441"/>`;
+  s+=`<text x="${W/2}" y="${H-8}" fill="#8b98a9" font-size="12" text-anchor="middle">${c.xLabel}</text>`;
+  s+=`<text x="14" y="${H/2}" fill="#8b98a9" font-size="12" text-anchor="middle" transform="rotate(-90,14,${H/2})">${c.yLabel}</text>`;
+  // points
+  for(const p of c.points){const col=p.o==="work"?"#2ea043":"#f85149";
+    s+=`<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="6" fill="${col}"/><text x="${X(p.x)}" y="${Y(p.y)-10}" fill="#8b98a9" font-size="10" text-anchor="middle">${p.y}</text>`;}
+  s+=`</svg><div class="mut" style="margin-top:6px">🟢 works · 🔴 fails · — — spec · ▮ boundary ±CI. הגבול נגזר: σ=MME/שיפוע.</div>`;
+  return s;
 }
 (async()=>{
   LIVE=await tryLive();
