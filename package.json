@@ -19,7 +19,8 @@
     "progress": "node scripts/progress_report.mjs",
     "docx": "python3 scripts/md2docx.py",
     "boundary": "node scripts/boundary_pipeline.mjs",
-    "e012": "node scripts/e012_to_observations.mjs"
+    "e012": "node scripts/e012_to_observations.mjs",
+    "scoreboard": "node scripts/scoreboard.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
