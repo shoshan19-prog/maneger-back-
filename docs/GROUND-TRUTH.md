@@ -3,11 +3,19 @@
 Step 4–5 of the K-closing sequence (Fresco). We measure the extractor against **human-confirmed
 labels**, not against itself — otherwise a confusion matrix is parser-vs-parser (meaningless).
 
-## Why
-A confusion matrix only means something if `truth` is correct. So the flow is:
-1. generate a skeleton (truth pre-filled from predictions, `confirmed:false`),
-2. **a human corrects the `truth` and flips `confirmed:true`**,
-3. score: re-run the extractor and compare to confirmed truth.
+## Two layers (Fresco)
+Ground Truth is built in two layers so we don't fabricate lab judgment from memory:
+
+- **Layer 1 — objective facts**, read from the document itself (near-mechanical): product,
+  family, document_type, version/date, parameters present, values present, units.
+  **Auto-filled** by `ground_truth.mjs skeleton`.
+- **Layer 2 — professional knowledge**, confirmed by **Rachel**: is this the official doc? is
+  a spec truly missing? External vs Not-Expected? does the parameter belong to the family? is
+  there an alternative document? Left **pending** for the lab.
+
+Plus **validation provenance** per record: `validated_by`, `validation_date`,
+`confidence: verified | provisional`. So a year from now we know what was professionally
+validated, what is still draft, and who approved each decision.
 
 The corpus and the ground-truth file live under `.corpus/` (git-ignored — proprietary
 formulations). Only the tooling is committed.

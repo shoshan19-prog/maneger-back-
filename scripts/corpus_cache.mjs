@@ -27,6 +27,18 @@ const entries = files.map(f => {
   const buf = fs.readFileSync(path.join(dir, f));
   return { file: f, bytes: buf.length, lines: buf.toString('utf8').split('\n').length, sha1: createHash('sha1').update(buf).digest('hex').slice(0, 12) };
 });
+
+// Immutability guard (Reference Corpus = strategic asset; never modify source). Compare to the
+// prior manifest and flag any changed or removed snapshot — the corpus should be append-only.
+if (fs.existsSync(manifestPath)) {
+  const prev = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  const prevById = Object.fromEntries((prev.files || []).map(e => [e.file, e.sha1]));
+  const nowById = Object.fromEntries(entries.map(e => [e.file, e.sha1]));
+  const changed = entries.filter(e => prevById[e.file] && prevById[e.file] !== e.sha1).map(e => e.file);
+  const removed = Object.keys(prevById).filter(f => !(f in nowById));
+  if (changed.length) console.warn(`⚠ source modified (corpus should be append-only): ${changed.join(', ')}`);
+  if (removed.length) console.warn(`⚠ snapshot removed since last manifest: ${removed.join(', ')}`);
+}
 const manifest = { corpus: dirArg, count: entries.length, files: entries, note: 'git-ignored proprietary corpus snapshot; deterministic record for reproducible parser runs' };
 fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
 
