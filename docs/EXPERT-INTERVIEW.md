@@ -5,28 +5,44 @@ verified operational engineering knowledge that **does not exist in the document
 (Identity Gate, Material Authority, Premix, Formula ≠ Recipe, PSD Design, Production Strategy,
 Manufacturing Response, Dry-Powder QC philosophy, Engineering Playbook rules).
 
-So MATRIYA runs **two first-class evidence streams in parallel** (`config/evidence_streams_v1.json`):
+So MATRIYA runs **three first-class knowledge sources in parallel** (`config/evidence_streams_v1.json`):
 
-| | Document stream | Expert stream |
-|---|---|---|
-| Source | Reference Corpus | Expert interviews |
-| Validator | **Rachel** | **David** |
-| Authority domain | document interpretation | operational engineering model |
-| Knowledge types | declarative, procedural | engineering |
-| Feeds | Materials / SOP / Requirement | Engineering Playbook / Knowledge Model / Authority Layers |
-| Gate | document fan-out waits for Gold Standard | **does not wait — proceeds via David** |
+| | Document Knowledge | Experimental Knowledge | Operational Knowledge |
+|---|---|---|---|
+| Question | what is written | what is measured | how Fresco actually works |
+| Source | Reference Corpus | lab runs (E-012…) | operational interviews |
+| Validator | **Rachel** | Lab (pre-registered) | **David** |
+| Knowledge types | declarative, procedural | declarative | engineering |
+| Feeds | Materials / SOP / Requirement | Experiment / Knowledge Graph | Engineering Playbook / Knowledge Model |
+| Gate | document fan-out → Gold Standard | coupling promotion | **does not wait — via David** |
 
-**Do not pause the expert stream waiting for Rachel.** Rachel validates *how documents are read*;
-David provides the *engineering model behind them*. Different authority domains, both first-class.
+The **Operational Knowledge** stream is the unique asset — it cannot be extracted from
+documents. **Do not pause it waiting for Rachel.**
 
-## How expert knowledge enters
-1. A question is raised (production philosophy, raw-material qualification, engineering decision,
-   manufacturing strategy) → added to `config/expert_interview_queue_v1.json`.
-2. **Ask David directly.**
-3. His answer becomes a verified `engineering_rule` (Engineering Playbook) or a `knowledge_model`
-   entity, tagged `source: David · source_type: expert_operational_knowledge ·
-   validation_status: verified · scope: <as David states>` (+ falsifier where one exists).
-4. Never generalize beyond the scope David states.
+## Four classes of operational knowledge
+Each insight is classified (`config/engineering_playbook_v1.json#knowledge_classes`):
+- **Engineering Principle** — PSD is part of the formula.
+- **Production Strategy** — buy fractions, assemble PSD in-house.
+- **Operational Rule** — don't compensate for out-of-spec raw material.
+- **Decision Heuristic** — QC deviation → investigate raw materials.
+
+## How operational knowledge enters — ONE question at a time
+Not a batch. Each question spawns 5–10 unexpected insights, so depth beats breadth:
+```
+Question → Discussion → Model Update → Next Question
+```
+1. Take the `active_question` from `config/expert_interview_queue_v1.json`.
+2. **Ask David directly; discuss** (follow the threads it opens).
+3. The answer becomes a verified `engineering_rule` / `knowledge_model` entity, tagged
+   `source: David · source_type: operational_knowledge · knowledge_class: <one of 4> ·
+   validation_status: verified`, with a **confidence_scope**:
+   ```yaml
+   confidence_scope:
+     verified_for:    [Dry Powder]
+     not_verified_for: [Liquid Systems]
+     future_validation: [Finish Coatings]
+   ```
+4. Update the model, then advance `active_question`. Never generalize beyond the stated scope.
 
 ## Open questions now (see queue for full text)
 Q-001 scope beyond dry powder/B-4 · Q-002 identity reject tolerances · Q-003 quantitative Premix

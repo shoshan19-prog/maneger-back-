@@ -1,10 +1,11 @@
 {
   "registry": "EVIDENCE_STREAMS",
   "version": "v1",
-  "note": "MATRIYA has TWO first-class evidence streams with DIFFERENT authority domains. They run in PARALLEL — neither blocks the other. Documents are validated by Rachel; the operational engineering model (which is NOT in the documents) comes from expert interviews with David.",
+  "note": "MATRIYA has THREE first-class knowledge sources with DIFFERENT authority domains, running in PARALLEL — none blocks the others. Document Knowledge (what is written), Experimental Knowledge (what is measured), Operational Knowledge (how Fresco actually works). The third cannot be extracted from documents — it is undocumented organizational knowledge made explicit via interview.",
   "streams": [
     {
       "id": "document_stream",
+      "label": "Document Knowledge — what is written",
       "source": "Reference Corpus (Drive: laboratory/)",
       "authority_domain": "document interpretation",
       "validator": "Rachel",
@@ -15,18 +16,33 @@
       "status": "pending Rachel"
     },
     {
-      "id": "expert_stream",
-      "source": "Expert interviews (Fresco R&D)",
-      "authority_domain": "operational engineering model — knowledge that does NOT exist in documents",
+      "id": "experimental_stream",
+      "label": "Experimental Knowledge — what is measured",
+      "source": "Lab runs / measurements (E-011 calibration, E-012, ...)",
+      "authority_domain": "empirical results — boundaries derived from measurement",
+      "validator": "Lab (Rachel) under pre-registration",
+      "validation_artifact": "observations → derived boundaries (Knowledge Graph)",
+      "knowledge_types": ["declarative"],
+      "feeds": ["Experiment Library", "Knowledge Graph"],
+      "gates": "gates promotion of couplings (Mechanistic → Verified)",
+      "status": "pending first real E-012 data"
+    },
+    {
+      "id": "operational_stream",
+      "label": "Operational Knowledge — how Fresco actually works",
+      "source": "Operational/engineering interviews (Fresco R&D — David)",
+      "authority_domain": "undocumented organizational engineering model (NOT in documents)",
       "validator": "David",
-      "validation_artifact": "verified engineering_rules + knowledge_model entities (source_type=expert_operational_knowledge)",
+      "validation_artifact": "verified engineering_rules + knowledge_model entities (source_type=operational_knowledge)",
       "knowledge_types": ["engineering"],
+      "knowledge_classes": ["engineering_principle", "production_strategy", "operational_rule", "decision_heuristic"],
       "feeds": ["Engineering Playbook", "Knowledge Model", "Authority Layers"],
       "gates": "does NOT depend on Rachel; validated directly by David; proceeds in parallel",
-      "status": "active — capture ongoing (see expert_interview_queue_v1.json)"
+      "intake_mode": "one question at a time (Question → Discussion → Model Update → Next) — see expert_interview_queue_v1.json",
+      "status": "active"
     }
   ],
-  "principle": "Both are first-class. Do not pause the expert stream waiting for document validation. Rachel validates how documents are read; David provides the engineering model behind them.",
+  "principle": "Three first-class sources, three authority domains, run in parallel — never serialized. Document = how docs are read (Rachel). Experimental = what was measured (lab). Operational = how Fresco works (David); the unique asset, since it cannot be extracted from documents.",
   "scope_verified": ["B-4 Primer", "Dry Powder Products"],
   "scope_not_verified": ["Finish Coatings", "other liquid systems"]
 }

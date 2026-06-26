@@ -49,11 +49,13 @@ the possibility space has been reliably ruled out.
 
 ## What exists (branch: claude/authority-before-intelligence-m4t1zz)
 
-- **Two parallel evidence streams** (`config/evidence_streams_v1.json`, docs/EXPERT-INTERVIEW.md):
-  Document stream (validated by **Rachel** → Gold Standard; gates document fan-out) and Expert
-  stream (validated by **David** → engineering model NOT in the docs; does NOT wait for Rachel).
-  Both first-class, different authority domains. Open questions for David:
-  `config/expert_interview_queue_v1.json` — ask him directly, don't pause.
+- **Three parallel knowledge sources** (`config/evidence_streams_v1.json`, docs/EXPERT-INTERVIEW.md):
+  Document (what is written — validated by **Rachel** → Gold Standard; gates document fan-out),
+  Experimental (what is measured — lab/E-012), and **Operational** (how Fresco works — validated
+  by **David**; NOT in the docs; the unique asset; does NOT wait for Rachel). Operational
+  knowledge is captured ONE question at a time (`config/expert_interview_queue_v1.json`,
+  active_question) and classified: engineering_principle / production_strategy / operational_rule /
+  decision_heuristic; every rule carries a confidence_scope (verified_for/not_verified_for/future).
 - **7 knowledge libraries** (docs/KNOWLEDGE-LIBRARIES.md): Materials · SOP · Requirement ·
   Experiment · Decision · Knowledge Graph · **Engineering Playbook** (`config/engineering_playbook_v1.json`
   — rules of engineering practice / how Fresco thinks; David, verified, scope B-4+Dry Powder).

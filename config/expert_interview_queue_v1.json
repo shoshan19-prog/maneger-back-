@@ -1,8 +1,11 @@
 {
-  "registry": "EXPERT_INTERVIEW_QUEUE",
+  "registry": "OPERATIONAL_KNOWLEDGE_INTERVIEW",
   "version": "v1",
   "expert": "David",
-  "note": "Open questions for the expert stream — the parallel evidence source. Each answer becomes a verified engineering_rule / knowledge_model entity (source_type=expert_operational_knowledge). Grounded in gaps from the 2026-06-26 interview; not generalized beyond what David states.",
+  "note": "Backlog for the Operational Knowledge Stream. IMPORTANT (Fresco): one question at a time, not a batch — each question spawns 5-10 unexpected insights, so depth beats breadth. Work Question → Discussion → Model Update → Next Question. Each answer becomes a verified engineering_rule / knowledge_model entity (source_type=operational_knowledge), classified (engineering_principle | production_strategy | operational_rule | decision_heuristic) and carrying a confidence_scope.",
+  "intake_mode": "one_question_at_a_time",
+  "workflow": ["Question", "Discussion", "Model Update", "Next Question"],
+  "active_question": "Q-001",
   "questions": [
     { "id": "Q-001", "area": "scope", "question": "Do the Identity/Process rules and the Identity Gate apply to finish coatings and other liquid systems, or are those genuinely different?",
       "why": "Current verified scope is only B-4 + Dry Powder; everything else is explicitly NOT verified.", "unblocks": "scope expansion of the whole knowledge model", "touches": "Material Authority" },
@@ -23,6 +26,6 @@
     { "id": "Q-009", "area": "formula_versioning", "question": "When a Premix or PSD Design changes, how is that versioned relative to the formula — same formula id, or a new one?",
       "why": "Formula ≠ Recipe (4 layers); we need to know which layer change creates a new formula identity.", "unblocks": "formula identity/versioning", "touches": "Materials Library" }
   ],
-  "intake": "Each answer → add/extend an engineering_rule (config/engineering_playbook_v1.json) or a knowledge_model entity, tagged source=David, source_type=expert_operational_knowledge, validation_status=verified, scope=<as David states>.",
-  "status": "open — ask David directly; do not wait for Rachel"
+  "intake": "Each answer → add/extend an engineering_rule (config/engineering_playbook_v1.json) or a knowledge_model entity, tagged source=David, source_type=operational_knowledge, knowledge_class=<one of the 4>, validation_status=verified, and a confidence_scope {verified_for, not_verified_for, future_validation} exactly as David bounds it.",
+  "status": "active — ask Q-001 first; discuss; update model; then advance active_question. Do not batch; do not wait for Rachel."
 }
