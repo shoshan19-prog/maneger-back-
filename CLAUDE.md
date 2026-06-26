@@ -41,6 +41,17 @@ via `lib/gapClassifier.js` + `npm run gap`; ladder in `config/discovery_depths_v
   after remix → SEM → FTIR), not a full battery. (Worked case: "viscosity dropped" → reversible
   separation vs irreversible failure → recoverability-after-remix, no SEM/FTIR needed yet.)
 
+A Discovery Gap is formally a **Discriminating Evidence Gap** — see the **fourth primitive,
+Discriminability** (`docs/DISCRIMINABILITY.md`, `lib/discriminability.js`, `npm run gap discriminate`):
+the power of the *existing* evidence to tell competing explanations apart (NOT the same as Evidence —
+a rich set has zero discriminability if H1/H2 predict identical values). **The boundary (hold this
+line):** *MATRIYA does not determine which evidence is needed to decide between hypotheses; it checks
+whether the evidence the scientist declared as discriminating actually exists.* So BOTH the hypotheses
+AND their discrimination links are **human-authored**; if a hypothesis has no declared discriminator
+the system **refuses** (`declaration_required`) rather than infer. The check is logical, not
+scientific — it states "Cannot discriminate between H1 and H2 given current evidence", never a
+recommendation. Feeds the kernel via `variables_distinguishable` → `evaluateFailSafe`.
+
 A question's purpose is to reduce uncertainty maximally at minimum cost. Before asking, check:
 (1) can the user answer from their own knowledge? (2) will the answer change the model? (3) is it
 the highest information-value question available? If any answer is "no" — don't ask. Never request

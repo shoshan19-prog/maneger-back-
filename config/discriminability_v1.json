@@ -1,0 +1,34 @@
+{
+  "registry": "DISCRIMINABILITY",
+  "version": "v1",
+  "principle": "MATRIYA does not determine which evidence is needed to decide between hypotheses. It checks whether the evidence the scientist defined as discriminating actually exists.",
+  "note": "The fourth primitive (Fresco). Knowledge / Evidence / Decision were three; Discriminability is the power of the EXISTING evidence to tell competing explanations apart — distinct from Evidence itself. A rich Evidence Set (viscosity+pH+density) has zero discriminability if H1 and H2 predict the same values for all of them. The check is LOGICAL, not scientific: are the human-declared discriminators present? It never infers WHAT discriminates.",
+  "pipeline": ["Question", "Observations", "Evidence Set", "Discriminability Assessment", "Decision"],
+  "boundary": {
+    "system_does": "check whether the human-declared discriminating observations are present in the evidence set",
+    "system_does_not": "decide which evidence discriminates between hypotheses (that is the scientist's authorship)",
+    "on_missing_declaration": "REFUSE — return status 'declaration_required'; do not infer a discriminator"
+  },
+  "hypothesis_declaration_contract": {
+    "required": ["id", "distinguished_by"],
+    "distinguished_by": "array of observation/depth ids the SCIENTIST declares would distinguish this hypothesis from its competitors (human-authored, like the hypotheses themselves)",
+    "example": [
+      { "id": "H1", "statement": "reversible separation", "distinguished_by": ["recoverability_after_remix"] },
+      { "id": "H2", "statement": "irreversible failure", "distinguished_by": ["recoverability_after_remix", "SEM"] }
+    ]
+  },
+  "worked_example": {
+    "observation": "viscosity dropped",
+    "evidence_set_present": ["wet_viscosity", "ph", "density"],
+    "hypotheses": [
+      { "id": "H1", "statement": "reversible separation", "distinguished_by": ["recoverability_after_remix"] },
+      { "id": "H2", "statement": "irreversible failure", "distinguished_by": ["recoverability_after_remix"] }
+    ],
+    "assessment": "discriminating_evidence_gap",
+    "statement": "Cannot discriminate between H1 and H2 given current evidence.",
+    "suggested_depth": "recoverability_after_remix",
+    "note": "The Evidence Set is non-empty, yet none of the present observations is the declared discriminator. The fix is the declared discriminator (WP-001 recoverability), at the shallowest cost — not a re-run, not SEM/FTIR."
+  },
+  "kernel_link": "assessDiscriminability → toFailSafeSignal → { variables_distinguishable } → kernel evaluateFailSafe (VARIABLES_NOT_DISTINGUISHABLE). This module DECIDES that flag, from human declarations only.",
+  "human_authored_link": "config/mechanism_registry_v1.json WP-001 (recoverability after remix) is the canonical human-authored discriminator for reversible vs irreversible failure."
+}

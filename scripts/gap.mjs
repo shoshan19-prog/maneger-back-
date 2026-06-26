@@ -9,6 +9,7 @@
  *   node scripts/gap.mjs classify --no-data             # → evidence_gap
  *   node scripts/gap.mjs classify --has-data            # data exists, unresolved → discovery_gap
  *   node scripts/gap.mjs example                        # the worked example (viscosity dropped)
+ *   node scripts/gap.mjs discriminate                   # run the Discriminability worked example
  */
 import fs from 'fs';
 import path from 'path';
@@ -18,6 +19,7 @@ const here = path.dirname(new URL(import.meta.url).pathname);
 const root = path.resolve(here, '..');
 const cfg = (n) => JSON.parse(fs.readFileSync(path.join(root, 'config', n), 'utf8'));
 const G = await import(pathToFileURL(path.resolve(root, 'lib/gapClassifier.js')).href);
+const D = await import(pathToFileURL(path.resolve(root, 'lib/discriminability.js')).href);
 
 const depths = cfg('discovery_depths_v1.json');
 const argv = process.argv.slice(2);
@@ -39,6 +41,19 @@ if (mode === 'classify') {
     console.log('\n→ Ask for the SHALLOWEST rung that discriminates the hypotheses, not a re-run.');
   }
   console.log('');
+} else if (mode === 'discriminate') {
+  const disc = cfg('discriminability_v1.json');
+  const e = disc.worked_example;
+  const r = D.assessDiscriminability(e.hypotheses, e.evidence_set_present, { ladder: depths.depth_ladder });
+  console.log(`\nDiscriminability Assessment — the fourth primitive`);
+  console.log(`  principle: ${disc.principle}`);
+  console.log(`\n  Evidence Set present: ${e.evidence_set_present.join(', ')}`);
+  console.log(`  Hypotheses: ${e.hypotheses.map(h => `${h.id} (${h.statement})`).join('  vs  ')}`);
+  console.log(`  declared discriminators: ${e.hypotheses.map(h => `${h.id}→[${h.distinguished_by.join(',')}]`).join('  ')}`);
+  console.log(`\n  → status: ${r.status}`);
+  console.log(`  → ${r.message}`);
+  if (r.suggested_depths) console.log(`  → shallowest declared-but-missing discriminator: ${r.suggested_depths[0].suggested_depth}`);
+  console.log(`\n  Boundary: the system CHECKS declared discriminators; it never INFERS what discriminates.\n`);
 } else if (mode === 'example') {
   const e = depths.worked_example;
   const r = G.recommend({
