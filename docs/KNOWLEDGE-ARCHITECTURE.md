@@ -1,4 +1,27 @@
-# Knowledge Architecture — the real achievement of 2026-06-26
+# MATRIYA Knowledge Architecture v1 — the real achievement of 2026-06-26
+
+> **Status: v1 complete (the loop closes).** From here, significant progress comes NOT from
+> extending the architecture but from feeding real evidence and running the loop until
+> mechanisms and rules strengthen or are refuted.
+
+## The complete learning loop
+```
+Question → Observation → Evidence → Evidence Set → Decision → Mechanism Candidate
+   → Engineering Rule → Prediction → Experiment ↺
+```
+The closing link (Prediction → Experiment → back into RuleSupport) is what makes MATRIYA a
+*science* model, not a records system: every rule must say what should happen next, and the
+result strengthens or refutes it. `lib/prediction.js`, `config/prediction_registry_v1.json`,
+`npm run predictions`. A resolved prediction becomes a RuleSupport link (confirmed → support,
+refuted → contradict) — the loop literally feeds itself.
+
+## What v1 separates cleanly (the core achievement)
+what happened (Observation/Evidence) · what was decided (Decision) · why (Reasoning) · what is
+probably true (Mechanism) · what generalizes (Engineering Rule) · what must happen next if the
+generalization holds (Prediction). Few R&D systems make these distinctions explicit.
+
+---
+
 
 The big step today is not another library. It is that MATRIYA stopped being a system that
 *stores* knowledge and became one that *distinguishes the stages of knowledge* — the jump from

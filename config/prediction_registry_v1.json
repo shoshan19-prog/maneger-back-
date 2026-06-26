@@ -1,0 +1,20 @@
+{
+  "registry": "PREDICTION_REGISTRY",
+  "version": "v1",
+  "note": "Closes the learning loop: every Engineering Rule / watched pattern must make a falsifiable prediction about the next experiment. A resolved prediction feeds back into RuleSupport (confirmed → support, refuted → contradict). This is what makes the model say 'what will happen if...', not only explain the past.",
+  "prediction_shape": {
+    "id": "PRED-001", "target": "ENG-… or WP-…", "prediction": "if X then Y",
+    "measurable_outcome": "the axis/observation that confirms or refutes it",
+    "experiment": "E-… (when assigned)", "status": "proposed | open | confirmed | refuted",
+    "result": null, "date": null, "source": "who framed it"
+  },
+  "predictions": [
+    {
+      "id": "PRED-001", "target": "WP-001",
+      "prediction": "If recoverability-after-remix stays high, viscosity drift will NOT predict failure.",
+      "measurable_outcome": "across batches: high recoverability + high viscosity-drift still pass; failure tracks recoverability, not drift",
+      "experiment": null, "status": "open", "result": null, "date": null, "source": "Fresco (framing of WP-001)",
+      "note": "Open prediction tied to the watched pattern WP-001 — testing it is how that pattern earns (or loses) the right to become a Mechanism Candidate."
+    }
+  ]
+}

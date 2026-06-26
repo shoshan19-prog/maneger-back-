@@ -24,7 +24,8 @@
     "gate": "node scripts/gates.mjs",
     "knowledge": "node scripts/knowledge.mjs",
     "rules:evolution": "node scripts/rule_support.mjs",
-    "decisions": "node scripts/decisions.mjs"
+    "decisions": "node scripts/decisions.mjs",
+    "predictions": "node scripts/predictions.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
