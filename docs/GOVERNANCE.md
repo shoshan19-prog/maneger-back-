@@ -55,7 +55,30 @@ knowledge_steward: Rachel   knowledge_steward: Lab Team
 ## Working principle (codified, see CLAUDE.md)
 > No parser improvement without re-running against the Gold Standard.
 
-## Sequence to unblock fan-out
-1. Rachel validates the 8 docs (sheet → merge) → **Gold Standard Dataset v1**.
+## Sequence to unblock fan-out (discipline: validate knowledge first, harden enforcement second)
+```
+Architecture ✅ → Governance ✅ → Reference Corpus ✅ → Gold Standard ⏳ (NOW)
+  → Confusion Matrix ⏳ → Threshold Lock ⏳ → Gate Automation ⏳ → Fan-out ⏳
+```
+1. Rachel validates the docs (sheet → merge) → **Gold Standard Dataset v1**.
 2. Lock the `data` thresholds in `lib/governanceGates.js` (remove `pending`).
 3. `npm run gate` → Gate K green → Fan-out ALLOWED.
+
+## Gold Standard versioning (don't grow it too fast — Fresco)
+Grow the validated set in deliberate steps so every parser change is re-measured as diversity
+increases (not one big 100-doc dump):
+- **v1 = ~10 docs** (validated well) — the durable first asset.
+- **v2 = ~25 docs.**
+- **v3 = ~50 docs.**
+
+## Deferred backlog — implement ONLY after Gold Standard v1 is approved
+These are automation *around* the process; they won't change `Gate K = Pending` today, so they
+wait until the contract has been checked against real validated data (not placeholders):
+1. **pre-commit / pre-fanout hook** — block fan-out actions when Gate K is red (enforce the
+   "no fan-out before a green gate" principle mechanically).
+2. **`gates.mjs` exit codes** — return non-zero on a failing gate so it can chain in CI
+   (`npm run gate && npm run fanout`): a gate that stops, not just reports.
+3. **`config/gate_thresholds.json`** — externalize the 99%/80% numbers so locking thresholds
+   after Gold Standard is one reviewed config edit, and per-library thresholds become possible
+   (TDS vs Formula).
+*Rationale: validate the knowledge first, then harden the enforcement.*
