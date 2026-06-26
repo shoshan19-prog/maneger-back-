@@ -1,0 +1,26 @@
+{
+  "registry": "LEARNING_HISTORY",
+  "version": "v1",
+  "note": "Time series of learning snapshots. Knowledge Delta = current vs the last snapshot. Append with: npm run learning -- --snapshot --date YYYY-MM-DD. Empty = no baseline yet (first snapshot becomes the baseline; real Knowledge Delta needs >=2).",
+  "snapshots": [
+    {
+      "date": "2026-06-26",
+      "rule_status": {
+        "ENG-001": "asserted",
+        "ENG-002": "asserted",
+        "ENG-003": "asserted",
+        "ENG-004": "asserted",
+        "ENG-005": "asserted",
+        "ENG-006": "asserted",
+        "ENG-007": "asserted",
+        "ENG-008": "asserted",
+        "ENG-009": "asserted",
+        "ENG-010": "asserted"
+      },
+      "questions_answered": 0,
+      "predictions_confirmed": 0,
+      "predictions_refuted": 0,
+      "mechanisms_confirmed": 0
+    }
+  ]
+}

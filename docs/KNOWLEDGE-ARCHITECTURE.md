@@ -4,9 +4,14 @@
 > extending the architecture but from feeding real evidence and running the loop until
 > mechanisms and rules strengthen or are refuted.
 >
-> **v1 in one sentence:** MATRIYA v1 is not another knowledge-management system; it is a
-> *formal framework for managing the lifecycle of engineering knowledge — from a question to a
-> falsifiable prediction.*
+> **v1 in one sentence (Fresco):** MATRIYA v1 is an **operating system for R&D** in which every
+> change in knowledge must be traceable, justifiable, falsifiable, and predictable. (Not merely
+> a lifecycle framework — a Scientific Operating System: it manages the *evolution* of knowledge,
+> not just its storage.)
+>
+> **Representation ≠ Generation.** v1 proves MATRIYA can *represent* knowledge consistently. It
+> has NOT yet proven it *generates* new knowledge — that is tested only by **Knowledge Δ**
+> (`npm run learning`): does graph(t+1) ≠ graph(t)? Today: NO CHANGE (baseline) — by design.
 >
 > **v1 is a language.** Every project, experiment, decision, and formulation can now be
 > described in one syntax: Question · Observation · Evidence · Decision · Mechanism · Rule ·
