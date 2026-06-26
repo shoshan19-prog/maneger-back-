@@ -169,6 +169,102 @@
       "source_file": "B-4 פריימר אקרילי.txt"
     },
     {
+      "product": "הרבצה צמנטית BST3",
+      "family": "cementitious",
+      "document_type": "Formula Sheet",
+      "document_capability": {
+        "can_contain": [
+          "ingredients",
+          "ph",
+          "density",
+          "wet_viscosity",
+          "uniformity",
+          "consistency",
+          "whiteness",
+          "applicability",
+          "packing_weight"
+        ],
+        "should_not_contain": [
+          "compressive_strength",
+          "flexural_strength",
+          "pull_off_adhesion",
+          "water_absorption_pct",
+          "fire_classification"
+        ]
+      },
+      "specification": {},
+      "present_non_standard": [
+        {
+          "axis": "density",
+          "reason": "QC row present but no range filled"
+        }
+      ],
+      "missing": [],
+      "not_expected": [
+        {
+          "axis": "compressive_strength",
+          "classification": {
+            "domain": "Mechanical",
+            "lifecycle": "Laboratory",
+            "phase": "Hardened",
+            "standard": "EN 1015-11",
+            "measurement_type": "destructive",
+            "age": "7/14/28 days"
+          },
+          "route_to": [
+            "Product Specification",
+            "QC Sheet",
+            "Test Report"
+          ]
+        },
+        {
+          "axis": "flexural_strength",
+          "classification": {
+            "domain": "Mechanical",
+            "lifecycle": "Laboratory",
+            "phase": "Hardened",
+            "standard": "EN 1015-11",
+            "measurement_type": "destructive"
+          },
+          "route_to": [
+            "Product Specification",
+            "Test Report"
+          ]
+        },
+        {
+          "axis": "water_absorption_pct",
+          "classification": {
+            "domain": "Durability",
+            "lifecycle": "Laboratory",
+            "phase": "Hardened",
+            "standard": "EN 1015-18",
+            "measurement_type": "non-destructive"
+          },
+          "route_to": [
+            "Product Specification",
+            "Test Report"
+          ]
+        },
+        {
+          "axis": "pull_off_adhesion",
+          "classification": {
+            "domain": "Mechanical",
+            "lifecycle": "Laboratory",
+            "phase": "Hardened",
+            "standard": "EN 1542",
+            "measurement_type": "semi-destructive"
+          },
+          "route_to": [
+            "Product Specification",
+            "QC Sheet",
+            "Test Report"
+          ]
+        }
+      ],
+      "needs_external_document": [],
+      "source_file": "הרבצה צמנטית BST3.txt"
+    },
+    {
       "product": "כיחול עדין",
       "family": "liquid",
       "document_type": "Formula Sheet",
@@ -433,102 +529,6 @@
       "not_expected": [],
       "needs_external_document": [],
       "source_file": "שכבה מיישרת.txt"
-    },
-    {
-      "product": "הרבצה צמנטית BST3",
-      "family": "cementitious",
-      "document_type": "Formula Sheet",
-      "document_capability": {
-        "can_contain": [
-          "ingredients",
-          "ph",
-          "density",
-          "wet_viscosity",
-          "uniformity",
-          "consistency",
-          "whiteness",
-          "applicability",
-          "packing_weight"
-        ],
-        "should_not_contain": [
-          "compressive_strength",
-          "flexural_strength",
-          "pull_off_adhesion",
-          "water_absorption_pct",
-          "fire_classification"
-        ]
-      },
-      "specification": {},
-      "present_non_standard": [
-        {
-          "axis": "density",
-          "reason": "QC row present but no range filled"
-        }
-      ],
-      "missing": [],
-      "not_expected": [
-        {
-          "axis": "compressive_strength",
-          "classification": {
-            "domain": "Mechanical",
-            "lifecycle": "Laboratory",
-            "phase": "Hardened",
-            "standard": "EN 1015-11",
-            "measurement_type": "destructive",
-            "age": "7/14/28 days"
-          },
-          "route_to": [
-            "Product Specification",
-            "QC Sheet",
-            "Test Report"
-          ]
-        },
-        {
-          "axis": "flexural_strength",
-          "classification": {
-            "domain": "Mechanical",
-            "lifecycle": "Laboratory",
-            "phase": "Hardened",
-            "standard": "EN 1015-11",
-            "measurement_type": "destructive"
-          },
-          "route_to": [
-            "Product Specification",
-            "Test Report"
-          ]
-        },
-        {
-          "axis": "water_absorption_pct",
-          "classification": {
-            "domain": "Durability",
-            "lifecycle": "Laboratory",
-            "phase": "Hardened",
-            "standard": "EN 1015-18",
-            "measurement_type": "non-destructive"
-          },
-          "route_to": [
-            "Product Specification",
-            "Test Report"
-          ]
-        },
-        {
-          "axis": "pull_off_adhesion",
-          "classification": {
-            "domain": "Mechanical",
-            "lifecycle": "Laboratory",
-            "phase": "Hardened",
-            "standard": "EN 1542",
-            "measurement_type": "semi-destructive"
-          },
-          "route_to": [
-            "Product Specification",
-            "QC Sheet",
-            "Test Report"
-          ]
-        }
-      ],
-      "needs_external_document": [],
-      "source_file": "הרבצה צמנטית BST3.txt"
     }
   ],
   "gap_list": {
@@ -542,8 +542,8 @@
       "whiteness: qualitative — no numeric scale yet",
       "applicability: qualitative — no numeric scale yet",
       "packing_weight: qualitative — no numeric scale yet",
-      "ph: QC row present but no range filled",
-      "density: QC row present but no range filled"
+      "density: QC row present but no range filled",
+      "ph: QC row present but no range filled"
     ],
     "C_missing_real_gap": [
       "wet_viscosity"
