@@ -1,0 +1,32 @@
+{
+  "registry": "EVIDENCE_STREAMS",
+  "version": "v1",
+  "note": "MATRIYA has TWO first-class evidence streams with DIFFERENT authority domains. They run in PARALLEL — neither blocks the other. Documents are validated by Rachel; the operational engineering model (which is NOT in the documents) comes from expert interviews with David.",
+  "streams": [
+    {
+      "id": "document_stream",
+      "source": "Reference Corpus (Drive: laboratory/)",
+      "authority_domain": "document interpretation",
+      "validator": "Rachel",
+      "validation_artifact": "Gold Standard Dataset (.corpus/gold_standard_v1.json)",
+      "knowledge_types": ["declarative", "procedural"],
+      "feeds": ["Materials Library", "SOP Library", "Requirement Library"],
+      "gates": "blocks DOCUMENT fan-out (Gate E / extraction quality) until Gold Standard clears",
+      "status": "pending Rachel"
+    },
+    {
+      "id": "expert_stream",
+      "source": "Expert interviews (Fresco R&D)",
+      "authority_domain": "operational engineering model — knowledge that does NOT exist in documents",
+      "validator": "David",
+      "validation_artifact": "verified engineering_rules + knowledge_model entities (source_type=expert_operational_knowledge)",
+      "knowledge_types": ["engineering"],
+      "feeds": ["Engineering Playbook", "Knowledge Model", "Authority Layers"],
+      "gates": "does NOT depend on Rachel; validated directly by David; proceeds in parallel",
+      "status": "active — capture ongoing (see expert_interview_queue_v1.json)"
+    }
+  ],
+  "principle": "Both are first-class. Do not pause the expert stream waiting for document validation. Rachel validates how documents are read; David provides the engineering model behind them.",
+  "scope_verified": ["B-4 Primer", "Dry Powder Products"],
+  "scope_not_verified": ["Finish Coatings", "other liquid systems"]
+}

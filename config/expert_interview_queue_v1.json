@@ -1,0 +1,28 @@
+{
+  "registry": "EXPERT_INTERVIEW_QUEUE",
+  "version": "v1",
+  "expert": "David",
+  "note": "Open questions for the expert stream — the parallel evidence source. Each answer becomes a verified engineering_rule / knowledge_model entity (source_type=expert_operational_knowledge). Grounded in gaps from the 2026-06-26 interview; not generalized beyond what David states.",
+  "questions": [
+    { "id": "Q-001", "area": "scope", "question": "Do the Identity/Process rules and the Identity Gate apply to finish coatings and other liquid systems, or are those genuinely different?",
+      "why": "Current verified scope is only B-4 + Dry Powder; everything else is explicitly NOT verified.", "unblocks": "scope expansion of the whole knowledge model", "touches": "Material Authority" },
+    { "id": "Q-002", "area": "identity_gate", "question": "For each identity variable (PSD, cement type, aggregate type), what deviation triggers REJECT? Is there a measurable tolerance, or is it pass/fail vs the supplier standard?",
+      "why": "The Identity Gate's reject decision needs a boundary to be operational.", "unblocks": "quantitative Identity Gate; identity-variable specs", "touches": "Material Authority · decision_level=Incoming Material" },
+    { "id": "Q-003", "area": "premix", "question": "What QUANTITATIVELY defines a fit Premix? Cellulose is checked as no-agglomeration/dry/free-flowing — is any of that measurable, or fully visual?",
+      "why": "Premix is a fixed component with no Batch ID; its fitness gate is currently qualitative only.", "unblocks": "Premix QC axis", "touches": "Incoming QC" },
+    { "id": "Q-004", "area": "manufacturing_response", "question": "For pH/viscosity/SG failures: how many Adjust→Retest cycles before a batch is rejected, and what is the adjustment mechanism (which additive moves which variable)?",
+      "why": "Manufacturing Response currently records the action but not its limit or lever.", "unblocks": "process-variable adjustment model", "touches": "Decision Authority · decision_level=Production" },
+    { "id": "Q-005", "area": "couplings", "question": "Which process variables (pH, viscosity, SG) actually predict product performance (adhesion, fire, durability), and which are independent QC only?",
+      "why": "Separates QC-only variables from performance-predictive ones — drives the coupling registry.", "unblocks": "process→performance couplings (like C16)", "touches": "Knowledge Graph" },
+    { "id": "Q-006", "area": "dry_mortar_qc", "question": "What is the quantitative workability spec for dry mortars, and why ~every 15 batches for the full check (what risk does that cadence cover)?",
+      "why": "Dry-mortar QC has no pH/viscosity; workability is the gate but is currently unquantified.", "unblocks": "workability axis + sampling rationale", "touches": "Acceptance Authority" },
+    { "id": "Q-007", "area": "supplier", "question": "What qualifies a supplier/CoA as trusted in the first place, and is there any re-qualification trigger besides an observed failure?",
+      "why": "CoA is event-driven authority today; the entry criterion isn't captured.", "unblocks": "supplier qualification model", "touches": "Material Authority" },
+    { "id": "Q-008", "area": "playbook_generalization", "question": "Which Engineering Playbook rules (ENG-001..009) do you expect to hold beyond dry powder, and which are dry-powder-specific?",
+      "why": "Lets us widen scope per-rule with your authority instead of guessing.", "unblocks": "per-rule scope widening", "touches": "Engineering Playbook" },
+    { "id": "Q-009", "area": "formula_versioning", "question": "When a Premix or PSD Design changes, how is that versioned relative to the formula — same formula id, or a new one?",
+      "why": "Formula ≠ Recipe (4 layers); we need to know which layer change creates a new formula identity.", "unblocks": "formula identity/versioning", "touches": "Materials Library" }
+  ],
+  "intake": "Each answer → add/extend an engineering_rule (config/engineering_playbook_v1.json) or a knowledge_model entity, tagged source=David, source_type=expert_operational_knowledge, validation_status=verified, scope=<as David states>.",
+  "status": "open — ask David directly; do not wait for Rachel"
+}

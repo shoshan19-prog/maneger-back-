@@ -49,6 +49,11 @@ the possibility space has been reliably ruled out.
 
 ## What exists (branch: claude/authority-before-intelligence-m4t1zz)
 
+- **Two parallel evidence streams** (`config/evidence_streams_v1.json`, docs/EXPERT-INTERVIEW.md):
+  Document stream (validated by **Rachel** → Gold Standard; gates document fan-out) and Expert
+  stream (validated by **David** → engineering model NOT in the docs; does NOT wait for Rachel).
+  Both first-class, different authority domains. Open questions for David:
+  `config/expert_interview_queue_v1.json` — ask him directly, don't pause.
 - **7 knowledge libraries** (docs/KNOWLEDGE-LIBRARIES.md): Materials · SOP · Requirement ·
   Experiment · Decision · Knowledge Graph · **Engineering Playbook** (`config/engineering_playbook_v1.json`
   — rules of engineering practice / how Fresco thinks; David, verified, scope B-4+Dry Powder).

@@ -4,6 +4,17 @@ The project crossed from *building a parser* to *governing a knowledge system* (
 freezes the governance frame so every future knowledge library (SOP, Experiments, Formula,
 TDS) enters the SAME rules from day one. Run: `npm run gate`.
 
+## Two parallel evidence streams (do not serialize them)
+MATRIYA has two first-class evidence streams with different authority domains
+(`config/evidence_streams_v1.json`, docs/EXPERT-INTERVIEW.md):
+- **Document stream** — validated by **Rachel** (Gold Standard); gates *document* fan-out.
+- **Expert stream** — validated by **David** (engineering model not in the documents); **does
+  not wait for Rachel** — it proceeds in parallel and feeds the Engineering Playbook / Knowledge
+  Model directly.
+
+So the gates below apply to the **document** stream; the expert stream advances independently
+via direct interview (`config/expert_interview_queue_v1.json`).
+
 ## Three gates, not one
 | Gate | Question | Blocks if FAIL |
 |---|---|---|
