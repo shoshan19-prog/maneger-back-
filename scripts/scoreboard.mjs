@@ -35,30 +35,37 @@ const kpi = {
   'Active Experiments': '1 (E-012)',
 };
 
-// --- System Readiness: engineering judgment (explicit, defensible) ---
-const system = [
-  ['Infrastructure (contract, endpoints, harness)', 100],
-  ['Identity / Axis Authority (axes, materials, equipment)', 88],
-  ['Evidence pipeline (ingest, preview, parser, converter)', 85],
-  ['Boundary engine (derive, contradiction, couplings, next)', 75],
-  ['Tooling & tests (64 assertions / 10 files)', 90],
+// THREE dimensions (Fresco): Infrastructure (built) · Knowledge (captured & structured) ·
+// Validation (proven). Engineering judgment, explicit and defensible.
+const DIMENSIONS = [
+  ['INFRASTRUCTURE READINESS  (how much is built)', [
+    ['Repository & harness', 100],
+    ['Governance (Gates K/E/A, authority layers)', 90],
+    ['Libraries (7 knowledge libraries scaffolded)', 85],
+    ['Ontology (axes, measurement, capability, variable-class)', 95],
+    ['Tooling & tests (83 assertions / 13 files)', 90],
+  ]],
+  ['KNOWLEDGE READINESS  (how much is captured & structured)', [
+    ['Operational Knowledge (David — playbook, 10 rules, verified)', 60],
+    ['Document Knowledge (spec library v3, parser ready; few products)', 40],
+    ['Experimental Knowledge (E-012 designed; 0 real data)', 15],
+  ]],
+  ['SCIENTIFIC VALIDATION  (how much is proven)', [
+    ['Verified couplings', 0],
+    ['Derived boundaries (real data)', 0],
+    ['Reproductions', 0],
+    ['Prediction / external validation', 0],
+    ['Calibration dry-run (E-011, synthetic)', 25],
+  ]],
 ];
-const systemReadiness = Math.round(system.reduce((s, [, v]) => s + v, 0) / system.length);
-
-// --- Scientific Readiness: scaffolding vs validated knowledge ---
-const scientific = [
-  ['Scientific scaffolding (axes defined, hypotheses, protocols, pre-registration)', 45],
-  ['Validated knowledge (boundaries from real data, verified couplings, reproductions)', 5],
-];
-const scientificReadiness = Math.round(scientific.reduce((s, [, v]) => s + v, 0) / scientific.length);
-
 const bar = (p) => '█'.repeat(Math.round(p / 10)) + '░'.repeat(10 - Math.round(p / 10));
-console.log('\nMATRIYA — Project Scoreboard (two measures)\n');
-console.log(`${bar(systemReadiness)}  ${systemReadiness}%  SYSTEM READINESS  (how much is built)`);
-system.forEach(([k, v]) => console.log(`            ${String(v).padStart(3)}%  ${k}`));
-console.log('');
-console.log(`${bar(scientificReadiness)}  ${scientificReadiness}%  SCIENTIFIC READINESS  (how much is proven)`);
-scientific.forEach(([k, v]) => console.log(`            ${String(v).padStart(3)}%  ${k}`));
+console.log('\nMATRIYA — Project Scoreboard (three dimensions)\n');
+for (const [title, subs] of DIMENSIONS) {
+  const score = Math.round(subs.reduce((s, [, v]) => s + v, 0) / subs.length);
+  console.log(`${bar(score)}  ${score}%  ${title}`);
+  subs.forEach(([k, v]) => console.log(`            ${String(v).padStart(3)}%  ${k}`));
+  console.log('');
+}
 console.log('\nKnowledge KPIs (counted from configs):');
 for (const [k, v] of Object.entries(kpi)) console.log(`   ${String(v).toString().padStart(9)}  ${k}`);
 console.log('\nThe number that matters most: Verified Couplings = ' + verifiedCouplings +

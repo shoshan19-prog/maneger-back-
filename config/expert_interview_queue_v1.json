@@ -7,8 +7,17 @@
   "workflow": ["Question", "Discussion", "Model Update", "Next Question"],
   "active_question": "Q-001",
   "questions": [
-    { "id": "Q-001", "area": "scope", "question": "Do the Identity/Process rules and the Identity Gate apply to finish coatings and other liquid systems, or are those genuinely different?",
-      "why": "Current verified scope is only B-4 + Dry Powder; everything else is explicitly NOT verified.", "unblocks": "scope expansion of the whole knowledge model", "touches": "Material Authority" },
+    { "id": "Q-001", "area": "identity_unit", "question": "What are the Identity Components of EACH product family, and which of them are NOT compensable by process/formulation adjustment?",
+      "why": "Reframed (Fresco): not yes/no 'does Identity Gate apply to liquids' but the general principle — every family has identity components that cannot be compensated. Keeps the model general while letting each family define its own identity unit.",
+      "candidate_principle": "HYPOTHESIS (David to confirm): every product family has identity components non-compensable by process; the Identity Gate is the general rule, the identity unit is family-specific.",
+      "candidate_identity_units_hypothesis": {
+        "_status": "claude_reasoning · provisional · David to confirm/correct",
+        "dry_powder": "PSD + mineral raw materials",
+        "primers": "latex + dispersion + initial pH",
+        "paints": "pigment + latex + dispersion system",
+        "intumescent": "blowing system + resin + filler"
+      },
+      "unblocks": "a GENERAL identity model across families (powders + liquids + future)", "touches": "Material Authority" },
     { "id": "Q-002", "area": "identity_gate", "question": "For each identity variable (PSD, cement type, aggregate type), what deviation triggers REJECT? Is there a measurable tolerance, or is it pass/fail vs the supplier standard?",
       "why": "The Identity Gate's reject decision needs a boundary to be operational.", "unblocks": "quantitative Identity Gate; identity-variable specs", "touches": "Material Authority · decision_level=Incoming Material" },
     { "id": "Q-003", "area": "premix", "question": "What QUANTITATIVELY defines a fit Premix? Cellulose is checked as no-agglomeration/dry/free-flowing — is any of that measurable, or fully visual?",

@@ -1,22 +1,23 @@
 # MATRIYA — Project Scoreboard
 
-> **Two measures, on purpose.** A single "% complete" conflates two different questions and
-> misleads (internally and to investors): "the system is 90%" is heard as "90% of the science
-> is done." It is not. We track engineering progress and scientific progress separately.
+> **Three dimensions, on purpose** (Fresco, 2026-06-26). A single "% complete" misleads. We
+> track three separate questions: is it *built*, is the knowledge *captured*, is it *proven*.
 >
 > Regenerate the live numbers: `npm run scoreboard` (knowledge KPIs are counted from the
-> canonical configs, so this board cannot drift from reality).
+> canonical configs, so the board cannot drift from reality).
 >
-> *Snapshot: 2026-06-25.*
+> *Snapshot: 2026-06-26.*
 
 | Dimension | Progress | Answers |
 |---|---:|---|
-| **System Readiness** | **88%** | How much of the system is *built*? |
-| **Scientific Readiness** | **25%** | How much knowledge is *proven*? |
+| **Infrastructure Readiness** | **92%** | How much of the system is *built*? (repo, governance, gates, ontology, libraries) |
+| **Knowledge Readiness** | **38%** | How much knowledge is *captured & structured*? (document, experimental, operational) |
+| **Scientific Validation** | **5%** | How much is *proven*? (verified couplings, derived/reproduced boundaries, prediction) |
 
-The gap between these two **is** the project status: the instrument is nearly built; almost
-nothing has been measured with it yet. That is expected and healthy at this stage — but it
-must not be hidden behind an averaged "53%".
+The shape **is** the project status: the instrument is built (92%), knowledge is starting to
+flow in (38%), almost nothing is proven yet (5%). Today's work (2026-06-26) moved Infrastructure
+and Knowledge; Validation is unchanged and only real data (Gold Standard, David's answers,
+E-012) will move it. See docs/KNOWLEDGE-ARCHITECTURE.md for the Question→…→Knowledge chain.
 
 ---
 
