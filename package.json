@@ -26,7 +26,8 @@
     "rules:evolution": "node scripts/rule_support.mjs",
     "decisions": "node scripts/decisions.mjs",
     "predictions": "node scripts/predictions.mjs",
-    "learning": "node scripts/learning.mjs"
+    "learning": "node scripts/learning.mjs",
+    "gap": "node scripts/gap.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",

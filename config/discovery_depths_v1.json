@@ -1,0 +1,25 @@
+{
+  "registry": "DISCOVERY_DEPTHS",
+  "version": "v1",
+  "note": "Three gap types (Fresco). A Discovery Gap is NOT 'run another experiment' — the data exists but cannot distinguish the competing hypotheses; what is missing is observation DEPTH. The ladder is ordered shallow→deep (low→high cost): the system asks for the SHALLOWEST depth that would discriminate, not a full battery.",
+  "gap_types": {
+    "knowledge_gap": { "action": "ask one short question", "to": "expert (from experience)" },
+    "evidence_gap": { "action": "Requires Experimental Evidence", "when": "no data exists at all" },
+    "discovery_gap": { "action": "Requires Deeper Observation", "when": "data exists but does not distinguish competing hypotheses" }
+  },
+  "depth_ladder": [
+    { "id": "macro_photograph", "rank": 1, "cost": "low", "reveals": "gross morphology / visible change" },
+    { "id": "failure_mode", "rank": 2, "cost": "low", "reveals": "how it failed (crack / blister / delamination / gelation)" },
+    { "id": "recoverability_after_remix", "rank": 3, "cost": "low-medium", "reveals": "reversible separation vs irreversible failure (WP-001)" },
+    { "id": "SEM", "rank": 4, "cost": "high", "reveals": "micro-structure" },
+    { "id": "FTIR", "rank": 5, "cost": "high", "reveals": "chemical change / bonding" }
+  ],
+  "worked_example": {
+    "observation": "viscosity dropped",
+    "competing_hypotheses": ["H1: reversible separation", "H2: irreversible failure"],
+    "classification": "discovery_gap",
+    "reason": "current observations cannot distinguish H1 from H2",
+    "suggested_depth": "recoverability_after_remix",
+    "note": "shallowest depth that discriminates — no SEM/FTIR needed yet"
+  }
+}

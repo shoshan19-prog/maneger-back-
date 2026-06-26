@@ -28,11 +28,18 @@ Always end with the "Improvements & threads" note (below).
 
 ## Information-gap protocol (how to ask — standing rule)
 
-When information is missing, do NOT assume the user can or should run a lab test. Distinguish:
+When information is missing, do NOT assume the user can or should run a lab test, and do NOT
+reflexively order a new experiment. First classify the gap into one of **three types** (executable
+via `lib/gapClassifier.js` + `npm run gap`; ladder in `config/discovery_depths_v1.json`):
 - **Knowledge gap** — answerable from the user's experience → ask ONE short question (e.g. "when
   you decide on adhesion, do you look at a single number or a body of evidence?").
-- **Evidence gap** — needs an experiment/measurement/lab access → do NOT ask the user to answer
-  it; mark it explicitly **Requires Experimental Evidence** and stop.
+- **Evidence gap** — no data exists at all; needs an experiment/measurement/lab access → do NOT
+  ask the user to answer it; mark it explicitly **Requires Experimental Evidence** and stop.
+- **Discovery gap** — data EXISTS but does not distinguish the competing hypotheses → mark it
+  **Requires Deeper Observation**. The fix is NOT a re-run: ask for the **shallowest observation
+  depth that would discriminate** H1 from H2 (macro photograph → failure mode → recoverability
+  after remix → SEM → FTIR), not a full battery. (Worked case: "viscosity dropped" → reversible
+  separation vs irreversible failure → recoverability-after-remix, no SEM/FTIR needed yet.)
 
 A question's purpose is to reduce uncertainty maximally at minimum cost. Before asking, check:
 (1) can the user answer from their own knowledge? (2) will the answer change the model? (3) is it
