@@ -3,6 +3,23 @@
 > **Status: v1 complete (the loop closes).** From here, significant progress comes NOT from
 > extending the architecture but from feeding real evidence and running the loop until
 > mechanisms and rules strengthen or are refuted.
+>
+> **v1 in one sentence:** MATRIYA v1 is not another knowledge-management system; it is a
+> *formal framework for managing the lifecycle of engineering knowledge — from a question to a
+> falsifiable prediction.*
+>
+> **v1 is a language.** Every project, experiment, decision, and formulation can now be
+> described in one syntax: Question · Observation · Evidence · Decision · Mechanism · Rule ·
+> Prediction. That uniformity — not any single JSON file — is what lets the system grow without
+> restructuring.
+
+## Architectural completeness ≠ scientific completeness
+v1 closes the **architecture**. The **science** now runs as four streams feeding the same loop
+(no new layers): Document (Gold Standard / Rachel) · Operational (interview / David) ·
+Experimental (E-012…) · Prediction (testing rule-derived predictions). Progress is measured by
+the **Learning KPI** (`npm run learning`) — knowledge creation, not software: open/resolved
+questions, active/resolved predictions, candidate/confirmed mechanisms, refuted rules, rule
+confidence. Today ≈ 0 by design; it moves only when the loop runs on real data.
 
 ## The complete learning loop
 ```
