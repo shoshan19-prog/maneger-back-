@@ -1,0 +1,31 @@
+{
+  "registry": "VARIABLE_CLASSIFICATION",
+  "version": "v1",
+  "source": "David (Fresco R&D lead) — verified production knowledge, 2026-06-26",
+  "validated_by": "David",
+  "confidence": "verified",
+  "note": "Two FUNDAMENTALLY different kinds of variable. The deviation policy is the distinction: identity deviations reject the material (never compensated by changing the formula); process deviations are adjusted and re-tested. Do NOT generalize beyond scope_verified.",
+  "classes": {
+    "identity": {
+      "definition": "Defines the identity of the raw material. Set before production; not produced by it.",
+      "on_deviation": "reject_material",
+      "policy": "Out-of-spec identity → Reject Material. NO formula compensation.",
+      "examples": ["PSD / granulometry", "aggregate type", "cement type", "raw material identity"]
+    },
+    "process": {
+      "definition": "Arises during production.",
+      "on_deviation": "adjust_retest_release",
+      "policy": "Out-of-spec → Adjust → Re-test → Release.",
+      "examples": ["pH", "viscosity", "specific_gravity"]
+    }
+  },
+  "manufacturing_response": {
+    "_scope": "B-4 Primer (verified)",
+    "appearance_uniformity": { "action": "Hold Batch", "meaning": "no lumps / no phase separation (NOT color)" },
+    "ph": { "action": "Adjust → Retest" },
+    "viscosity": { "action": "Adjust → Retest" },
+    "specific_gravity": { "action": "Adjust → Retest" }
+  },
+  "scope_verified": ["B-4 Primer", "Dry Powder products"],
+  "scope_not_verified": ["Finish Coatings", "other liquid systems"]
+}

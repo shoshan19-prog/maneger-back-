@@ -65,6 +65,13 @@ the possibility space has been reliably ruled out.
   controlling axis for fire protection is **CHAR_DENSITY**, not height/expansion.
 - Existing experiment data has **no APP scan** (APP held ~24–27.5%); measurements live as
   free-text `results`. ~0% is boundary-grade until the contract is live.
+- **Identity vs Process variables** (David, verified — docs/PRODUCTION-KNOWLEDGE-DAVID.md):
+  identity vars (PSD/granulometry, cement/aggregate type, raw-material identity) → on deviation
+  **Reject Material, never compensate via formula**; process vars (pH/viscosity/SG) → Adjust→
+  Re-test→Release. Production starts at the **Identity Gate** (incoming material), not the formula.
+  New objects: Premix, Identity Gate, Manufacturing Response, PSD Design. Formula = Binder +
+  PSD Design + Functional Additives + Processing Strategy. **Verified scope: B-4 Primer + Dry
+  Powder only** — do NOT generalize to finish coatings / other liquids.
 
 ## Drive seeds + live-schema convergence (read docs/SCHEMA-RECONCILIATION.md)
 
