@@ -1,0 +1,94 @@
+{
+  "registry": "PRODUCT_SPECIFICATION_LIBRARY",
+  "version": "v1",
+  "source": "Fresco formulation sheets QC blocks (Drive: laboratory/), extracted 2026-06-26",
+  "note": "T_relevance per product: when is a result \"good\". The other half of the decision boundary (max(T_noise, T_relevance)); T_noise still comes only from measurement. Numeric ranges where the sheet filled them; qualitative checks listed as gaps.",
+  "products": [
+    {
+      "product": "B-4 אקרילי",
+      "source_file": "B-4 פריימר אקרילי.txt",
+      "specs": [
+        {
+          "axis": "ph",
+          "min": 7.6,
+          "max": 10,
+          "unit": "pH",
+          "method": "pH_meter_direct"
+        },
+        {
+          "axis": "density",
+          "min": 1.3,
+          "max": 1.5,
+          "unit": "g/cm3",
+          "method": "specific_gravity",
+          "note": "captured in g/cm3; canonical axis \"density\" is kg/m3 — multiply by 1000 before aggregating"
+        }
+      ],
+      "declared_empty": [],
+      "qualitative_gaps": [
+        "uniformity",
+        "consistency",
+        "whiteness",
+        "applicability",
+        "packing_weight"
+      ]
+    },
+    {
+      "product": "כיחול עדין",
+      "source_file": "כיחול עדין.txt",
+      "specs": [
+        {
+          "axis": "density",
+          "min": 1.7,
+          "max": 1.9,
+          "unit": "g/cm3",
+          "method": "specific_gravity",
+          "note": "captured in g/cm3; canonical axis \"density\" is kg/m3 — multiply by 1000 before aggregating"
+        }
+      ],
+      "declared_empty": [
+        "ph"
+      ],
+      "qualitative_gaps": [
+        "uniformity",
+        "consistency",
+        "whiteness",
+        "applicability",
+        "packing_weight"
+      ]
+    },
+    {
+      "product": "שכבה מיישרת",
+      "source_file": "שכבה מיישרת.txt",
+      "specs": [
+        {
+          "axis": "density",
+          "min": 1.7,
+          "max": 1.9,
+          "unit": "g/cm3",
+          "method": "specific_gravity",
+          "note": "captured in g/cm3; canonical axis \"density\" is kg/m3 — multiply by 1000 before aggregating"
+        }
+      ],
+      "declared_empty": [
+        "ph"
+      ],
+      "qualitative_gaps": [
+        "uniformity",
+        "consistency",
+        "whiteness",
+        "applicability",
+        "packing_weight"
+      ]
+    }
+  ],
+  "gap_list": [
+    "qualitative axis with no numeric scale: uniformity",
+    "qualitative axis with no numeric scale: consistency",
+    "qualitative axis with no numeric scale: whiteness",
+    "qualitative axis with no numeric scale: applicability",
+    "qualitative axis with no numeric scale: packing_weight",
+    "density spec in g/cm3 vs canonical kg/m3 — convert x1000 (commensurability)",
+    "QC row present but no range filled: ph"
+  ]
+}
