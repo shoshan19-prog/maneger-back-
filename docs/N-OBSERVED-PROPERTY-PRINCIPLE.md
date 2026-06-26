@@ -12,13 +12,16 @@ Because a value is **multi-valued** — it varies across conditions, method, tim
 This is a *structural* impossibility, not a missing feature.
 
 ## 2. The new principle
-> **An Observed Property is not a value-bearing entity. It is a function derived from a set of
-> measurement events. The event is the bearer of authority; the property is a derived result.**
+> **Within the problem space investigated, the *authority* of an Observed Property cannot be
+> assigned to a stored value; it must be *derived* from the observation events that support it.**
 
-- The **measurement event** is the atom of identity. It — and only it — owns Value + Conditions
-  + Uncertainty + Provenance + Authority, all together, immutably, for that one event.
-- The **property value** is never stored. It is *derived on demand* from the relevant set of
-  events (a distribution, a boundary, a best estimate within a stated context).
+(Phrased as a claim about **authority within the studied domain** — not a universal claim about
+the essence of every property. It remains open to refutation; see §6.)
+
+- The **measurement event** is the bearer of authority. It — and only it — owns Value +
+  Conditions + Uncertainty + Provenance + Authority, all together, immutably, for that one event.
+- The **property value** is not authoritative as a stored field. It is *derived on demand* from
+  the relevant set of events (a distribution, a boundary, a best estimate within a stated context).
 
 ## 3. Why A and B failed
 - **A (promote an existing entity to the binding identity):** the promoted entity coexists with
@@ -37,7 +40,8 @@ C makes the **event** the identity and the **property** a derivation:
 - All five attributes live, mandatory and together, on the immutable event.
 The contradiction dissolves because nothing is asked to be both "one identity" and "many
 values" at once. (This is the same shape as the existing **LAW-BOUNDARY-001** — *store
-observations, derive boundaries* — generalized from boundaries to *every* observed property.)
+observations, derive boundaries* — extended from boundaries to the **class of observed
+properties studied here**; not claimed beyond that class.)
 
 ## 5. What new capabilities this enables
 - **Honest multiplicity:** disagreeing measurements coexist as facts (contradiction detection),
@@ -49,6 +53,15 @@ observations, derive boundaries* — generalized from boundaries to *every* obse
 - **Time-travel & re-derivation:** change the derivation method → re-derive history; the events
   never change.
 - **Authority where it belongs:** on the event (who/how measured), not on a mutable "current value".
+
+## 6. Boundary of validity
+> This principle is derived from the analysis of the current MATRIYA observation model.
+> It is valid only for the class of observed properties investigated in this analysis.
+> Its applicability beyond this domain has not yet been established.
+
+This keeps N a principle *inferred from the collected evidence* — with a stated scope and open
+to refutation — rather than a prematurely universal law. If future evidence shows a class of
+properties that does not require derivation, this boundary is where the principle is revised.
 
 ---
 ### Not yet (the next gates)
