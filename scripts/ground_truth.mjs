@@ -71,8 +71,11 @@ const L2_COLS = ['official_source', 'superseded_by', 'missing_real_spec', 'exter
 //   Document Authority = official_source + superseded_by (which version is canonical).
 //   Domain Authority    = owner / created_by / validated_by (who knows/decides about it).
 // Preserved per-document so future knowledge from other people keeps its organizational context.
-const OWN_COLS = ['owner', 'created_by', 'validated_by'];
-const defaultOwner = arg('--owner', 'Rachel');
+// owner can change; created_by is historical; validated_by is who approved; knowledge_steward
+// is the standing person responsible for KEEPING the knowledge object maintained (Fresco).
+const OWN_COLS = ['owner', 'created_by', 'validated_by', 'knowledge_steward'];
+const defaultOwner = arg('--owner', 'Fresco');
+const defaultSteward = arg('--steward', 'Rachel');
 const csvCell = (v) => { const s = v == null ? '' : Array.isArray(v) ? v.join('|') : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
 
 const predictOf = (text, file) => {
@@ -92,7 +95,7 @@ if (mode === 'skeleton') {
       source_file: path.basename(f),
       layer1_objective: layer1(text),                 // auto-filled (verifiable from the doc)
       layer2_professional: layer2Blank(),             // Rachel (professional judgment)
-      ownership: { owner: defaultOwner, created_by: null, validated_by: null }, // Domain Authority
+      ownership: { owner: defaultOwner, created_by: null, validated_by: null, knowledge_steward: defaultSteward }, // Domain Authority
       predicted: predictOf(text, f),                  // frozen parser reference
       validation: { validated_by: null, validation_date: null, confidence: 'provisional' },
     };
@@ -147,7 +150,7 @@ if (mode === 'merge') {
     const d = byFile[sf]; if (!d) continue;
     d.layer2_professional = d.layer2_professional || layer2Blank();
     for (const c of L2_COLS) if (idx[c] != null) { const v = (cells[idx[c]] || '').trim(); d.layer2_professional[c] = v === '' ? null : v; }
-    d.ownership = d.ownership || { owner: defaultOwner, created_by: null, validated_by: null };
+    d.ownership = d.ownership || { owner: defaultOwner, created_by: null, validated_by: null, knowledge_steward: defaultSteward };
     for (const c of OWN_COLS) if (idx[c] != null) { const v = (cells[idx[c]] || '').trim(); if (v !== '') d.ownership[c] = v; }
     const by = d.ownership.validated_by || '';
     const complete = (d.layer2_professional.official_source || '').toString().trim() !== '';

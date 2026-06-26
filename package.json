@@ -20,7 +20,8 @@
     "docx": "python3 scripts/md2docx.py",
     "boundary": "node scripts/boundary_pipeline.mjs",
     "e012": "node scripts/e012_to_observations.mjs",
-    "scoreboard": "node scripts/scoreboard.mjs"
+    "scoreboard": "node scripts/scoreboard.mjs",
+    "gate": "node scripts/gates.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
