@@ -49,6 +49,10 @@ the possibility space has been reliably ruled out.
 
 ## What exists (branch: claude/authority-before-intelligence-m4t1zz)
 
+- **7 knowledge libraries** (docs/KNOWLEDGE-LIBRARIES.md): Materials · SOP · Requirement ·
+  Experiment · Decision · Knowledge Graph · **Engineering Playbook** (`config/engineering_playbook_v1.json`
+  — rules of engineering practice / how Fresco thinks; David, verified, scope B-4+Dry Powder).
+  Three knowledge types: Declarative / Procedural / Engineering.
 - `migrations/007_observation_contract.sql` — Axis Authority + Observation Contract (append-only).
 - `lib/observationContract.js` — the validation gate (single source of truth for ingest).
 - `scripts/analyze_formulation.mjs` + skill `analyze-formulation-data` — analyze uploaded xlsx.

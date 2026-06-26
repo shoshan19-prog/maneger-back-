@@ -10,6 +10,7 @@
   "confidence": "verified",
   "note": "Structural entities added to MATRIYA's knowledge model from VERIFIED Fresco production knowledge (Operational Authority, not memory). These change the model: production starts from material identity, not the formula. Every entity carries knowledge_origin so the system knows HOW it knows, not only WHAT. Do NOT generalize beyond scope_verified; do NOT fan-out before the ontology reflects these.",
   "authority_layers_ref": "config/authority_layers_v1.json (Material → Measurement → Acceptance → Decision)",
+  "engineering_playbook_ref": "config/engineering_playbook_v1.json (7th library: rules of engineering practice — how Fresco thinks)",
   "formula_model": {
     "insight": "Formula ≠ Recipe — the biggest structural finding. A Fresco formula is four layers, not just chemistry.",
     "layers": ["Chemical System", "PSD Design", "Functional Premix", "Manufacturing Strategy"],
