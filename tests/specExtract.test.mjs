@@ -66,20 +66,27 @@ t('qualitative checks go to present_non_standard, not specification', () => {
   assert.ok(!r.specification.whiteness);
 });
 
-t('Family B (cementitious) = External spec, NOT missing', () => {
+t('Document Capability: cementitious compressive_strength is NOT-EXPECTED here (no false gap), routed', () => {
   const r = extractSpecs(cementitious);
   assert.equal(r.family, 'cementitious');
-  assert.deepEqual(r.specification, {});                       // none in this doc
-  assert.ok(r.needs_external_document.some(e => e.axis === 'compressive_strength'));
-  assert.equal(r.missing.length, 0);                           // not "missing" — it's external
+  assert.deepEqual(r.specification, {});
+  assert.equal(r.missing.length, 0);                           // not a real gap on a Formula Sheet
+  const cs = r.not_expected.find(e => e.axis === 'compressive_strength');
+  assert.ok(cs, 'compressive_strength is not_expected, not missing');
+  assert.ok(cs.route_to.includes('Product Specification') || cs.route_to.includes('QC Sheet'));
+  assert.ok(r.document_capability.should_not_contain.includes('compressive_strength'));
 });
 
-t('Measurement Ontology classifies each spec (domain/lifecycle/phase/standard/type)', () => {
+t('Document Capability: a liquid sheet missing viscosity IS a real gap (doc can_contain it)', () => {
+  const r = extractSpecs(liquid);                              // B-4 QC block has no viscosity
+  assert.ok(r.missing.some(e => e.axis === 'wet_viscosity'), 'real Missing, not Not-Expected');
+});
+
+t('Measurement Ontology classifies each spec (domain/standard) and rides on gaps too', () => {
   const r = extractSpecs(liquid);
   assert.equal(r.specification.ph.classification.domain, 'Chemical');
   assert.equal(r.specification.density.classification.domain, 'Physical');
-  // external specs carry classification too → "products with no Mechanical spec" is answerable
-  const cs = extractSpecs(cementitious).needs_external_document.find(e => e.axis === 'compressive_strength');
+  const cs = extractSpecs(cementitious).not_expected.find(e => e.axis === 'compressive_strength');
   assert.equal(cs.classification.domain, 'Mechanical');
   assert.equal(cs.classification.standard, 'EN 1015-11');
 });

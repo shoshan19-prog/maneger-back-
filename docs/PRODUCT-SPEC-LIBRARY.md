@@ -44,6 +44,18 @@ missing: [axis]                            # D
 B-4 פריימר אקרילי (pH + density) · כיחול עדין (density) · שכבה מיישרת (density) ·
 הרבצה צמנטית BST3 (Family B → all External). Extracted, not hand-typed.
 
+## Document Capability Map (last layer of K)
+`lib/documentCapability.js` declares, per document_type, `can_contain` / `should_not_contain`.
+This is what makes the Gap List honest — a **real Missing** (the doc *could* hold it but
+didn't) is separated from a **false gap** (the doc *shouldn't* hold it → routed to the doc
+type that should). So the Spec Library is now a **Document Knowledge Model**: the system
+knows not just what is written, but what each document *type* is capable of containing.
+
+5-category gap list (`gap_list`): A Extracted · B Present-but-Non-standard ·
+**C Missing (real)** · **D Not-Expected (routed)** · E Capability-unknown. On the 4 samples:
+A=2 · C=1 (liquid sheet without viscosity) · D=4 (cementitious mechanical axes → Product
+Spec / QC Sheet) — i.e. the cementitious "gaps" are correctly *routed*, not false-flagged.
+
 ## Honest scoreboard note
 Raises **System Readiness** (spec spine). Does **not** move the bolded zeros — specs are
 criteria, not evidence; no boundary is derived from them.

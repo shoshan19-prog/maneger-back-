@@ -27,7 +27,7 @@ const { extractSpecs } = await import(pathToFileURL(path.resolve(here, '../lib/s
 
 let withProduct = 0, withFamily = 0, normOK = 0, normTotal = 0, falseMissing = 0;
 const misses = [];
-const xtab = { document_type: {}, family: {}, spec_status: { Present: 0, External: 0, Missing: 0 }, domain: {} };
+const xtab = { document_type: {}, family: {}, spec_status: { Present: 0, Missing: 0, NotExpected: 0 }, domain: {} };
 const bump = (b, k) => { b[k] = (b[k] || 0) + 1; };
 for (const f of files) {
   const text = fs.readFileSync(f, 'utf8');
@@ -40,8 +40,8 @@ for (const f of files) {
   // distribution cross-tab (scaffold for the confusion matrix; a true CM needs labeled docs)
   bump(xtab.document_type, r.document_type); bump(xtab.family, r.family);
   xtab.spec_status.Present += Object.keys(r.specification).length;
-  xtab.spec_status.External += r.needs_external_document.length;
   xtab.spec_status.Missing += r.missing.length;
+  xtab.spec_status.NotExpected += r.not_expected.length;
   for (const ax of Object.keys(r.specification)) bump(xtab.domain, r.specification[ax].classification.domain);
 }
 const n = files.length;
