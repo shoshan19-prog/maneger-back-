@@ -33,6 +33,21 @@ beneath them. By snapshotting and never mutating the source, every derived claim
 traceable to an immutable original. This is Evidence-first at the corpus level: MATRIYA learns
 from **real Fresco R&D history**, and can always show exactly which document any value came from.
 
+## Two kinds of authority (Fresco)
+The corpus is Rachel's authentic work environment, built and organized over years — so its
+*organization* is itself knowledge, and Rachel is not only a validator but a primary source of
+organizational knowledge. We therefore separate two authorities per document:
+
+- **Document Authority** — which version is canonical: `official_source` (yes/no) + `superseded_by`.
+- **Domain Authority** — who knows/decides about it: `owner` · `created_by` · `validated_by`.
+
+Recorded per record (ownership block, `owner` defaults to Rachel for this corpus). When other
+people contribute knowledge later, the source and organizational context are preserved — the
+system knows not just what is written, but **who can decide when it is unclear**.
+
+What this does NOT assert (still needs content/results review): that every document is
+professionally correct, every formulation succeeded, or every decision was optimal.
+
 ## Status
 - Snapshot + manifest + immutability guard: **built** (`scripts/corpus_cache.mjs`).
 - Round-1 corpus: 8 real Formula Sheets (git-ignored).

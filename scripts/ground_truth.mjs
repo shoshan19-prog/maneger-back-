@@ -67,6 +67,12 @@ const layer2Blank = () => ({
 
 // The Rachel-facing columns of the validation sheet (Layer 2 order).
 const L2_COLS = ['official_source', 'superseded_by', 'missing_real_spec', 'external_vs_not_expected', 'parameter_belongs_to_family', 'alternative_document', 'comments'];
+// Authority / ownership (Fresco): two kinds of authority over a document.
+//   Document Authority = official_source + superseded_by (which version is canonical).
+//   Domain Authority    = owner / created_by / validated_by (who knows/decides about it).
+// Preserved per-document so future knowledge from other people keeps its organizational context.
+const OWN_COLS = ['owner', 'created_by', 'validated_by'];
+const defaultOwner = arg('--owner', 'Rachel');
 const csvCell = (v) => { const s = v == null ? '' : Array.isArray(v) ? v.join('|') : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
 
 const predictOf = (text, file) => {
@@ -85,7 +91,8 @@ if (mode === 'skeleton') {
     return {
       source_file: path.basename(f),
       layer1_objective: layer1(text),                 // auto-filled (verifiable from the doc)
-      layer2_professional: layer2Blank(),             // Rachel
+      layer2_professional: layer2Blank(),             // Rachel (professional judgment)
+      ownership: { owner: defaultOwner, created_by: null, validated_by: null }, // Domain Authority
       predicted: predictOf(text, f),                  // frozen parser reference
       validation: { validated_by: null, validation_date: null, confidence: 'provisional' },
     };
@@ -105,16 +112,16 @@ if (mode === 'sheet') {
   const gt = JSON.parse(fs.readFileSync(gtPath, 'utf8'));
   const out = arg('--out', '.corpus/ground_truth_sheet.csv');
   const refCols = ['source_file', 'product', 'family', 'document_type', 'version_date', 'values_present', 'parameters_present'];
-  const header = [...refCols, ...L2_COLS, 'validated_by'];
+  const header = [...refCols, ...L2_COLS, ...OWN_COLS];
   const lines = [header.join(',')];
   for (const d of gt.docs) {
-    const L1 = d.layer1_objective, L2 = d.layer2_professional || {};
+    const L1 = d.layer1_objective, L2 = d.layer2_professional || {}, OWN = d.ownership || {};
     const ref = {
       source_file: d.source_file, product: L1.product, family: L1.family, document_type: L1.document_type,
       version_date: L1.version_date, values_present: (L1.values_present || []),
       parameters_present: (L1.parameters_present || []).map(p => p.axis),
     };
-    const row = [...refCols.map(c => csvCell(ref[c])), ...L2_COLS.map(c => csvCell(L2[c])), csvCell((d.validation || {}).validated_by)];
+    const row = [...refCols.map(c => csvCell(ref[c])), ...L2_COLS.map(c => csvCell(L2[c])), ...OWN_COLS.map(c => csvCell(OWN[c]))];
     lines.push(row.join(','));
   }
   fs.writeFileSync(path.resolve(out), lines.join('\n') + '\n');
@@ -140,9 +147,11 @@ if (mode === 'merge') {
     const d = byFile[sf]; if (!d) continue;
     d.layer2_professional = d.layer2_professional || layer2Blank();
     for (const c of L2_COLS) if (idx[c] != null) { const v = (cells[idx[c]] || '').trim(); d.layer2_professional[c] = v === '' ? null : v; }
-    const by = (cells[idx.validated_by] || '').trim();
+    d.ownership = d.ownership || { owner: defaultOwner, created_by: null, validated_by: null };
+    for (const c of OWN_COLS) if (idx[c] != null) { const v = (cells[idx[c]] || '').trim(); if (v !== '') d.ownership[c] = v; }
+    const by = d.ownership.validated_by || '';
     const complete = (d.layer2_professional.official_source || '').toString().trim() !== '';
-    d.validation = { validated_by: by || (complete ? 'Rachel' : null), validation_date: valDate, confidence: complete ? 'verified' : 'provisional' };
+    d.validation = { validated_by: by || (complete ? d.ownership.owner : null), validation_date: valDate, confidence: complete ? 'verified' : 'provisional' };
     if (complete) verified++;
   }
   fs.writeFileSync(path.resolve(out), JSON.stringify({ note: 'Gold Standard Dataset v1 — Layer 1 objective + Layer 2 (Rachel). confidence=verified once official_source is set.', docs: gt.docs }, null, 2) + '\n');
