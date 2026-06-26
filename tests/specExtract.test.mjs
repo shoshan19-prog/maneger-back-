@@ -1,7 +1,7 @@
 /**
- * Tests for the Product-Spec extractor. Run: node tests/specExtract.test.mjs
- * Locks the QC-block parsing (T_relevance) so scaling to the rest of the Drive library
- * keeps the same mapping.
+ * Tests for the Product-Spec extractor v2. Run: node tests/specExtract.test.mjs
+ * Locks: case-insensitive label match, unit normalization (traceable), three-state status
+ * (Present / External / Missing), and the document classifier — so scaling keeps the mapping.
  */
 import assert from 'node:assert';
 import path from 'path';
@@ -18,42 +18,53 @@ const liquid = [
   'בדיקות ,,אישור מעבדה',
   '1,בדיקת אחידות מדיה ,ניבדק,,שם מוצר ,B-4 אקרילי',
   '2,סמיכות חומר ,ניבדק',
-  '3,PH ,7.6 -10',
+  '3,PH ,7.6 -10',          // uppercase PH on purpose
   '4,בדיקת לובן ,#####',
   '5,משקל סגולי ,1.3- 1.5',
-  '7,בדיקה של ישום החומר ,ניבדק',
 ].join('\n');
 
-t('extracts the product name from the QC block', () => {
-  assert.equal(extractSpecs(liquid).product, 'B-4 אקרילי');
-});
+const cementitious = [
+  'הרבצה צמנטית FRESCO COLORS',
+  'חומר,מנה,,אחוז',
+  '0-700,1090,,54.61%',
+  'cement,400,,20.04%',
+  'HYDRATED LIME,25',
+  'שם המוצר ,הרבצה צמנטית BST3',
+  'משקל סגולי:,',
+].join('\n');
 
-t('parses PH range with spaces ("7.6 -10") into ph spec', () => {
-  const ph = extractSpecs(liquid).specs.find(s => s.axis === 'ph');
-  assert.ok(ph, 'ph spec present');
-  assert.deepEqual([ph.min, ph.max], [7.6, 10]);
-  assert.equal(ph.method, 'pH_meter_direct');
-});
-
-t('parses specific gravity ("1.3- 1.5") and flags the g/cm3 vs kg/m3 commensurability gap', () => {
-  const d = extractSpecs(liquid).specs.find(s => s.axis === 'density');
-  assert.deepEqual([d.min, d.max], [1.3, 1.5]);
-  assert.equal(d.unit, 'g/cm3');
-  assert.ok(/kg\/m3/.test(d.note), 'note flags conversion');
-});
-
-t('lists qualitative checks (no numeric scale) as gaps, not specs', () => {
+t('classifies a liquid formula sheet with embedded QC', () => {
   const r = extractSpecs(liquid);
-  for (const g of ['uniformity', 'consistency', 'whiteness', 'applicability']) assert.ok(r.qualitative_gaps.includes(g), g);
-  assert.ok(!r.specs.some(s => s.axis === 'whiteness'));
+  assert.equal(r.family, 'liquid');
+  assert.equal(r.document_type, 'Formula Sheet');
+  assert.equal(r.product, 'B-4 אקרילי');
 });
 
-t('a present-but-empty QC row is "declared_empty", not a spec', () => {
-  const emptyPh = 'WK-200\nשם מוצר ,כיחול עדין\n3,PH ,,,גוון\n5, משקל סגולי ,1.7- 1.9';
-  const r = extractSpecs(emptyPh);
-  assert.ok(r.declared_empty.includes('ph'));
-  assert.ok(!r.specs.some(s => s.axis === 'ph'));
-  assert.ok(r.specs.some(s => s.axis === 'density'));
+t('case-insensitive: uppercase "PH" still maps to ph', () => {
+  const ph = extractSpecs(liquid).specification.ph;
+  assert.ok(ph, 'ph extracted despite uppercase');
+  assert.deepEqual(ph.value, { min: 7.6, max: 10, unit: 'pH' });
+});
+
+t('normalizes specific gravity g/cm3 -> kg/m3, keeps raw for traceability', () => {
+  const d = extractSpecs(liquid).specification.density;
+  assert.deepEqual(d.value, { min: 1300, max: 1500, unit: 'kg/m3' });
+  assert.equal(d.normalization.raw, '1.3-1.5 g/cm3');
+});
+
+t('qualitative checks go to present_non_standard, not specification', () => {
+  const r = extractSpecs(liquid);
+  const axes = r.present_non_standard.map(x => x.axis);
+  for (const g of ['uniformity', 'consistency', 'whiteness']) assert.ok(axes.includes(g), g);
+  assert.ok(!r.specification.whiteness);
+});
+
+t('Family B (cementitious) = External spec, NOT missing', () => {
+  const r = extractSpecs(cementitious);
+  assert.equal(r.family, 'cementitious');
+  assert.deepEqual(r.specification, {});                       // none in this doc
+  assert.ok(r.needs_external_document.includes('compressive_strength'));
+  assert.equal(r.missing.length, 0);                           // not "missing" — it's external
 });
 
 console.log(`\n${passed} passed`);

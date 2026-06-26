@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
- * Build the Product Specification Library from Fresco formulation sheets (text exports).
- * Usage: node scripts/extract_specs.mjs <file1.txt> [file2.txt ...] [--out config/product_specification_library_v1.json]
+ * Build the Product Specification Library (v2) from Fresco sheets (text exports).
+ * Usage: node scripts/extract_specs.mjs <file1.txt> [...] [--out config/product_specification_library_v1.json]
  *
- * Each .txt is the text representation of one workbook (one or more products). Runs the
- * shared extractor (lib/specExtract.js), emits Spec Library + a Gap List (the third output
- * of the unified-parser idea). T_relevance side only — no measurement here.
+ * Emits traceable per-product records + a 4-category Gap List (Fresco):
+ *   A Extracted · B Present-but-Non-standard · C External-Required · D Unknown.
+ * T_relevance side only — no measurement here.
  */
 import fs from 'fs';
 import path from 'path';
@@ -20,25 +20,31 @@ const here = path.dirname(new URL(import.meta.url).pathname);
 const { extractSpecs } = await import(pathToFileURL(path.resolve(here, '../lib/specExtract.js')).href);
 
 const products = [];
-const gapSet = new Set();
+const A = new Set(), B = new Set(), C = new Set(), D = new Set();
 for (const f of files) {
-  const text = fs.readFileSync(f, 'utf8');
-  const r = extractSpecs(text, path.basename(f, '.txt'));
-  products.push({ product: r.product, source_file: path.basename(f), specs: r.specs,
-    declared_empty: r.declared_empty, qualitative_gaps: r.qualitative_gaps });
-  r.qualitative_gaps.forEach(g => gapSet.add(`qualitative axis with no numeric scale: ${g}`));
-  r.declared_empty.forEach(g => gapSet.add(`QC row present but no range filled: ${g}`));
-  if (r.specs.some(s => s.axis === 'density')) gapSet.add('density spec in g/cm3 vs canonical kg/m3 — convert x1000 (commensurability)');
+  const r = extractSpecs(fs.readFileSync(f, 'utf8'), path.basename(f, '.txt'));
+  products.push({ ...r, source_file: path.basename(f) });
+  for (const ax of Object.keys(r.specification)) A.add(ax);
+  for (const g of r.present_non_standard) B.add(`${g.axis}: ${g.reason}`);
+  for (const ax of r.needs_external_document) C.add(ax);
+  for (const ax of r.missing) D.add(ax);
 }
 
 const lib = {
   registry: 'PRODUCT_SPECIFICATION_LIBRARY',
-  version: 'v1',
-  source: 'Fresco formulation sheets QC blocks (Drive: laboratory/), extracted 2026-06-26',
-  note: 'T_relevance per product: when is a result "good". The other half of the decision boundary (max(T_noise, T_relevance)); T_noise still comes only from measurement. Numeric ranges where the sheet filled them; qualitative checks listed as gaps.',
+  version: 'v2',
+  source: 'Fresco formulation sheets (Drive: laboratory/), extracted 2026-06-26',
+  note: 'T_relevance per product (when a result is "good"). Three-state spec status: Present (in this doc) / External (known, in a QC/spec doc) / Missing. The other half of max(T_noise,T_relevance); T_noise still comes only from measurement.',
+  mechanisms: ['docClassify (document type + family)', 'parameterDictionary (label -> canonical axis)', 'unitNormalize (raw -> canonical, traceable)'],
   products,
-  gap_list: [...gapSet],
+  gap_list: {
+    A_extracted_successfully: [...A],
+    B_present_but_non_standard: [...B],
+    C_external_specification_required: [...C],
+    D_unknown: [...D],
+  },
 };
 fs.writeFileSync(out, JSON.stringify(lib, null, 2) + '\n');
-const nSpecs = products.reduce((s, p) => s + p.specs.length, 0);
-console.log(`Spec Library: ${products.length} products, ${nSpecs} numeric specs, ${lib.gap_list.length} gap types -> ${out}`);
+const nSpecs = products.reduce((s, p) => s + Object.keys(p.specification).length, 0);
+console.log(`Spec Library v2: ${products.length} products, ${nSpecs} numeric specs`);
+console.log(`  Gap: A=${A.size} extracted, B=${B.size} non-standard, C=${C.size} external, D=${D.size} unknown -> ${out}`);
