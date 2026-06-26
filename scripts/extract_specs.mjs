@@ -26,7 +26,7 @@ for (const f of files) {
   products.push({ ...r, source_file: path.basename(f) });
   for (const ax of Object.keys(r.specification)) A.add(ax);
   for (const g of r.present_non_standard) B.add(`${g.axis}: ${g.reason}`);
-  for (const ax of r.needs_external_document) C.add(ax);
+  for (const e of r.needs_external_document) C.add(e.axis);
   for (const ax of r.missing) D.add(ax);
 }
 

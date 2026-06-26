@@ -27,6 +27,8 @@ const { extractSpecs } = await import(pathToFileURL(path.resolve(here, '../lib/s
 
 let withProduct = 0, withFamily = 0, normOK = 0, normTotal = 0, falseMissing = 0;
 const misses = [];
+const xtab = { document_type: {}, family: {}, spec_status: { Present: 0, External: 0, Missing: 0 }, domain: {} };
+const bump = (b, k) => { b[k] = (b[k] || 0) + 1; };
 for (const f of files) {
   const text = fs.readFileSync(f, 'utf8');
   const r = extractSpecs(text, path.basename(f, '.txt'), path.basename(f));
@@ -35,6 +37,12 @@ for (const f of files) {
   for (const ax of Object.keys(r.specification)) { normTotal++; if (r.specification[ax].confidence >= 1.0) normOK++; }
   const looksLikeQc = /בדיקות/.test(text) && /(משקל סגולי|PH|אחידות)/i.test(text);
   if (looksLikeQc && Object.keys(r.specification).length === 0) { falseMissing++; misses.push(`false-missing (QC block, 0 specs): ${path.basename(f)}`); }
+  // distribution cross-tab (scaffold for the confusion matrix; a true CM needs labeled docs)
+  bump(xtab.document_type, r.document_type); bump(xtab.family, r.family);
+  xtab.spec_status.Present += Object.keys(r.specification).length;
+  xtab.spec_status.External += r.needs_external_document.length;
+  xtab.spec_status.Missing += r.missing.length;
+  for (const ax of Object.keys(r.specification)) bump(xtab.domain, r.specification[ax].classification.domain);
 }
 const n = files.length;
 const pct = (x, d) => d ? (100 * x / d).toFixed(1) : 'n/a';
@@ -45,5 +53,9 @@ console.log(row('Family classification', pct(withFamily, n), '>98%'));
 console.log(row('Parameter normalization', pct(normOK, normTotal), '>99%'));
 console.log(row('False-Missing rate', pct(falseMissing, n), '<2%'));
 if (misses.length) { console.log('\nFlags:'); misses.forEach(m => console.log('  - ' + m)); }
+console.log('\nDistribution (cross-tab; true confusion matrix needs labeled docs):');
+for (const [dim, counts] of Object.entries(xtab)) {
+  console.log(`  ${dim}: ${Object.entries(counts).map(([k, v]) => `${k}=${v}`).join(' · ')}`);
+}
 const gate = Number(pct(withProduct, n)) >= 99 && Number(pct(withFamily, n)) >= 98 && Number(pct(normOK, normTotal || 1)) >= 99 && Number(pct(falseMissing, n)) < 2;
 console.log(`\nGate: ${gate ? 'PASS — justified to run on the full library' : 'NOT PASS — fix before scaling'}\n`);

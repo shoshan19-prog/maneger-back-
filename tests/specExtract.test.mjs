@@ -70,8 +70,18 @@ t('Family B (cementitious) = External spec, NOT missing', () => {
   const r = extractSpecs(cementitious);
   assert.equal(r.family, 'cementitious');
   assert.deepEqual(r.specification, {});                       // none in this doc
-  assert.ok(r.needs_external_document.includes('compressive_strength'));
+  assert.ok(r.needs_external_document.some(e => e.axis === 'compressive_strength'));
   assert.equal(r.missing.length, 0);                           // not "missing" — it's external
+});
+
+t('Measurement Ontology classifies each spec (domain/lifecycle/phase/standard/type)', () => {
+  const r = extractSpecs(liquid);
+  assert.equal(r.specification.ph.classification.domain, 'Chemical');
+  assert.equal(r.specification.density.classification.domain, 'Physical');
+  // external specs carry classification too → "products with no Mechanical spec" is answerable
+  const cs = extractSpecs(cementitious).needs_external_document.find(e => e.axis === 'compressive_strength');
+  assert.equal(cs.classification.domain, 'Mechanical');
+  assert.equal(cs.classification.standard, 'EN 1015-11');
 });
 
 console.log(`\n${passed} passed`);

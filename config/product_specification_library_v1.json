@@ -35,7 +35,14 @@
               }
             }
           },
-          "confidence": 1
+          "confidence": 1,
+          "classification": {
+            "domain": "Chemical",
+            "lifecycle": "Production",
+            "phase": "Wet",
+            "standard": "Internal QC",
+            "measurement_type": "non-destructive"
+          }
         },
         "density": {
           "value": {
@@ -58,33 +65,84 @@
               }
             }
           },
-          "confidence": 1
+          "confidence": 1,
+          "classification": {
+            "domain": "Physical",
+            "lifecycle": "Production",
+            "phase": "Wet",
+            "standard": "Internal QC",
+            "measurement_type": "non-destructive"
+          }
         }
       },
       "present_non_standard": [
         {
           "axis": "uniformity",
-          "reason": "qualitative — no numeric scale yet"
+          "reason": "qualitative — no numeric scale yet",
+          "classification": {
+            "domain": "Application",
+            "lifecycle": "Production",
+            "phase": "Wet",
+            "standard": "Internal QC",
+            "measurement_type": "qualitative"
+          }
         },
         {
           "axis": "consistency",
-          "reason": "qualitative — no numeric scale yet"
+          "reason": "qualitative — no numeric scale yet",
+          "classification": {
+            "domain": "Rheological",
+            "lifecycle": "Production",
+            "phase": "Wet",
+            "standard": "Internal QC",
+            "measurement_type": "qualitative"
+          }
         },
         {
           "axis": "whiteness",
-          "reason": "qualitative — no numeric scale yet"
+          "reason": "qualitative — no numeric scale yet",
+          "classification": {
+            "domain": "Optical",
+            "lifecycle": "Laboratory",
+            "phase": "Dry film",
+            "standard": "spectrophotometer / hiding chart",
+            "measurement_type": "non-destructive"
+          }
         },
         {
           "axis": "applicability",
-          "reason": "qualitative — no numeric scale yet"
+          "reason": "qualitative — no numeric scale yet",
+          "classification": {
+            "domain": "Application",
+            "lifecycle": "Laboratory",
+            "phase": "Applied",
+            "standard": "Internal QC",
+            "measurement_type": "qualitative"
+          }
         },
         {
           "axis": "packing_weight",
-          "reason": "qualitative — no numeric scale yet"
+          "reason": "qualitative — no numeric scale yet",
+          "classification": {
+            "domain": "Logistics",
+            "lifecycle": "Production",
+            "phase": "n/a",
+            "standard": "Internal QC",
+            "measurement_type": "non-destructive"
+          }
         }
       ],
       "needs_external_document": [
-        "wet_viscosity"
+        {
+          "axis": "wet_viscosity",
+          "classification": {
+            "domain": "Rheological",
+            "lifecycle": "Production",
+            "phase": "Wet",
+            "standard": "ASTM D2196 / ISO 2555",
+            "measurement_type": "non-destructive"
+          }
+        }
       ],
       "missing": [],
       "source_file": "B-4 פריימר אקרילי.txt"
@@ -115,7 +173,14 @@
               }
             }
           },
-          "confidence": 1
+          "confidence": 1,
+          "classification": {
+            "domain": "Physical",
+            "lifecycle": "Production",
+            "phase": "Wet",
+            "standard": "Internal QC",
+            "measurement_type": "non-destructive"
+          }
         }
       },
       "present_non_standard": [
@@ -125,27 +190,71 @@
         },
         {
           "axis": "uniformity",
-          "reason": "qualitative — no numeric scale yet"
+          "reason": "qualitative — no numeric scale yet",
+          "classification": {
+            "domain": "Application",
+            "lifecycle": "Production",
+            "phase": "Wet",
+            "standard": "Internal QC",
+            "measurement_type": "qualitative"
+          }
         },
         {
           "axis": "consistency",
-          "reason": "qualitative — no numeric scale yet"
+          "reason": "qualitative — no numeric scale yet",
+          "classification": {
+            "domain": "Rheological",
+            "lifecycle": "Production",
+            "phase": "Wet",
+            "standard": "Internal QC",
+            "measurement_type": "qualitative"
+          }
         },
         {
           "axis": "whiteness",
-          "reason": "qualitative — no numeric scale yet"
+          "reason": "qualitative — no numeric scale yet",
+          "classification": {
+            "domain": "Optical",
+            "lifecycle": "Laboratory",
+            "phase": "Dry film",
+            "standard": "spectrophotometer / hiding chart",
+            "measurement_type": "non-destructive"
+          }
         },
         {
           "axis": "applicability",
-          "reason": "qualitative — no numeric scale yet"
+          "reason": "qualitative — no numeric scale yet",
+          "classification": {
+            "domain": "Application",
+            "lifecycle": "Laboratory",
+            "phase": "Applied",
+            "standard": "Internal QC",
+            "measurement_type": "qualitative"
+          }
         },
         {
           "axis": "packing_weight",
-          "reason": "qualitative — no numeric scale yet"
+          "reason": "qualitative — no numeric scale yet",
+          "classification": {
+            "domain": "Logistics",
+            "lifecycle": "Production",
+            "phase": "n/a",
+            "standard": "Internal QC",
+            "measurement_type": "non-destructive"
+          }
         }
       ],
       "needs_external_document": [
-        "wet_viscosity"
+        {
+          "axis": "wet_viscosity",
+          "classification": {
+            "domain": "Rheological",
+            "lifecycle": "Production",
+            "phase": "Wet",
+            "standard": "ASTM D2196 / ISO 2555",
+            "measurement_type": "non-destructive"
+          }
+        }
       ],
       "missing": [],
       "source_file": "כיחול עדין.txt"
@@ -176,7 +285,14 @@
               }
             }
           },
-          "confidence": 1
+          "confidence": 1,
+          "classification": {
+            "domain": "Physical",
+            "lifecycle": "Production",
+            "phase": "Wet",
+            "standard": "Internal QC",
+            "measurement_type": "non-destructive"
+          }
         }
       },
       "present_non_standard": [
@@ -186,27 +302,71 @@
         },
         {
           "axis": "uniformity",
-          "reason": "qualitative — no numeric scale yet"
+          "reason": "qualitative — no numeric scale yet",
+          "classification": {
+            "domain": "Application",
+            "lifecycle": "Production",
+            "phase": "Wet",
+            "standard": "Internal QC",
+            "measurement_type": "qualitative"
+          }
         },
         {
           "axis": "consistency",
-          "reason": "qualitative — no numeric scale yet"
+          "reason": "qualitative — no numeric scale yet",
+          "classification": {
+            "domain": "Rheological",
+            "lifecycle": "Production",
+            "phase": "Wet",
+            "standard": "Internal QC",
+            "measurement_type": "qualitative"
+          }
         },
         {
           "axis": "whiteness",
-          "reason": "qualitative — no numeric scale yet"
+          "reason": "qualitative — no numeric scale yet",
+          "classification": {
+            "domain": "Optical",
+            "lifecycle": "Laboratory",
+            "phase": "Dry film",
+            "standard": "spectrophotometer / hiding chart",
+            "measurement_type": "non-destructive"
+          }
         },
         {
           "axis": "applicability",
-          "reason": "qualitative — no numeric scale yet"
+          "reason": "qualitative — no numeric scale yet",
+          "classification": {
+            "domain": "Application",
+            "lifecycle": "Laboratory",
+            "phase": "Applied",
+            "standard": "Internal QC",
+            "measurement_type": "qualitative"
+          }
         },
         {
           "axis": "packing_weight",
-          "reason": "qualitative — no numeric scale yet"
+          "reason": "qualitative — no numeric scale yet",
+          "classification": {
+            "domain": "Logistics",
+            "lifecycle": "Production",
+            "phase": "n/a",
+            "standard": "Internal QC",
+            "measurement_type": "non-destructive"
+          }
         }
       ],
       "needs_external_document": [
-        "wet_viscosity"
+        {
+          "axis": "wet_viscosity",
+          "classification": {
+            "domain": "Rheological",
+            "lifecycle": "Production",
+            "phase": "Wet",
+            "standard": "ASTM D2196 / ISO 2555",
+            "measurement_type": "non-destructive"
+          }
+        }
       ],
       "missing": [],
       "source_file": "שכבה מיישרת.txt"
@@ -223,10 +383,47 @@
         }
       ],
       "needs_external_document": [
-        "compressive_strength",
-        "flexural_strength",
-        "water_absorption_pct",
-        "pull_off_adhesion"
+        {
+          "axis": "compressive_strength",
+          "classification": {
+            "domain": "Mechanical",
+            "lifecycle": "Laboratory",
+            "phase": "Hardened",
+            "standard": "EN 1015-11",
+            "measurement_type": "destructive",
+            "age": "7/14/28 days"
+          }
+        },
+        {
+          "axis": "flexural_strength",
+          "classification": {
+            "domain": "Mechanical",
+            "lifecycle": "Laboratory",
+            "phase": "Hardened",
+            "standard": "EN 1015-11",
+            "measurement_type": "destructive"
+          }
+        },
+        {
+          "axis": "water_absorption_pct",
+          "classification": {
+            "domain": "Durability",
+            "lifecycle": "Laboratory",
+            "phase": "Hardened",
+            "standard": "EN 1015-18",
+            "measurement_type": "non-destructive"
+          }
+        },
+        {
+          "axis": "pull_off_adhesion",
+          "classification": {
+            "domain": "Mechanical",
+            "lifecycle": "Laboratory",
+            "phase": "Hardened",
+            "standard": "EN 1542",
+            "measurement_type": "semi-destructive"
+          }
+        }
       ],
       "missing": [],
       "source_file": "הרבצה צמנטית BST3.txt"
