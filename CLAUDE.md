@@ -28,13 +28,16 @@ Always end with the "Improvements & threads" note (below).
 
 ## FSCTM law track (K→C→B→N→L→Design)
 
-- **LAW-AUTHORITY-001** (docs/L-OBSERVATION-AUTHORITY-LAW.md): within the investigated observation
-  domain, authority belongs to the observation **record** (value+conditions+uncertainty+provenance+
-  context), not to a stored value; a property value is a *derived interpretation*. Has Statement ·
-  Boundary of validity · Falsifier. Derived via: structural contradiction → survivability test
-  (only C survived) → N (docs/N-OBSERVED-PROPERTY-PRINCIPLE.md) → L. **Design not yet started** —
-  do NOT write schema/migration/API until Design is ratified. Wider "authority = property of
-  evidence" law is a parked candidate (needs ≥2 more domains, by observation).
+- **LAW-AUTHORITY-001 (Domain-Validated Structural Law CANDIDATE — not yet a general law)**
+  (docs/L-OBSERVATION-AUTHORITY-LAW.md): within the investigated observation domain, authority
+  belongs to the observation **record** (value+conditions+uncertainty+provenance+context), not to
+  a stored value; a property value is a *derived interpretation*. Has Statement · Boundary of
+  validity · Falsifier. Derived via: structural contradiction → survivability test (only C
+  survived) → N (docs/N-OBSERVED-PROPERTY-PRINCIPLE.md) → L. Promotion to a general law needs the
+  same structure to reappear INDEPENDENTLY (by observation, not design) in ≥2 further domains
+  (combustion/char, couplings, another decision system). **Design not yet started** — do NOT write
+  schema/migration/API until Design is ratified. The bigger asset is the *methodology*
+  (docs/METHODOLOGY-LAW-DISCOVERY.md), not this candidate.
 - The reusable method itself: docs/METHODOLOGY-LAW-DISCOVERY.md.
 
 ## Canonical reference
