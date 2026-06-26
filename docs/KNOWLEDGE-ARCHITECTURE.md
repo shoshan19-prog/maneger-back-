@@ -16,10 +16,20 @@ Evidence Set      (observations sharing a context — what a boundary is derived
    ↓
 Decision          (release / hold / reject — Manufacturing Response, decision_shift)
    ↓
+Rule Support Update  (each Evidence Set strengthens/weakens a rule — RuleSupport)
+   ↓
 Engineering Rule  (operational knowledge — how Fresco thinks; Engineering Playbook)
    ↓
 Knowledge         (validated, scoped, attributable — in the Knowledge Graph)
 ```
+
+**Knowledge Evolution (not just storage):** rules are living entities. `lib/ruleSupport.js` +
+`config/rule_support_v1.json` (`npm run rules:evolution`) link each rule to the Evidence Sets
+that support/contradict it and derive a status: asserted (expert-only) → single_support →
+supported → promotion_ready (→ candidate verified coupling/mechanism), or contested/refuted.
+This answers: what strengthened this week, what is contradicted, which rule is fragile (one
+evidence set), which is ready to be promoted. Empty today (0 evidence sets) — every rule is
+`asserted` until real evidence flows.
 Each stage has its own authority, validator, and confidence — none is collapsed into "a fact
 in a document."
 

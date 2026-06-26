@@ -1,0 +1,7 @@
+{
+  "registry": "RULE_SUPPORT",
+  "version": "v1",
+  "note": "Knowledge Evolution layer: links each engineering rule to the Evidence Sets that support or contradict it, so rules become living entities. Empty now (no evidence sets yet) → every rule is 'asserted' (expert-only). As experiments/observations produce Evidence Sets, append links here (or via scripts/rule_support.mjs link) and the rule's confidence/status updates. An EVS that supports/contradicts a rule is the bridge from the Knowledge Graph back to the Engineering Playbook.",
+  "link_shape": { "rule_id": "ENG-002", "evs_id": "EVS-014", "stance": "support|contradict", "date": "YYYY-MM-DD", "context": "optional (family/formulation)" },
+  "links": []
+}

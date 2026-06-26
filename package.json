@@ -22,7 +22,8 @@
     "e012": "node scripts/e012_to_observations.mjs",
     "scoreboard": "node scripts/scoreboard.mjs",
     "gate": "node scripts/gates.mjs",
-    "knowledge": "node scripts/knowledge.mjs"
+    "knowledge": "node scripts/knowledge.mjs",
+    "rules:evolution": "node scripts/rule_support.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
