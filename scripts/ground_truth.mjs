@@ -24,7 +24,7 @@ const arg = (k, d) => process.argv.includes(k) ? process.argv[process.argv.index
 const dir = path.resolve(arg('--dir', '.corpus/specsrc'));
 const gtPath = path.resolve(arg('--gt', '.corpus/ground_truth.json'));
 const force = process.argv.includes('--force');
-if (!['skeleton', 'score'].includes(mode)) { console.error('Usage: ground_truth.mjs skeleton|score'); process.exit(2); }
+if (!['skeleton', 'sheet', 'merge', 'score'].includes(mode)) { console.error('Usage: ground_truth.mjs skeleton|sheet|merge|score'); process.exit(2); }
 
 const here = path.dirname(new URL(import.meta.url).pathname);
 const imp = (p) => import(pathToFileURL(path.resolve(here, '../lib/' + p)).href);
@@ -54,10 +54,20 @@ function layer1(text) {
   return { product: productOf(text), family: doc.family, document_type: doc.document_type, version_date: dateOf(text), parameters_present, values_present };
 }
 
+// Layer 2 — the lab's professional judgment (Rachel). Includes Fresco's three context fields.
 const layer2Blank = () => ({
-  is_official_document: null, missing_real_spec: null, external_vs_not_expected: null,
-  parameter_belongs_to_family: null, alternative_document: null,
+  official_source: null,        // yes/no — official doc, or a copy/draft?  (Fresco)
+  superseded_by: null,          // newer version, if any                   (Fresco)
+  missing_real_spec: null,      // yes/no — is a spec truly missing?
+  external_vs_not_expected: null, // External | NotExpected — for empty rows
+  parameter_belongs_to_family: null, // yes/no/notes
+  alternative_document: null,   // where the spec actually lives
+  comments: null,               // free text for exceptions / doubt        (Fresco)
 });
+
+// The Rachel-facing columns of the validation sheet (Layer 2 order).
+const L2_COLS = ['official_source', 'superseded_by', 'missing_real_spec', 'external_vs_not_expected', 'parameter_belongs_to_family', 'alternative_document', 'comments'];
+const csvCell = (v) => { const s = v == null ? '' : Array.isArray(v) ? v.join('|') : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
 
 const predictOf = (text, file) => {
   const r = extractSpecs(text, path.basename(file, '.txt'), path.basename(file));
@@ -86,6 +96,58 @@ if (mode === 'skeleton') {
   }, null, 2) + '\n');
   console.log(`Ground-Truth skeleton (2-layer): ${docs.length} docs -> ${path.relative(process.cwd(), gtPath)}`);
   console.log('Layer 1 (objective) auto-filled. Next: Rachel fills Layer 2 + flips validation.confidence=verified, then: ground_truth.mjs score');
+  process.exit(0);
+}
+
+if (mode === 'sheet') {
+  // Export a flat validation interface for Rachel: Layer-1 facts (read-only reference) +
+  // blank Layer-2 columns to confirm. Excel-friendly CSV.
+  const gt = JSON.parse(fs.readFileSync(gtPath, 'utf8'));
+  const out = arg('--out', '.corpus/ground_truth_sheet.csv');
+  const refCols = ['source_file', 'product', 'family', 'document_type', 'version_date', 'values_present', 'parameters_present'];
+  const header = [...refCols, ...L2_COLS, 'validated_by'];
+  const lines = [header.join(',')];
+  for (const d of gt.docs) {
+    const L1 = d.layer1_objective, L2 = d.layer2_professional || {};
+    const ref = {
+      source_file: d.source_file, product: L1.product, family: L1.family, document_type: L1.document_type,
+      version_date: L1.version_date, values_present: (L1.values_present || []),
+      parameters_present: (L1.parameters_present || []).map(p => p.axis),
+    };
+    const row = [...refCols.map(c => csvCell(ref[c])), ...L2_COLS.map(c => csvCell(L2[c])), csvCell((d.validation || {}).validated_by)];
+    lines.push(row.join(','));
+  }
+  fs.writeFileSync(path.resolve(out), lines.join('\n') + '\n');
+  console.log(`Validation sheet (for Rachel) -> ${out}`);
+  console.log('She fills official_source / superseded_by / missing_real_spec / external_vs_not_expected / parameter_belongs_to_family / alternative_document / comments + validated_by, then: ground_truth.mjs merge');
+  process.exit(0);
+}
+
+if (mode === 'merge') {
+  // Merge Rachel's filled sheet back into Layer 2 → Gold Standard Dataset v1.
+  const sheet = arg('--sheet', '.corpus/ground_truth_sheet.csv');
+  const out = arg('--out', '.corpus/gold_standard_v1.json');
+  const valDate = arg('--date', null);
+  const { parseCSV } = await imp('observationCsv.js');
+  const rows = parseCSV(fs.readFileSync(path.resolve(sheet), 'utf8'));
+  const header = rows.shift().map(h => h.trim());
+  const idx = Object.fromEntries(header.map((h, i) => [h, i]));
+  const gt = JSON.parse(fs.readFileSync(gtPath, 'utf8'));
+  const byFile = Object.fromEntries(gt.docs.map(d => [d.source_file, d]));
+  let verified = 0;
+  for (const cells of rows) {
+    const sf = (cells[idx.source_file] || '').trim();
+    const d = byFile[sf]; if (!d) continue;
+    d.layer2_professional = d.layer2_professional || layer2Blank();
+    for (const c of L2_COLS) if (idx[c] != null) { const v = (cells[idx[c]] || '').trim(); d.layer2_professional[c] = v === '' ? null : v; }
+    const by = (cells[idx.validated_by] || '').trim();
+    const complete = (d.layer2_professional.official_source || '').toString().trim() !== '';
+    d.validation = { validated_by: by || (complete ? 'Rachel' : null), validation_date: valDate, confidence: complete ? 'verified' : 'provisional' };
+    if (complete) verified++;
+  }
+  fs.writeFileSync(path.resolve(out), JSON.stringify({ note: 'Gold Standard Dataset v1 — Layer 1 objective + Layer 2 (Rachel). confidence=verified once official_source is set.', docs: gt.docs }, null, 2) + '\n');
+  console.log(`Gold Standard merged: ${verified}/${gt.docs.length} verified -> ${out}`);
+  console.log(verified ? 'Run: ground_truth.mjs score --gt ' + out : 'No rows verified — fill official_source in the sheet first.');
   process.exit(0);
 }
 

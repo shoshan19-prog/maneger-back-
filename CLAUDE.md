@@ -87,3 +87,6 @@ the possibility space has been reliably ruled out.
 - Commit to the feature branch; end commits with the required Co-Authored-By / Claude-Session trailers.
 - xlsx package lives in `../matriya-back/node_modules`.
 - Two codebases exist (`matriya-back` monolith vs `matriya-system` modular) — unresolved (Phase D1).
+- **No parser improvement without re-running against the Gold Standard** (`.corpus/gold_standard_v1.json`
+  via `scripts/ground_truth.mjs score`). Every extraction-pipeline change is measured against the
+  lab-validated set — so we know we improved the system, not just changed its behavior. (docs/GROUND-TRUTH.md)

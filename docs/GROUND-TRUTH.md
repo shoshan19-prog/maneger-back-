@@ -28,13 +28,29 @@ Document-type variety (TDS/MSDS/SOP) is **not** in this corpus — legacy 2014 .
 extracted empty, and fabricating evidence would violate Evidence-first. Those classifier
 branches are instead covered by `tests/docClassify.test.mjs`.
 
-## Workflow
+## Workflow (validation interface, not a raw form)
 ```bash
 node scripts/corpus_cache.mjs                 # snapshot the corpus (manifest: sha1/bytes)
-node scripts/ground_truth.mjs skeleton        # write .corpus/ground_truth.json (truth pre-filled)
-#   → edit each `truth` (product / family / document_type / specs), set confirmed:true
-node scripts/ground_truth.mjs score           # confusion matrices + spec precision/recall
+node scripts/ground_truth.mjs skeleton        # auto-fill Layer 1 (objective) → .corpus/ground_truth.json
+node scripts/ground_truth.mjs sheet           # export Rachel's validation sheet (.corpus/ground_truth_sheet.csv)
+#   → Rachel fills the Layer-2 columns in Excel (see below)
+node scripts/ground_truth.mjs merge --date 2026-06-26   # merge sheet → .corpus/gold_standard_v1.json
+node scripts/ground_truth.mjs score --gt .corpus/gold_standard_v1.json   # score vs Gold Standard
 ```
+
+### Rachel's columns (Layer 2 — the validation interface)
+Left side is **read-only reference** (Layer-1 facts the parser read). Rachel fills the right side:
+`official_source` (yes/no) · `superseded_by` (newer version, if any) · `missing_real_spec` (yes/no) ·
+`external_vs_not_expected` (External | NotExpected) · `parameter_belongs_to_family` (yes/no) ·
+`alternative_document` · `comments`. A row counts as **verified** once `official_source` is set.
+
+The merged result is the **Gold Standard Dataset v1** — a permanent asset: every future parser
+change is measured against it.
+
+## Working principle (new)
+> **No parser improvement without re-running against the Gold Standard.**
+Every change to the extraction pipeline must be scored against `gold_standard_v1.json`, so we
+know whether we improved the system or merely changed its behavior.
 
 ## What `score` reports
 - **Confusion matrix** for `document_type` and `family` (truth → predicted).
