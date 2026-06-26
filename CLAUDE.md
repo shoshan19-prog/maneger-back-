@@ -26,6 +26,17 @@ Still STOP and ask first for (not auto-approved by design):
 
 Always end with the "Improvements & threads" note (below).
 
+## FSCTM law track (K→C→B→N→L→Design)
+
+- **LAW-AUTHORITY-001** (docs/L-OBSERVATION-AUTHORITY-LAW.md): within the investigated observation
+  domain, authority belongs to the observation **record** (value+conditions+uncertainty+provenance+
+  context), not to a stored value; a property value is a *derived interpretation*. Has Statement ·
+  Boundary of validity · Falsifier. Derived via: structural contradiction → survivability test
+  (only C survived) → N (docs/N-OBSERVED-PROPERTY-PRINCIPLE.md) → L. **Design not yet started** —
+  do NOT write schema/migration/API until Design is ratified. Wider "authority = property of
+  evidence" law is a parked candidate (needs ≥2 more domains, by observation).
+- The reusable method itself: docs/METHODOLOGY-LAW-DISCOVERY.md.
+
 ## Canonical reference
 
 - **`docs/MASTER-ARCHITECTURE.md` is the stable architecture (v1.0)** — start there. Session/
