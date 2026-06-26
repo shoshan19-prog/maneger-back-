@@ -14,14 +14,27 @@ Evidence          (an observation with provenance + measurement protocol + confi
    ↓
 Evidence Set      (observations sharing a context — what a boundary is derived from)
    ↓
-Decision          (release / hold / reject — Manufacturing Response, decision_shift)
+Decision Library  (the LOGIC: question · alternatives · reasoning · evidence_used · authority ·
+                   uncertainties · next_action · criteria — not just the outcome)
+   ↓
+Mechanism Candidate  (born from a CRITERION recurring across real decisions — data, not
+                   impression; kept in a SEPARATE Mechanism Registry, Evidence Sets only link it)
    ↓
 Rule Support Update  (each Evidence Set strengthens/weakens a rule — RuleSupport)
    ↓
 Engineering Rule  (operational knowledge — how Fresco thinks; Engineering Playbook)
    ↓
-Knowledge         (validated, scoped, attributable — in the Knowledge Graph)
+Knowledge Graph   (validated, scoped, attributable)
 ```
+
+**Decision Authority + data-driven mechanisms** (`lib/decisionLibrary.js`,
+`config/decision_library_v1.json`, `config/mechanism_registry_v1.json`; `npm run decisions`):
+we record *why* an engineer released one batch and rejected another. A criterion used across
+≥N real decisions becomes a Mechanism Candidate — emergent, not asserted. Mechanisms live in
+their own registry; an Evidence Set holds only `candidate_mechanisms: [MC-…]` links, keeping
+investigations separate from the mechanisms that accumulate from them. (Empty today; the
+"recoverability after remix" pattern is held as a *watched pattern*, explicitly NOT promoted —
+too few evidence sets, one environment.)
 
 **Knowledge Evolution (not just storage):** rules are living entities. `lib/ruleSupport.js` +
 `config/rule_support_v1.json` (`npm run rules:evolution`) link each rule to the Evidence Sets

@@ -1,0 +1,19 @@
+{
+  "registry": "DECISION_LIBRARY",
+  "version": "v1",
+  "note": "The Decision Authority layer (Fresco): not just the outcome but the LOGIC — why a batch was released or rejected. Empty now; each real engineering decision is added with full reasoning. A criterion that recurs across many decisions becomes a Mechanism Candidate (from data, not impression). decision_shift in the live DB is the outcome; this is the reasoning behind it.",
+  "decision_shape": {
+    "id": "DEC-001",
+    "date": "YYYY-MM-DD",
+    "question": "what was being decided",
+    "decision": "release | hold | reject | adjust | ...",
+    "alternatives_considered": ["..."],
+    "reasoning": "why this decision over the alternatives",
+    "evidence_used": ["EVS-014", "..."],
+    "authority": "who decided (David / Rachel / Lab)",
+    "uncertainties": ["what was still unknown"],
+    "next_action": "what follows",
+    "criteria": ["the decision criteria used — these are what aggregate into Mechanism Candidates"]
+  },
+  "decisions": []
+}

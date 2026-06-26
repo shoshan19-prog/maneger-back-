@@ -23,7 +23,8 @@
     "scoreboard": "node scripts/scoreboard.mjs",
     "gate": "node scripts/gates.mjs",
     "knowledge": "node scripts/knowledge.mjs",
-    "rules:evolution": "node scripts/rule_support.mjs"
+    "rules:evolution": "node scripts/rule_support.mjs",
+    "decisions": "node scripts/decisions.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",

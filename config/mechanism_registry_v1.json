@@ -1,0 +1,29 @@
+{
+  "registry": "MECHANISM_REGISTRY",
+  "version": "v1",
+  "note": "Mechanisms are kept SEPARATE from Evidence Sets (Fresco). An Evidence Set holds only candidate_mechanisms: [MC-...] links; this registry aggregates, per mechanism, its supporting evidence sets, the relevant decisions, and the engineering rules derived from it. A mechanism is promoted only when a criterion recurs across real decisions (decision_library) — born from data, not impression.",
+  "evidence_set_link_shape": { "evs_id": "EVS-014", "candidate_mechanisms": ["MC-001"] },
+  "mechanism_shape": {
+    "id": "MC-001",
+    "statement": "...",
+    "status": "watch | candidate | observed | verified",
+    "supporting_evidence_sets": ["EVS-..."],
+    "relevant_decisions": ["DEC-..."],
+    "derived_rules": ["ENG-..."],
+    "confidence_scope": { "verified_for": [], "not_verified_for": [], "future_validation": [] }
+  },
+  "watched_patterns": [
+    {
+      "id": "WP-001",
+      "statement": "Recoverability after remix may distinguish reversible separation from irreversible failure.",
+      "status": "watch",
+      "do_not_promote": true,
+      "based_on": "≈4 evidence sets · one product family · same experimental environment",
+      "not_yet_verified_for": ["other systems", "other polymers", "other products", "other aging times"],
+      "source": "lab observation",
+      "confidence": "provisional",
+      "note": "NOT a Mechanism Candidate yet — too few evidence sets, single environment. Watch; promote only if the criterion recurs across decisions and holds across families."
+    }
+  ],
+  "mechanisms": []
+}
