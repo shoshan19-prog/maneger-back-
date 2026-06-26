@@ -22,7 +22,7 @@ const { extractSpecs } = await import(pathToFileURL(path.resolve(here, '../lib/s
 const products = [];
 const A = new Set(), B = new Set(), C = new Set(), D = new Set();
 for (const f of files) {
-  const r = extractSpecs(fs.readFileSync(f, 'utf8'), path.basename(f, '.txt'));
+  const r = extractSpecs(fs.readFileSync(f, 'utf8'), path.basename(f, '.txt'), path.basename(f));
   products.push({ ...r, source_file: path.basename(f) });
   for (const ax of Object.keys(r.specification)) A.add(ax);
   for (const g of r.present_non_standard) B.add(`${g.axis}: ${g.reason}`);

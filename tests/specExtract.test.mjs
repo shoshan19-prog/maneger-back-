@@ -49,7 +49,14 @@ t('case-insensitive: uppercase "PH" still maps to ph', () => {
 t('normalizes specific gravity g/cm3 -> kg/m3, keeps raw for traceability', () => {
   const d = extractSpecs(liquid).specification.density;
   assert.deepEqual(d.value, { min: 1300, max: 1500, unit: 'kg/m3' });
-  assert.equal(d.normalization.raw, '1.3-1.5 g/cm3');
+  assert.equal(d.evidence.normalization.raw, '1.3-1.5 g/cm3');
+});
+
+t('Evidence Layer: each spec keeps source_document + literal source_text + confidence', () => {
+  const ph = extractSpecs(liquid, 'B-4', 'B-4 פריימר אקרילי.txt').specification.ph;
+  assert.equal(ph.evidence.source_document, 'B-4 פריימר אקרילי.txt');
+  assert.ok(/7\.6/.test(ph.evidence.source_text), 'literal evidence text retained');
+  assert.equal(ph.confidence, 1.0);
 });
 
 t('qualitative checks go to present_non_standard, not specification', () => {
