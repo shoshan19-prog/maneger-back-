@@ -26,6 +26,20 @@ Still STOP and ask first for (not auto-approved by design):
 
 Always end with the "Improvements & threads" note (below).
 
+## Information-gap protocol (how to ask — standing rule)
+
+When information is missing, do NOT assume the user can or should run a lab test. Distinguish:
+- **Knowledge gap** — answerable from the user's experience → ask ONE short question (e.g. "when
+  you decide on adhesion, do you look at a single number or a body of evidence?").
+- **Evidence gap** — needs an experiment/measurement/lab access → do NOT ask the user to answer
+  it; mark it explicitly **Requires Experimental Evidence** and stop.
+
+A question's purpose is to reduce uncertainty maximally at minimum cost. Before asking, check:
+(1) can the user answer from their own knowledge? (2) will the answer change the model? (3) is it
+the highest information-value question available? If any answer is "no" — don't ask. Never request
+a new experiment when existing knowledge can first narrow the possibility space. When lab data is
+required, stop and flag the gap instead of burdening the user.
+
 ## FSCTM law track (K→C→B→N→L→Design)
 
 - **LAW-AUTHORITY-001 (Domain-Validated Structural Law CANDIDATE — not yet a general law)**

@@ -5,6 +5,18 @@
   "note": "Backlog for the Operational Knowledge Stream. IMPORTANT (Fresco): one question at a time, not a batch — each question spawns 5-10 unexpected insights, so depth beats breadth. Work Question → Discussion → Model Update → Next Question. Each answer becomes a verified engineering_rule / knowledge_model entity (source_type=operational_knowledge), classified (engineering_principle | production_strategy | operational_rule | decision_heuristic) and carrying a confidence_scope.",
   "intake_mode": "one_question_at_a_time",
   "workflow": ["Question", "Discussion", "Model Update", "Next Question"],
+  "gap_protocol": "Knowledge gap = answerable from experience → ask one short question. Evidence gap = needs experiment/lab → mark 'Requires Experimental Evidence', do NOT ask the user. Ask only if: user can answer from knowledge AND the answer changes the model AND it is the highest information-value question. Narrow with existing knowledge before requesting any experiment.",
+  "gap_classification": {
+    "Q-001": "knowledge_gap",
+    "Q-002": "knowledge_gap (their internal reject standard — look-up, not a new experiment)",
+    "Q-003": "knowledge_gap (is Premix fitness measured or visual today?)",
+    "Q-004": "knowledge_gap",
+    "Q-005": "knowledge_gap for which vars David WATCHES as predictive; Requires Experimental Evidence to CONFIRM which actually predict performance",
+    "Q-006": "knowledge_gap",
+    "Q-007": "knowledge_gap",
+    "Q-008": "knowledge_gap",
+    "Q-009": "knowledge_gap"
+  },
   "active_question": "Q-001",
   "questions": [
     { "id": "Q-001", "area": "identity_unit", "question": "What are the Identity Components of EACH product family, and which of them are NOT compensable by process/formulation adjustment?",
