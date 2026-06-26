@@ -2,9 +2,20 @@
   "registry": "KNOWLEDGE_MODEL",
   "version": "v1",
   "source": "David (Fresco R&D lead) — verified production knowledge, 2026-06-26",
+  "source_type": "expert_operational_knowledge",
+  "knowledge_origin": "expert",
+  "expert": "David",
   "validated_by": "David",
+  "validation_status": "verified",
   "confidence": "verified",
-  "note": "Structural entities added to MATRIYA's knowledge model from VERIFIED Fresco production knowledge. These change the model: production starts from material identity, not the formula. Do NOT generalize beyond scope_verified; do NOT fan-out before the ontology reflects these.",
+  "note": "Structural entities added to MATRIYA's knowledge model from VERIFIED Fresco production knowledge (Operational Authority, not memory). These change the model: production starts from material identity, not the formula. Every entity carries knowledge_origin so the system knows HOW it knows, not only WHAT. Do NOT generalize beyond scope_verified; do NOT fan-out before the ontology reflects these.",
+  "authority_layers_ref": "config/authority_layers_v1.json (Material → Measurement → Acceptance → Decision)",
+  "formula_model": {
+    "insight": "Formula ≠ Recipe — the biggest structural finding. A Fresco formula is four layers, not just chemistry.",
+    "layers": ["Chemical System", "PSD Design", "Functional Premix", "Manufacturing Strategy"],
+    "knowledge_origin": "expert"
+  },
+  "knowledge_origin_taxonomy": ["document", "experiment", "expert", "standard", "operational_practice"],
   "entities": [
     { "id": "identity_variable", "definition": "Variable that defines raw-material identity (PSD, type, identity). Deviation → reject material.", "on_deviation": "reject_material" },
     { "id": "process_variable", "definition": "Variable created during production (pH, viscosity, SG). Deviation → adjust, re-test, release.", "on_deviation": "adjust_retest_release" },
@@ -26,7 +37,8 @@
       "yes": ["workability", "accurate water ratio", "visual application", "incoming materials", "PSD"],
       "cadence": "visual inspection every batch; full workability verification ~every 15 batches"
     },
-    "formula_definition": ["Binder System", "PSD Design", "Functional Additives", "Processing Strategy"],
+    "formula_definition": ["Chemical System", "PSD Design", "Functional Premix", "Manufacturing Strategy"],
+    "formula_not_recipe": "Formula ≠ Recipe — see formula_model. entities below: knowledge_origin = expert (all).",
     "supplier_coa": "Supplier CoA is NOT the final authority. Sufficient while no problem; on a failure → event-driven deep investigation: Granulometry → Raw Materials → Supplier.",
     "cellulose_qc_before_use": ["no agglomeration", "dry", "free flowing"]
   },

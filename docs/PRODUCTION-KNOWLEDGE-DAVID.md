@@ -58,6 +58,21 @@ deep investigation: Granulometry → Raw Materials → Supplier.
 - **Verified:** B-4 Primer · Dry Powder products.
 - **Not yet verified:** Finish Coatings · other liquid systems.
 
+## Refinements (David, round 2 — verified)
+- **Operational Authority, not "memory".** Tagged `source_type: expert_operational_knowledge ·
+  expert: David · validation_status: verified` (config/*_v1.json).
+- **4th authority layer — Material Authority** (config/authority_layers_v1.json): Fresco decides
+  *before* measurement (does the material enter? granulometry/Premix fit?). Order now:
+  **Material → Measurement → Acceptance → Decision.**
+- **Decision level per variable** (ontology `decision_level`): PSD/cement → Incoming Material ·
+  pH/viscosity/SG → Production · adhesion → Product Validation · fire → Certification. MATRIYA
+  knows *at which stage* each variable governs a decision.
+- **Formula ≠ Recipe** (the biggest finding): a Fresco formula is four layers —
+  **Chemical System · PSD Design · Functional Premix · Manufacturing Strategy.**
+- **`knowledge_origin` on every entity** — document | experiment | expert | standard |
+  operational_practice. The system records not just *what* it knows but *how* it knows it
+  (the long-term Knowledge-Graph asset). Everything here = `expert`.
+
 ## Required next (before continuing parser work / fan-out)
 Ontology updated ✅ · entities added ✅ · knowledge model updated ✅. **Do not continue fan-out
 before these verified production concepts are incorporated** — done in this commit. The next

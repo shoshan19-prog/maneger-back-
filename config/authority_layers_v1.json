@@ -1,0 +1,34 @@
+{
+  "registry": "AUTHORITY_LAYERS",
+  "version": "v1",
+  "source_type": "expert_operational_knowledge",
+  "expert": "David",
+  "validation_status": "verified",
+  "knowledge_origin": "expert",
+  "note": "Four authority layers (Fresco). The new one is Material Authority — Fresco makes decisions BEFORE measurement (does the material even enter the plant? is granulometry/Premix fit?). Each layer answers a different question and a different authority can decide it.",
+  "layers": [
+    { "order": 1, "id": "material_authority", "question": "Does the material/Premix enter production at all?",
+      "decides": ["raw-material acceptance", "granulometry/PSD fitness", "Premix fitness"],
+      "decision_level": "Incoming Material", "on_fail": "reject_material (no formula compensation)" },
+    { "order": 2, "id": "measurement_authority", "question": "How is it measured?",
+      "decides": ["axis / unit / method / measurement_protocol"], "decision_level": "Production" },
+    { "order": 3, "id": "acceptance_authority", "question": "When is a result good?",
+      "decides": ["spec ranges (T_relevance)"], "decision_level": "Production / Product Validation" },
+    { "order": 4, "id": "decision_authority", "question": "Release, hold, or reject?",
+      "decides": ["manufacturing response (Hold Batch / Adjust→Retest / Release)"], "decision_level": "Production / Certification" }
+  ],
+  "decision_levels": ["Incoming Material", "Production", "Product Validation", "Certification"],
+  "knowledge_origin_taxonomy": {
+    "_note": "Every knowledge object should record HOW it is known, not only what is known — the long-term asset for the Knowledge Graph.",
+    "values": ["document", "experiment", "expert", "standard", "operational_practice"],
+    "examples": {
+      "pH 7.6-10": "document",
+      "viscosity SOP": "document",
+      "PSD cannot be compensated": "expert (operational)",
+      "ASTM B117 / EN 1015": "standard",
+      "stability result": "experiment"
+    }
+  },
+  "scope_verified": ["B-4 Primer", "Dry Powder Products"],
+  "scope_not_verified": ["Finish Coatings", "other liquid systems"]
+}

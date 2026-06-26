@@ -2,8 +2,19 @@
   "registry": "VARIABLE_CLASSIFICATION",
   "version": "v1",
   "source": "David (Fresco R&D lead) — verified production knowledge, 2026-06-26",
+  "source_type": "expert_operational_knowledge",
+  "knowledge_origin": "expert",
+  "expert": "David",
   "validated_by": "David",
+  "validation_status": "verified",
   "confidence": "verified",
+  "decision_levels": {
+    "_note": "At which point in the chain each variable governs a decision (Fresco).",
+    "PSD": "Incoming Material", "granulometry": "Incoming Material", "cement_type": "Incoming Material",
+    "aggregate_type": "Incoming Material", "raw_material_identity": "Incoming Material",
+    "ph": "Production", "viscosity": "Production", "specific_gravity": "Production",
+    "pull_off_adhesion": "Product Validation", "fire_resistance": "Certification"
+  },
   "note": "Two FUNDAMENTALLY different kinds of variable. The deviation policy is the distinction: identity deviations reject the material (never compensated by changing the formula); process deviations are adjusted and re-tested. Do NOT generalize beyond scope_verified.",
   "classes": {
     "identity": {
