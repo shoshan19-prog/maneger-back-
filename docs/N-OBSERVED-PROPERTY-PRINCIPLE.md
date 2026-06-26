@@ -63,6 +63,34 @@ This keeps N a principle *inferred from the collected evidence* — with a state
 to refutation — rather than a prematurely universal law. If future evidence shows a class of
 properties that does not require derivation, this boundary is where the principle is revised.
 
+## 7. Validation by analogy (analogies as test instruments)
+An analogy that breaks under analysis would mean the principle is still imprecise. Four were
+tested; none breaks — two sharpen it.
+
+| Analogy | Maps to | Holds? | What it sharpens |
+|---|---|---|---|
+| **Book vs reading-history** | label ≠ knowledge; meaning derived from readings | ✓ | the *text* (record) IS stored & authoritative = the **event**; only the derived *meaning* is non-stored |
+| **Courtroom: case vs evidence** | the case aggregates; authority is in testimony/evidence; a verdict is appealable | ✓ (strongest) | supports framing it as **authority**, not "property"; a verdict is a *re-derivable* result |
+| **Lab: "viscosity" vs observed-viscosity@conditions** | no bare value; authority in the measurement event | ✓ (home domain) | exactly the studied case |
+| **GPS: position vs pings** | no `Current Position`; location = Projection(events) | ✓ | a stored value, if kept, is a **non-authoritative cache** of a derivation |
+
+**Net sharpening added to the model:** (a) the **event/record is the stored authority**;
+(b) any stored property value is only a **non-authoritative cache** of a derivation.
+
+## 8. Candidate generalization — recorded, NOT adopted
+The courtroom analogy is not about "properties" at all, which suggests a wider claim:
+> **Authority is not a property of an object; it is a property of the evidence the object rests on.**
+
+- **Status: candidate, not a law.** Confirmed instances so far: **1** (Observed Property).
+- **Possibly corroborating, but design-consistent (not independent):** RuleSupport (a rule's
+  confidence derived from evidence sets, not stored on the rule), the Mechanism Registry
+  (status from supporting evidence + decisions), coupling level (Mechanistic→Verified from
+  evidence). These were *designed* this way, so they *suggest* the pattern but do not
+  independently confirm it.
+- **Promotion rule:** state the general Authority law only after the pattern is shown to hold in
+  **≥2 further domains on real evidence** (e.g. decisions, mechanisms) — by observation, not by
+  design. Until then it stays a candidate, with the same boundary of validity as §6.
+
 ---
 ### Not yet (the next gates)
 - **L (proposed, not ratified):** *"Property values are derived, not authoritative; authority
