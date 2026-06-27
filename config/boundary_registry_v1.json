@@ -1,0 +1,21 @@
+{
+  "registry": "BOUNDARY_REGISTRY",
+  "version": "v1",
+  "note": "Boundaries born from a Boundary Δ are CANDIDATES. A law is justified only when a boundary is ESTABLISHED — held across ≥2 distinct DEFINED conditions by INDEPENDENT replication (Fresco). A single experiment, however rich, yields a candidate, not knowledge. Law 5 (valid only in context): the established conditions ARE the boundary's scope.",
+  "states": {
+    "candidate": "born from one experiment",
+    "supported": "re-observed independently at least once (held)",
+    "established": "held across ≥2 distinct defined conditions, no in-context violation → law justified",
+    "contested": "violated within its declared context (the boundary as stated failed)"
+  },
+  "boundaries": [
+    {
+      "id": "B-DENSITY-TTF",
+      "statement": "char_density threshold separating Works / Borderline / Fails for time_to_failure",
+      "origin": "E-012",
+      "context": { "domain": "intumescent", "furnace": "ISO 834" },
+      "replications": [],
+      "note": "Candidate-in-waiting: E-012 is pre-registered, not yet run. Even once E-012 produces it, it is a CANDIDATE — it becomes Supported only on independent replication (different batch/conditions), Established across ≥2 defined conditions. This is the qualitative WP-002 finding awaiting metric replication."
+    }
+  ]
+}

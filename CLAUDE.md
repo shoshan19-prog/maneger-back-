@@ -150,6 +150,18 @@ the possibility space has been reliably ruled out.
   source=measurement — the only path lifting measurement coverage off 0%. **Full chain now exists
   (in representation):** Document → Formula → Knowledge Graph → Experiment → Knowledge Δ → Boundary →
   Law. What's missing is not architecture but the first real measurement (human: Rachel/David/E-012).
+- **Replication Layer — the link between Knowledge Δ and Law** (docs/REPLICATION.md,
+  `lib/replication.js`, `config/boundary_registry_v1.json`, `npm run boundaries`): a law is NOT born
+  from a Knowledge Δ — it is born when a Δ SURVIVES independent replication. A Boundary Δ from one
+  experiment is a **candidate**; ladder: candidate → **supported** (re-observed independently once) →
+  **established** (held across ≥2 distinct DEFINED conditions, no in-context violation → law justified)
+  → *contested* (violated in-context). The established conditions ARE the scope (Law 5). Two ORTHOGONAL
+  metrics: `learning_value` (how much knowledge moved) ≠ `confidence` (how stable — depends ONLY on
+  replication, never on learning_value): e.g. value 64/conf 0.22 vs value 18/conf 0.94. For Fresco:
+  not every successful formulation change becomes knowledge — only one that repeats, holds across
+  batches, stays valid under defined conditions. Today: B-DENSITY-TTF is a candidate (conf 0.20, 0
+  replications); 0 established; no law justified — honest. **Still pending (awaits data):** Boundary
+  Validation (needs E-012) · Law Registry (needs independent cross-domain replication of LAW-AUTHORITY-001).
 - `migrations/007_observation_contract.sql` — Axis Authority + Observation Contract (append-only).
 - `lib/observationContract.js` — the validation gate (single source of truth for ingest).
 - `scripts/analyze_formulation.mjs` + skill `analyze-formulation-data` — analyze uploaded xlsx.
