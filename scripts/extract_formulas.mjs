@@ -19,11 +19,15 @@ const out = path.resolve(arg('--out', '.corpus/formulas_v1.json'));
 
 const here = path.dirname(new URL(import.meta.url).pathname);
 const { extractFormula } = await import(pathToFileURL(path.resolve(here, '../lib/formulaExtract.js')).href);
+const { canonicalFormula, validateFormula } = await import(pathToFileURL(path.resolve(here, '../lib/formulaSchema.js')).href);
 
 const files = fs.readdirSync(dir).filter(f => f.endsWith('.txt')).sort();
 const formulas = files.map(f => {
   const text = fs.readFileSync(path.join(dir, f), 'utf8');
-  return { source_file: f, ...extractFormula(text, path.basename(f, '.txt')) };
+  const extracted = extractFormula(text, path.basename(f, '.txt'));
+  const canonical = canonicalFormula(extracted, { document_source: f, extraction_method: 'formulaExtract.v1' });
+  const validation = validateFormula(canonical);
+  return { source_file: f, ...extracted, canonical, schema_valid: validation.ok, schema_errors: validation.errors };
 });
 
 fs.writeFileSync(out, JSON.stringify({
@@ -37,9 +41,11 @@ fs.writeFileSync(out, JSON.stringify({
 const totIng = formulas.reduce((s, r) => s + r.ingredient_count, 0);
 const totPsd = formulas.reduce((s, r) => s + r.psd_design.length, 0);
 const okPct = formulas.filter(r => r.percent_ok).length;
+const schemaOk = formulas.filter(r => r.schema_valid).length;
 console.log(`\nFormula extraction → ${path.relative(path.resolve(here, '..'), out)}`);
 console.log(`  formulas: ${formulas.length}  ·  ingredients: ${totIng}  ·  PSD fractions (identity): ${totPsd}`);
 console.log(`  percent self-audit OK (sum≈100): ${okPct}/${formulas.length}`);
+console.log(`  Formula Schema v1 valid: ${schemaOk}/${formulas.length}`);
 console.log('\n  per formula:');
 for (const r of formulas) {
   const flag = r.percent_ok ? '✓' : '⚠';

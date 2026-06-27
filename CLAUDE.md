@@ -106,6 +106,17 @@ the possibility space has been reliably ruled out.
   Experiment · Decision · Knowledge Graph · **Engineering Playbook** (`config/engineering_playbook_v1.json`
   — rules of engineering practice / how Fresco thinks; David, verified, scope B-4+Dry Powder).
   Three knowledge types: Declarative / Procedural / Engineering.
+- **Formula is a First-Class Entity** (docs/FORMULA-ENTITY.md, `config/formula_schema_v1.json`,
+  `lib/formulaSchema.js` + `lib/formulaExtract.js`): Fresco's knowledge is `Formula → Ingredients →
+  Role → PSD → Process → Measurements → Performance`, NOT `Document → Specs`. Pipeline reordered:
+  Document → Formula Extraction → **Canonical Formula Object (v1)** → [LATER: Knowledge Graph →
+  Experiment Linking → Project Knowledge]. The schema tags every field's authority — **objective**
+  (read mechanically: material/percent/quantity, psd), **interpreted** (provisional heuristic: role,
+  family, chemical_system), **pending** (process/linked_*/observed_effects — declared empty, not
+  guessed); `validateFormula` forbids interpretation masquerading as objective. `formula_id` is
+  PROVISIONAL pending **Q-009** (versioning) — do not aggregate across it yet. `npm run formulas`
+  → `.corpus/formulas_v1.json` (proprietary, git-ignored). **Do NOT build the Knowledge Graph /
+  Experiment / Project layers until the schema is ratified** (Fresco).
 - `migrations/007_observation_contract.sql` — Axis Authority + Observation Contract (append-only).
 - `lib/observationContract.js` — the validation gate (single source of truth for ingest).
 - `scripts/analyze_formulation.mjs` + skill `analyze-formulation-data` — analyze uploaded xlsx.

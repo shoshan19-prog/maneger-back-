@@ -1,0 +1,96 @@
+{
+  "registry": "FORMULA_SCHEMA",
+  "version": "v1",
+  "principle": "Formula is a First-Class Entity (Fresco). At Fresco most knowledge lives as Formula → Ingredients → Role → PSD → Process → Measurements → Performance — NOT as Document → Specifications. A formula sheet is a document; the FORMULA is the knowledge object the lab reasons about.",
+  "architecture_shift": {
+    "from": ["Document", "Spec Extraction"],
+    "to": ["Document", "Formula Extraction", "Canonical Formula Object", "Knowledge Graph", "Experiment Linking", "Project Knowledge"],
+    "note": "Spec extraction stays for documents that ARE spec sheets; for formula sheets the Canonical Formula Object is the central knowledge layer. Knowledge Graph / Experiment / Project linking come LATER — only after this schema is stable (Fresco)."
+  },
+  "maps_to_david": "Formula = Chemical System (binders) + PSD Design (psd) + Functional Premix (additives) + Manufacturing Strategy (process). Verified scope: B-4 + Dry Powder.",
+
+  "field_authority": {
+    "_note": "The Verified/Interpretation separation, built into the schema. objective = read mechanically from the document (authoritative). interpreted = a provisional heuristic, NOT asserted knowledge. pending = not in a formula sheet; awaits another source (David / experiment / QC doc).",
+    "formula_id": "objective (provisional identity — see identity_status; versioning rule is Q-009, open)",
+    "product": "objective",
+    "product_family": "interpreted (classifier; provisional)",
+    "version": "objective if present in doc; identity semantics pending Q-009",
+    "ingredients[].material": "objective",
+    "ingredients[].batch": "objective",
+    "ingredients[].percent": "objective",
+    "ingredients[].quantity": "objective",
+    "ingredients[].role": "interpreted (psd_fraction is mechanical; binder/additive are heuristics — provisional)",
+    "psd[]": "objective (a fraction name IS a particle-size range/mesh — mechanical)",
+    "composition_audit": "objective (Σ% self-audit computed from the rows)",
+    "chemical_system": "interpreted (role=binder view)",
+    "functional_additives": "interpreted (role=additive view)",
+    "process": "pending (Manufacturing Strategy — not in the formula sheet; David / SOP)",
+    "quality_checks": "objective when the QC block is filled (usually near-empty in these docs)",
+    "linked_experiments": "pending",
+    "linked_results": "pending",
+    "observed_effects": "pending",
+    "linked_projects": "pending"
+  },
+
+  "boundary": {
+    "identity": "formula_id is PROVISIONAL until Q-009 (what change creates a new formula identity) is answered by David. Do not aggregate across formula_id as if it were canonical yet (Law 2: Identity Before Aggregation).",
+    "roles": "role / chemical_system / functional_additives are interpreted heuristics — never asserted as derived knowledge. Only objective fields carry authority.",
+    "pending_fields": "process / linked_* / observed_effects are declared EMPTY, not guessed. An empty pending field is a known gap, not a value."
+  },
+
+  "json_schema": {
+    "type": "object",
+    "required": ["formula_id", "product", "product_family", "ingredients", "composition_audit", "provenance", "identity_status"],
+    "properties": {
+      "formula_id": { "type": "string" },
+      "product": { "type": "string" },
+      "product_family": { "type": "string" },
+      "version": { "type": ["string", "null"] },
+      "identity_status": { "type": "string", "enum": ["provisional_pending_Q009", "canonical"] },
+      "ingredients": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["material", "role"],
+          "properties": {
+            "material": { "type": "string" },
+            "batch": { "type": ["number", "null"] },
+            "percent": { "type": ["number", "null"] },
+            "quantity": { "type": ["number", "null"] },
+            "role": { "type": "string", "enum": ["binder", "psd_fraction", "additive"] },
+            "role_authority": { "type": "string", "enum": ["objective", "interpreted"] }
+          }
+        }
+      },
+      "psd": {
+        "type": "array",
+        "items": { "type": "object", "required": ["fraction"], "properties": { "fraction": { "type": "string" }, "percent": { "type": ["number", "null"] } } }
+      },
+      "chemical_system": { "type": "array", "items": { "type": "string" } },
+      "functional_additives": { "type": "array", "items": { "type": "string" } },
+      "composition_audit": {
+        "type": "object",
+        "required": ["percent_sum", "percent_ok"],
+        "properties": { "percent_sum": { "type": "number" }, "percent_ok": { "type": "boolean" }, "complete": { "type": "boolean" } }
+      },
+      "process": { "type": ["object", "null"], "description": "pending — David / SOP" },
+      "quality_checks": { "type": "array" },
+      "linked_experiments": { "type": "array" },
+      "linked_results": { "type": "array" },
+      "observed_effects": { "type": "array" },
+      "linked_projects": { "type": "array" },
+      "provenance": {
+        "type": "object",
+        "required": ["document_source", "extraction_method", "extraction_layer"],
+        "properties": {
+          "document_source": { "type": "string" },
+          "document_sha1": { "type": ["string", "null"] },
+          "extraction_method": { "type": "string" },
+          "extraction_layer": { "type": "string", "enum": ["layer1_objective", "layer2_validated"] },
+          "extracted_date": { "type": ["string", "null"] },
+          "validated_by": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}
