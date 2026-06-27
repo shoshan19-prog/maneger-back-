@@ -128,6 +128,17 @@ the possibility space has been reliably ruled out.
   materialsWithMultipleRoles (CaCO3 insight), authorityCoverage (54% document · 46% heuristic · **0%
   measurement** — honest), diffFormulas (V4→V5). Identity still provisional (Q-009 / Phase A5) — do
   not aggregate as canonical yet. Persistence is human-gated (map onto live DB, never a parallel store).
+- **Knowledge Δ Engine — measures what we LEARNED** (docs/KNOWLEDGE-DELTA.md, `lib/knowledgeDelta.js`,
+  `npm run delta`): not another entity — a layer that classifies CHANGE in knowledge into five types:
+  **Identity Δ** (new formula/material) · **Composition Δ** (ingredient add/remove/re-proportion) ·
+  **Authority Δ** (a datum MATURED: pending→interpreted→objective(document)→objective(measurement) —
+  the deepest; knowledge becoming authoritative without changing what it's about) · **Boundary Δ** (a
+  new boundary born) · **Evidence Δ** (evidence items added by axis). `summary.learned` is true ONLY
+  if Authority/Boundary/Evidence moved — a pure composition edit is a *change*, not *learning*
+  (representation ≠ generation, operationalized). Current corpus: Identity 42 · all others 0 ·
+  measurement coverage 0% → `learned=false` (built a state, not yet learned — the honest gap). Gives
+  each future experiment a value = how much it moves the Δ. **Build order:** Schema ✅ → Graph ✅ →
+  Knowledge Δ ✅ → **Experiment Linking next** (measured by Δ contribution, not just its link).
 - `migrations/007_observation_contract.sql` — Axis Authority + Observation Contract (append-only).
 - `lib/observationContract.js` — the validation gate (single source of truth for ingest).
 - `scripts/analyze_formulation.mjs` + skill `analyze-formulation-data` — analyze uploaded xlsx.

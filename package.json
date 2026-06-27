@@ -29,7 +29,8 @@
     "learning": "node scripts/learning.mjs",
     "gap": "node scripts/gap.mjs",
     "formulas": "node scripts/extract_formulas.mjs",
-    "graph": "node scripts/graph.mjs"
+    "graph": "node scripts/graph.mjs",
+    "delta": "node scripts/delta.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
