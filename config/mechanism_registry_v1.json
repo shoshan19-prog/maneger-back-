@@ -23,6 +23,17 @@
       "source": "lab observation",
       "confidence": "provisional",
       "note": "NOT a Mechanism Candidate yet — too few evidence sets, single environment. Watch; promote only if the criterion recurs across decisions and holds across families."
+    },
+    {
+      "id": "WP-002",
+      "statement": "Char density / structural integrity — not char height and not expansion ratio — controls fire-protection time (TTF): tall low-density foam detaches and exposes the substrate; short dense char holds.",
+      "status": "watch",
+      "do_not_promote": true,
+      "based_on": "E-011 calibration on existing burn-test data · n=16 observational · char_height~TTF r=-0.63 · Fresco char noted soft/low-density vs competitor hard/dense",
+      "not_yet_verified_for": ["a metric density→TTF boundary", "isolated variables (Fresco=thin+tall vs competitors=thick+short → confounded)", "other formulations / substrates / furnace profiles"],
+      "source": "E-011 (docs/E-011-calibration-result.md) — qualitative PASS vs known lab ground truth, NOT metrically validated",
+      "confidence": "provisional",
+      "note": "Recovered a KNOWN lab understanding from data already in hand (more foam ≠ more protection; density decides). Watch only — the controlled experiment must scan toward CHAR_DENSITY to earn a metric boundary. Do NOT assert as an engineering rule; no ENG- rule encodes this and inventing one would fabricate support."
     }
   ],
   "mechanisms": []
