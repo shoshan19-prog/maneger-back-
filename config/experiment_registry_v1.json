@@ -1,0 +1,40 @@
+{
+  "registry": "EXPERIMENT_REGISTRY",
+  "version": "v1",
+  "note": "Experiments linked to formulas AND measured by their Knowledge Δ contribution (Fresco). Pre-registration: an experiment declares expected_contribution BEFORE running (declaration precedes measurement), so pending experiments can be ranked by PROJECTED Δ. actual_contribution is filled only when status=completed. A measurement carries authority source=measurement — the only path that lifts measurement coverage above 0%.",
+  "contribution_shape": {
+    "evidence": { "<axis>": "count of measurements added" },
+    "authority": [{ "formula_id": "<id>", "material": "<name>", "to": { "field": "objective", "source": "measurement" } }],
+    "boundaries": [{ "id": "B-...", "statement": "..." }]
+  },
+  "experiments": [
+    {
+      "id": "E-011",
+      "domain": "intumescent",
+      "formula_id": "intumescent-calibration",
+      "status": "completed",
+      "hypothesis": "Recover known lab understanding from existing burn-test data before a controlled run.",
+      "actual_contribution": {
+        "evidence": { "expansion_ratio": 16, "time_to_failure": 16, "char_height": 16, "film_thickness": 16 },
+        "authority": [],
+        "boundaries": []
+      },
+      "result_ref": "docs/E-011-calibration-result.md",
+      "note": "Produced WP-002 (watched pattern: density controls TTF) — but QUALITATIVE only, confounded (Fresco thin+tall vs competitors thick+short), n=16. Lots of evidence, NO metric boundary — which is precisely why a controlled E-012 is needed."
+    },
+    {
+      "id": "E-012",
+      "domain": "intumescent",
+      "formula_id": "intumescent",
+      "status": "pre_registered",
+      "hypothesis": "Char density (not height/expansion) controls fire-protection time — scan toward CHAR_DENSITY (WP-002).",
+      "expected_contribution": {
+        "evidence": { "char_density": 6, "time_to_failure": 6 },
+        "authority": [],
+        "boundaries": [{ "id": "B-DENSITY-TTF", "statement": "char_density threshold separating Works / Borderline / Fails for time_to_failure (to be established)" }]
+      },
+      "pre_registration_ref": "docs/E-011-calibration-result.md §7",
+      "note": "Pre-registered. Projected to BIRTH a boundary E-011 could not (it was confounded). Run this next — its value is the boundary, not the evidence count."
+    }
+  ]
+}

@@ -30,7 +30,8 @@
     "gap": "node scripts/gap.mjs",
     "formulas": "node scripts/extract_formulas.mjs",
     "graph": "node scripts/graph.mjs",
-    "delta": "node scripts/delta.mjs"
+    "delta": "node scripts/delta.mjs",
+    "experiments": "node scripts/experiments.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",

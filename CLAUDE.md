@@ -137,8 +137,19 @@ the possibility space has been reliably ruled out.
   if Authority/Boundary/Evidence moved — a pure composition edit is a *change*, not *learning*
   (representation ≠ generation, operationalized). Current corpus: Identity 42 · all others 0 ·
   measurement coverage 0% → `learned=false` (built a state, not yet learned — the honest gap). Gives
-  each future experiment a value = how much it moves the Δ. **Build order:** Schema ✅ → Graph ✅ →
-  Knowledge Δ ✅ → **Experiment Linking next** (measured by Δ contribution, not just its link).
+  each future experiment a value = how much it moves the Δ.
+- **Experiment Linking — value = Knowledge Δ contribution** (docs/EXPERIMENT-LINKING.md,
+  `lib/experimentLink.js`, `config/experiment_registry_v1.json`, `npm run experiments`): an experiment
+  is measured by how much it MOVES knowledge, not which formula it links to. `learning_value =
+  evidence×1 + authority×3 + boundary×5` (a born boundary > a matured datum > an evidence item;
+  identity/composition don't count). Pre-registration declares `expected_contribution` BEFORE running
+  → pending experiments ranked by PROJECTED Δ (the next-experiment lever); `actual_contribution`
+  replaces it on completion; a pre-registered experiment is projected only, never folded into the real
+  state. Registry: E-011 completed (value 64, all evidence, NO boundary — confounded) · E-012
+  pre-registered (projected value 17, would BIRTH a boundary E-011 couldn't). A measurement carries
+  source=measurement — the only path lifting measurement coverage off 0%. **Full chain now exists
+  (in representation):** Document → Formula → Knowledge Graph → Experiment → Knowledge Δ → Boundary →
+  Law. What's missing is not architecture but the first real measurement (human: Rachel/David/E-012).
 - `migrations/007_observation_contract.sql` — Axis Authority + Observation Contract (append-only).
 - `lib/observationContract.js` — the validation gate (single source of truth for ingest).
 - `scripts/analyze_formulation.mjs` + skill `analyze-formulation-data` — analyze uploaded xlsx.
