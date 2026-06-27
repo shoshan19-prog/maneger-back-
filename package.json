@@ -27,7 +27,8 @@
     "decisions": "node scripts/decisions.mjs",
     "predictions": "node scripts/predictions.mjs",
     "learning": "node scripts/learning.mjs",
-    "gap": "node scripts/gap.mjs"
+    "gap": "node scripts/gap.mjs",
+    "formulas": "node scripts/extract_formulas.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
