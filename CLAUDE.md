@@ -118,8 +118,16 @@ the possibility space has been reliably ruled out.
   (so you can later query "only measurement-backed" / "ignore heuristics"). (3) **Functional Interface**
   (`functional_interfaces[]`) — explicit layer between Component and Process, defined now but pending.
   `formula_id` PROVISIONAL pending **Q-009** (versioning) — don't aggregate across it yet. `npm run
-  formulas` → `.corpus/formulas_v1.json` (proprietary, git-ignored; 8/8 valid). **Do NOT build the
-  Knowledge Graph / Experiment / Project layers until the schema is ratified** (Fresco).
+  formulas` → `.corpus/formulas_v1.json` (proprietary, git-ignored; 8/8 valid).
+- **Knowledge Graph — DERIVED, not stored** (docs/KNOWLEDGE-GRAPH.md, `lib/knowledgeGraph.js`, `npm
+  run graph`): the layer above Schema v1.1. Law 3 — `graph(t)` is recomputed from canonical formulas,
+  no persisted parallel truth, no migration. Chain `Formula → FunctionalRole → Component → PSD →
+  [FunctionalInterface → Process → Measurement → Performance]` (tail pending). Every edge carries the
+  two-dim authority → `subgraph(g,{source:'measurement'})` gives a measurement-only view. Answers
+  (real data): formulasSharingPsd (0.8-1.4 in 4/8), coOccurringIngredients, rolesOfMaterial /
+  materialsWithMultipleRoles (CaCO3 insight), authorityCoverage (54% document · 46% heuristic · **0%
+  measurement** — honest), diffFormulas (V4→V5). Identity still provisional (Q-009 / Phase A5) — do
+  not aggregate as canonical yet. Persistence is human-gated (map onto live DB, never a parallel store).
 - `migrations/007_observation_contract.sql` — Axis Authority + Observation Contract (append-only).
 - `lib/observationContract.js` — the validation gate (single source of truth for ingest).
 - `scripts/analyze_formulation.mjs` + skill `analyze-formulation-data` — analyze uploaded xlsx.
