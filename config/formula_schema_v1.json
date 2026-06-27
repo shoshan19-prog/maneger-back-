@@ -1,84 +1,126 @@
 {
   "registry": "FORMULA_SCHEMA",
-  "version": "v1",
-  "principle": "Formula is a First-Class Entity (Fresco). At Fresco most knowledge lives as Formula → Ingredients → Role → PSD → Process → Measurements → Performance — NOT as Document → Specifications. A formula sheet is a document; the FORMULA is the knowledge object the lab reasons about.",
+  "version": "v1.1",
+  "principle": "Formula is a First-Class Entity (Fresco). Knowledge lives as Formula → Functional Role → Component → PSD → Functional Interface → Process → Measurements → Performance — NOT as Document → Specifications. v1.1 adds the structure that leads to BEHAVIOUR, not just the list of ingredients.",
   "architecture_shift": {
-    "from": ["Document", "Spec Extraction"],
+    "from": ["Document", "Specifications"],
     "to": ["Document", "Formula Extraction", "Canonical Formula Object", "Knowledge Graph", "Experiment Linking", "Project Knowledge"],
-    "note": "Spec extraction stays for documents that ARE spec sheets; for formula sheets the Canonical Formula Object is the central knowledge layer. Knowledge Graph / Experiment / Project linking come LATER — only after this schema is stable (Fresco)."
+    "note": "Spec extraction stays for documents that ARE spec sheets. Knowledge Graph / Experiment / Project layers are NOT built until this schema is ratified (Fresco)."
   },
+  "knowledge_chain": ["Formula", "Functional Role", "Component (Ingredient)", "PSD", "Functional Interface", "Process", "Measurements", "Performance"],
   "maps_to_david": "Formula = Chemical System (binders) + PSD Design (psd) + Functional Premix (additives) + Manufacturing Strategy (process). Verified scope: B-4 + Dry Powder.",
 
+  "extensions_v1_1": {
+    "1_role_as_entity": "Role is a property of the FORMULA, not of the material. The SAME material (e.g. CaCO3 / Omyacarb 5) can be Packing in one formula and Opacity in another with NO change to material identity — it is not always Filler (it may be PSD controller / rheology stabilizer / cost optimizer / thermal sink / packing modifier). So FunctionalRole is a SEPARATE entity linking (formula, ingredient) → role, never a field of Ingredient.",
+    "2_source_authority": "Authority now has TWO orthogonal dimensions: FIELD (objective | interpreted | pending — is it fact, interpretation, or gap?) AND SOURCE (document | measurement | instrument | heuristic | unknown — where did it come from?). This lets future queries say 'show me only measurement-backed knowledge' or 'ignore all heuristics' without changing the object structure.",
+    "3_functional_interface": "An explicit layer BETWEEN Component and Process: how a functional role behaves and couples to process variables. Defined now (mostly pending — no process/behaviour data yet) so future linking of formulas, experiments, equipment and results needs no structural change."
+  },
+
+  "authority": {
+    "field": ["objective", "interpreted", "pending"],
+    "source": ["document", "measurement", "instrument", "heuristic", "unknown"],
+    "invariants": [
+      "field=objective ⇒ source ∈ {document, measurement, instrument} (a fact must trace to a real source, never to a heuristic)",
+      "field=interpreted ⇒ source = heuristic (a provisional guess)",
+      "field=pending ⇒ source = unknown (a declared gap, not a value)"
+    ]
+  },
+
   "field_authority": {
-    "_note": "The Verified/Interpretation separation, built into the schema. objective = read mechanically from the document (authoritative). interpreted = a provisional heuristic, NOT asserted knowledge. pending = not in a formula sheet; awaits another source (David / experiment / QC doc).",
-    "formula_id": "objective (provisional identity — see identity_status; versioning rule is Q-009, open)",
-    "product": "objective",
-    "product_family": "interpreted (classifier; provisional)",
-    "version": "objective if present in doc; identity semantics pending Q-009",
-    "ingredients[].material": "objective",
-    "ingredients[].batch": "objective",
-    "ingredients[].percent": "objective",
-    "ingredients[].quantity": "objective",
-    "ingredients[].role": "interpreted (psd_fraction is mechanical; binder/additive are heuristics — provisional)",
-    "psd[]": "objective (a fraction name IS a particle-size range/mesh — mechanical)",
-    "composition_audit": "objective (Σ% self-audit computed from the rows)",
-    "chemical_system": "interpreted (role=binder view)",
-    "functional_additives": "interpreted (role=additive view)",
-    "process": "pending (Manufacturing Strategy — not in the formula sheet; David / SOP)",
-    "quality_checks": "objective when the QC block is filled (usually near-empty in these docs)",
-    "linked_experiments": "pending",
-    "linked_results": "pending",
-    "observed_effects": "pending",
-    "linked_projects": "pending"
+    "_note": "Default authority per field. Per-datum authority (functional_roles, functional_interfaces) is carried INSIDE each item as { field, source }.",
+    "product": { "field": "objective", "source": "document" },
+    "product_family": { "field": "interpreted", "source": "heuristic" },
+    "version": { "field": "objective", "source": "document", "note": "identity semantics pending Q-009" },
+    "ingredients[].material": { "field": "objective", "source": "document" },
+    "ingredients[].batch": { "field": "objective", "source": "document" },
+    "ingredients[].percent": { "field": "objective", "source": "document" },
+    "ingredients[].quantity": { "field": "objective", "source": "document" },
+    "functional_roles[]": { "field": "interpreted", "source": "heuristic", "note": "psd_fraction role is objective/document — the name IS a size range" },
+    "psd[]": { "field": "objective", "source": "document" },
+    "composition_audit": { "field": "objective", "source": "document" },
+    "functional_interfaces[]": { "field": "pending", "source": "unknown" },
+    "process": { "field": "pending", "source": "unknown" },
+    "measurements": { "field": "pending", "source": "unknown" },
+    "performance": { "field": "pending", "source": "unknown" }
   },
 
   "boundary": {
-    "identity": "formula_id is PROVISIONAL until Q-009 (what change creates a new formula identity) is answered by David. Do not aggregate across formula_id as if it were canonical yet (Law 2: Identity Before Aggregation).",
-    "roles": "role / chemical_system / functional_additives are interpreted heuristics — never asserted as derived knowledge. Only objective fields carry authority.",
-    "pending_fields": "process / linked_* / observed_effects are declared EMPTY, not guessed. An empty pending field is a known gap, not a value."
+    "identity": "formula_id is PROVISIONAL until Q-009 (what change creates a new formula identity) is answered by David. Do not aggregate across formula_id as canonical yet (Law 2: Identity Before Aggregation).",
+    "role_is_formula_scoped": "A FunctionalRole belongs to (formula, ingredient) — never to the material globally. The material entity carries identity only.",
+    "no_fact_from_heuristic": "field=objective may not carry source=heuristic/unknown. validateFormula enforces it: interpretation cannot masquerade as fact.",
+    "pending_is_empty": "functional_interfaces / process / measurements / performance are declared EMPTY (pending/unknown), not guessed."
   },
 
   "json_schema": {
     "type": "object",
-    "required": ["formula_id", "product", "product_family", "ingredients", "composition_audit", "provenance", "identity_status"],
+    "required": ["formula_id", "product", "product_family", "ingredients", "functional_roles", "functional_interfaces", "composition_audit", "provenance", "identity_status"],
     "properties": {
       "formula_id": { "type": "string" },
       "product": { "type": "string" },
       "product_family": { "type": "string" },
       "version": { "type": ["string", "null"] },
       "identity_status": { "type": "string", "enum": ["provisional_pending_Q009", "canonical"] },
+
       "ingredients": {
         "type": "array",
+        "description": "Component identity + composition only. NO role here (role is formula-scoped, see functional_roles).",
         "items": {
           "type": "object",
-          "required": ["material", "role"],
+          "required": ["material"],
           "properties": {
             "material": { "type": "string" },
             "batch": { "type": ["number", "null"] },
             "percent": { "type": ["number", "null"] },
-            "quantity": { "type": ["number", "null"] },
-            "role": { "type": "string", "enum": ["binder", "psd_fraction", "additive"] },
-            "role_authority": { "type": "string", "enum": ["objective", "interpreted"] }
+            "quantity": { "type": ["number", "null"] }
+          },
+          "not": { "required": ["role"] }
+        }
+      },
+
+      "functional_roles": {
+        "type": "array",
+        "description": "Role as a SEPARATE entity: (this formula, this ingredient) → a functional role. Same material may have different roles in different formulas.",
+        "items": {
+          "type": "object",
+          "required": ["ingredient", "role", "authority"],
+          "properties": {
+            "ingredient": { "type": "string" },
+            "role": { "type": "string", "enum": ["binder", "psd_fraction", "additive", "packing", "opacity", "rheology", "cost", "thermal_sink", "unknown"] },
+            "authority": { "$ref": "#/$defs/authority" },
+            "evidence": { "type": ["string", "null"] }
           }
         }
       },
-      "psd": {
+
+      "functional_interfaces": {
         "type": "array",
-        "items": { "type": "object", "required": ["fraction"], "properties": { "fraction": { "type": "string" }, "percent": { "type": ["number", "null"] } } }
+        "description": "Explicit layer between Component and Process: a functional behaviour and the process variables it couples to. Mostly pending now.",
+        "items": {
+          "type": "object",
+          "required": ["interface", "authority"],
+          "properties": {
+            "component": { "type": ["string", "null"] },
+            "role_ref": { "type": ["string", "null"] },
+            "interface": { "type": "string", "description": "the functional behaviour (e.g. rheology control, packing, water demand)" },
+            "couples_to": { "type": "array", "items": { "type": "string" }, "description": "process variables it interacts with" },
+            "authority": { "$ref": "#/$defs/authority" },
+            "evidence": { "type": ["string", "null"] }
+          }
+        }
       },
-      "chemical_system": { "type": "array", "items": { "type": "string" } },
-      "functional_additives": { "type": "array", "items": { "type": "string" } },
-      "composition_audit": {
-        "type": "object",
-        "required": ["percent_sum", "percent_ok"],
-        "properties": { "percent_sum": { "type": "number" }, "percent_ok": { "type": "boolean" }, "complete": { "type": "boolean" } }
-      },
+
+      "psd": { "type": "array", "items": { "type": "object", "required": ["fraction"], "properties": { "fraction": { "type": "string" }, "percent": { "type": ["number", "null"] } } } },
+      "composition_audit": { "type": "object", "required": ["percent_sum", "percent_ok"], "properties": { "percent_sum": { "type": "number" }, "percent_ok": { "type": "boolean" }, "complete": { "type": "boolean" } } },
+
       "process": { "type": ["object", "null"], "description": "pending — David / SOP" },
+      "measurements": { "type": "array", "description": "pending" },
+      "performance": { "type": "array", "description": "pending" },
       "quality_checks": { "type": "array" },
       "linked_experiments": { "type": "array" },
       "linked_results": { "type": "array" },
       "observed_effects": { "type": "array" },
       "linked_projects": { "type": "array" },
+
       "provenance": {
         "type": "object",
         "required": ["document_source", "extraction_method", "extraction_layer"],
@@ -89,6 +131,16 @@
           "extraction_layer": { "type": "string", "enum": ["layer1_objective", "layer2_validated"] },
           "extracted_date": { "type": ["string", "null"] },
           "validated_by": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "$defs": {
+      "authority": {
+        "type": "object",
+        "required": ["field", "source"],
+        "properties": {
+          "field": { "type": "string", "enum": ["objective", "interpreted", "pending"] },
+          "source": { "type": "string", "enum": ["document", "measurement", "instrument", "heuristic", "unknown"] }
         }
       }
     }

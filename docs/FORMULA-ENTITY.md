@@ -1,8 +1,41 @@
-# Formula as a First-Class Entity (Formula Schema v1)
+# Formula as a First-Class Entity (Formula Schema v1.1)
 
 > Born from the formula-extraction finding (Fresco). The significant result was not the 48
 > ingredients — it was realizing the system must treat **Formula as a first-class entity**, not
-> as a by-product of document parsing.
+> as a by-product of document parsing. **v1.1** adds the structure that leads to *behaviour*, not
+> just the list of ingredients — locked BEFORE the Knowledge Graph (Fresco).
+
+## v1.1 — three extensions (the structure that leads to behaviour)
+
+**1. Role is a separate entity — not a field of Ingredient.**
+Role is a property of the **formula**, not of the material. The same material can serve different
+roles in different formulas with no change to its identity:
+```
+CaCO3  (Omyacarb 5)  is NOT always "Filler" — it may be:
+   PSD controller · rheology stabilizer · cost optimizer · thermal sink · packing modifier
+F-103:  Omyacarb 5 → role = Packing
+F-200:  Omyacarb 5 → role = Opacity      (identical material, different role)
+```
+So `ingredients[]` carry **identity + composition only**; a separate `functional_roles[]` entity
+links `(formula, ingredient) → role`. `validateFormula` rejects any `role` placed on an ingredient.
+
+**2. Source Authority — orthogonal to Field Authority.**
+Authority now has **two** dimensions per datum:
+```
+field  : objective | interpreted | pending     (is it fact, interpretation, or gap?)
+source : document | measurement | instrument | heuristic | unknown   (where did it come from?)
+```
+Enforced invariants (in `validateAuthority`): `objective ⇒ source ∈ {document, measurement,
+instrument}` (a fact may never trace to a heuristic); `pending ⇒ source = unknown`. This lets future
+queries say *"show only measurement-backed knowledge"* or *"ignore all heuristics"* with no change to
+the object structure.
+
+**3. Functional Interface — an explicit layer between Component and Process.**
+```
+Formula → Functional Role → Component → PSD → Functional Interface → Process → Measurements → Performance
+```
+`functional_interfaces[]` is defined now (mostly **pending** — no process/behaviour data yet) so that
+linking formulas, experiments, equipment and results later needs no structural change.
 
 ## The architecture shift
 
@@ -35,28 +68,32 @@ formula sheets, the Canonical Formula Object is the knowledge object the lab rea
 **Discipline (Fresco):** only the schema is defined now. Knowledge Graph / Experiment / Project
 linking are deliberately NOT built until this schema is stable.
 
-## What a Canonical Formula Object holds
-`formula_id · product · product_family · version · ingredients[] · psd[] · chemical_system ·
-functional_additives · composition_audit · process · quality_checks · linked_experiments ·
-linked_results · observed_effects · linked_projects · provenance`
+## What a Canonical Formula Object holds (v1.1)
+`formula_id · product · product_family · version · identity_status · ingredients[] (identity+
+composition) · functional_roles[] (role as entity) · functional_interfaces[] (explicit layer) ·
+psd[] · composition_audit · process · measurements · performance · quality_checks ·
+linked_experiments · linked_results · observed_effects · linked_projects · provenance`
 
 It lets the lab eventually ask: *which formulas share a PSD? which ingredients always co-occur?
 which experiments ran on each version? what changed between V4 and V5?* — questions a DOCX can't
 answer.
 
 ## The Verified / Interpretation boundary (built INTO the schema)
-Every field is tagged in `config/formula_schema_v1.json → field_authority`:
+Every field has a default authority in `config/formula_schema_v1.json → field_authority`, and every
+authored datum (`functional_roles`, `functional_interfaces`) carries its own `{ field, source }`:
 
-| authority | meaning | examples |
+| field | meaning | examples |
 |---|---|---|
-| **objective** | read mechanically from the document — authoritative | material, batch, percent, quantity, `psd` (name IS a size range), composition_audit |
-| **interpreted** | provisional heuristic — NOT asserted knowledge | `product_family`, ingredient `role` (binder/additive), `chemical_system`, `functional_additives` |
-| **pending** | not in a formula sheet; awaits another source | `process` (David/SOP), `linked_*`, `observed_effects` |
+| **objective** | read mechanically — authoritative | material, batch, percent, quantity, `psd` (name IS a size range) |
+| **interpreted** | provisional heuristic — NOT asserted knowledge | `product_family`, functional roles (binder/additive) |
+| **pending** | not in a formula sheet; awaits another source | `process`, `functional_interfaces`, `measurements`, `linked_*` |
 
-Enforced in code: `validateFormula()` rejects a formula that claims `role_authority: objective`
-for anything other than a `psd_fraction`. Interpretation cannot masquerade as fact.
+Enforced in code (`validateFormula` / `validateAuthority`): a `psd_fraction` role must be objective;
+a binder/additive role may not be objective; `objective` may never carry `source=heuristic/unknown`;
+`pending` must be `source=unknown`. Interpretation cannot masquerade as fact.
 
-Pending fields are declared **empty, not guessed** — an empty `process` is a known gap, not a value.
+Pending layers are declared **empty, not guessed** — an empty `process` / `functional_interfaces` is
+a known gap, not a value.
 
 ## Identity is provisional (Law 2)
 `formula_id` is `slug(product):slug(version)` with `identity_status: provisional_pending_Q009`.

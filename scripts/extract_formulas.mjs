@@ -45,7 +45,7 @@ const schemaOk = formulas.filter(r => r.schema_valid).length;
 console.log(`\nFormula extraction → ${path.relative(path.resolve(here, '..'), out)}`);
 console.log(`  formulas: ${formulas.length}  ·  ingredients: ${totIng}  ·  PSD fractions (identity): ${totPsd}`);
 console.log(`  percent self-audit OK (sum≈100): ${okPct}/${formulas.length}`);
-console.log(`  Formula Schema v1 valid: ${schemaOk}/${formulas.length}`);
+console.log(`  Formula Schema v1.1 valid: ${schemaOk}/${formulas.length}`);
 console.log('\n  per formula:');
 for (const r of formulas) {
   const flag = r.percent_ok ? '✓' : '⚠';

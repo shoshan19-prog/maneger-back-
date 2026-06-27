@@ -106,17 +106,20 @@ the possibility space has been reliably ruled out.
   Experiment · Decision · Knowledge Graph · **Engineering Playbook** (`config/engineering_playbook_v1.json`
   — rules of engineering practice / how Fresco thinks; David, verified, scope B-4+Dry Powder).
   Three knowledge types: Declarative / Procedural / Engineering.
-- **Formula is a First-Class Entity** (docs/FORMULA-ENTITY.md, `config/formula_schema_v1.json`,
-  `lib/formulaSchema.js` + `lib/formulaExtract.js`): Fresco's knowledge is `Formula → Ingredients →
-  Role → PSD → Process → Measurements → Performance`, NOT `Document → Specs`. Pipeline reordered:
-  Document → Formula Extraction → **Canonical Formula Object (v1)** → [LATER: Knowledge Graph →
-  Experiment Linking → Project Knowledge]. The schema tags every field's authority — **objective**
-  (read mechanically: material/percent/quantity, psd), **interpreted** (provisional heuristic: role,
-  family, chemical_system), **pending** (process/linked_*/observed_effects — declared empty, not
-  guessed); `validateFormula` forbids interpretation masquerading as objective. `formula_id` is
-  PROVISIONAL pending **Q-009** (versioning) — do not aggregate across it yet. `npm run formulas`
-  → `.corpus/formulas_v1.json` (proprietary, git-ignored). **Do NOT build the Knowledge Graph /
-  Experiment / Project layers until the schema is ratified** (Fresco).
+- **Formula is a First-Class Entity — Schema v1.1** (docs/FORMULA-ENTITY.md, `config/formula_schema_v1.json`,
+  `lib/formulaSchema.js` + `lib/formulaExtract.js`): Fresco's knowledge is `Formula → Functional Role →
+  Component → PSD → Functional Interface → Process → Measurements → Performance`, NOT `Document → Specs`.
+  Pipeline: Document → Formula Extraction → **Canonical Formula Object (v1.1)** → [LATER: Knowledge Graph →
+  Experiment Linking → Project Knowledge]. **v1.1 three extensions:** (1) **Role is a separate entity**
+  (`functional_roles[]`), NOT a field of Ingredient — role is formula-scoped (same material = Packing in
+  one formula, Opacity in another); `validateFormula` rejects a `role` on an ingredient. (2) **Authority
+  is two-dimensional** `{field: objective|interpreted|pending, source: document|measurement|instrument|
+  heuristic|unknown}` — invariant: objective may never come from heuristic/unknown; pending ⇒ unknown
+  (so you can later query "only measurement-backed" / "ignore heuristics"). (3) **Functional Interface**
+  (`functional_interfaces[]`) — explicit layer between Component and Process, defined now but pending.
+  `formula_id` PROVISIONAL pending **Q-009** (versioning) — don't aggregate across it yet. `npm run
+  formulas` → `.corpus/formulas_v1.json` (proprietary, git-ignored; 8/8 valid). **Do NOT build the
+  Knowledge Graph / Experiment / Project layers until the schema is ratified** (Fresco).
 - `migrations/007_observation_contract.sql` — Axis Authority + Observation Contract (append-only).
 - `lib/observationContract.js` — the validation gate (single source of truth for ingest).
 - `scripts/analyze_formulation.mjs` + skill `analyze-formulation-data` — analyze uploaded xlsx.
