@@ -6,3 +6,7 @@ node_modules/
 
 # proprietary lab corpus snapshot (raw formulation sheets) — never commit
 .corpus/
+
+# transient scratch parsers (agent working files)
+scratchpad_parse.mjs
+*.scratch.mjs
