@@ -32,7 +32,8 @@
     "graph": "node scripts/graph.mjs",
     "delta": "node scripts/delta.mjs",
     "experiments": "node scripts/experiments.mjs",
-    "boundaries": "node scripts/boundaries.mjs"
+    "boundaries": "node scripts/boundaries.mjs",
+    "evolution": "node scripts/evolution.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",

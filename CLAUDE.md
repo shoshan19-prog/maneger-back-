@@ -170,6 +170,29 @@ the possibility space has been reliably ruled out.
 - `docs/RACHEL-LAB-WORKPLAN.md` — lab (Rachel) parallel daily plan.
 - `docs/E-011-PREREGISTRATION.md` / `docs/E-011-calibration-result.md` — the experiment + finding.
 
+- **Evolution Engine — the transition is the unit of learning** (docs/EVOLUTION-ENGINE.md,
+  `lib/evolutionEngine.js`, `npm run evolution`): a version is a snapshot; a TRANSITION (parent→child
+  along `based_on`) is learning. Each transition carries FOUR Δ types — Composition / Process /
+  Reasoning (verbatim, SOP filtered) / Decision (based_on|fixed|passed|rejected). Pattern layers:
+  recurringChanges (edit→**trend**), coOccurringMoves (formula→**strategy**), problemFixes
+  (problem→fix **decision chain**); materials abstracted to functional families. Causality guard: a
+  parent must precede its child (`based_on` suffixes RECYCLE across years — Law 2). Real run on the
+  intumescent journey (119 versions, `.corpus/drive/`, git-ignored): 64 transitions; **strategy
+  `-melamine & -polyol` ×21** = the char-former pair co-trimmed as one package (the v037 rule, proven
+  recurring); `-binder & -tio2` ×22; foam is the dominant decision-chain problem. Performance not yet
+  joinable — link burn tests to versions and each transition gains an effect.
+
+## The intumescent corpus (from Drive — `.corpus/drive/`, git-ignored, proprietary)
+- Pulled via Google Drive MCP: `INTUMESCENT_NEW_FORMULATIONS` xlsx (7 sheets) → parsed to
+  `.corpus/drive/intumescent_versions.json` (119 versions) + `intumescent_burn.json` (~13 burn rows).
+  **119 versions over 2.5 yrs**, 81 with `based_on`, 98 with pH/SG/viscosity lab data. The 2023
+  watershed: acid source EXOLIT AP435 → FRCROSS; binder MOWILITH→ENCOR→VINNAPAS/EMULTEX; char-formers
+  trimmed; water down; +LAPINUS CF10 fiber. **Honest gap (= measurement-coverage-0% on real data):**
+  burn TTF data is a separate 2026 controlled set + competitor benchmarks, NOT joinable to the
+  2022–2025 version ids — performance is decoupled from the lineage. Drive also holds raw-material
+  datasheets (literature layer) and burn-chamber videos. Other Drive read tools need per-tool approval;
+  `list_recent_files` + `download_file_content` are approved.
+
 ## Key findings to remember
 
 - Material identity is **fractured**: canonical `materials` vs per-project `material_library`
