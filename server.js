@@ -20,6 +20,7 @@ import {
   filterProjectGptSnippetsToIndex
 } from './lib/gptRagSync.js';
 import { RAG_INSUFFICIENT_SUPPORT_MESSAGE_HE } from './lib/ragService.js';
+import { emitKnowledgeEvent } from './lib/knowledgeEmit.js';
 import {
   UUID_IN_TEXT_RE,
   parseEmailOnly,
@@ -2411,6 +2412,7 @@ app.post('/api/projects/:projectId/experiments/from-formulation', async (req, re
     }
 
     res.status(201).json({ experiment: row, materials_written });
+    emitKnowledgeEvent('intent.declared', `experiment ${row.experiment_id}`);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -2474,6 +2476,7 @@ app.post('/api/projects/:projectId/research-sessions', async (req, res) => {
     }).select().single();
     if (error) throw error;
     res.status(201).json(data);
+    emitKnowledgeEvent('question.opened', (name != null && String(name).trim()) || 'research session');
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -3850,6 +3853,7 @@ app.post('/api/projects/:projectId/files', limiterUpload, upload.single('file'),
     auditLog(projectId, ctx.user.id, ctx.user.username, 'create', 'project_file', rowOut.id, { original_name: originalName }, req.requestId);
 
     res.status(201).json(rowOut);
+    emitKnowledgeEvent('document.ingested', originalName);
     if (hasLocalRag() && buffer) {
       setImmediate(() => ingestFileInBackground(projectId, rowOut.id, buffer, originalName));
     }
@@ -3892,6 +3896,7 @@ app.delete('/api/projects/:projectId/files/:fileId', async (req, res) => {
     if (error) throw error;
     auditLog(projectId, ctx.user.id, ctx.user.username, 'delete', 'project_file', fileId, null, req.requestId);
     res.json({ success: true });
+    emitKnowledgeEvent('document.removed', originalName || 'file');
 
     // OpenAI detach + storage remove can take a long time; reply first so the UI does not stick on «מוחק…» (same idea as Matriya DELETE /files).
     const rowSnapshot = {
